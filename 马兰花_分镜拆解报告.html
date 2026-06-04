@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《马兰花》分镜拆解与视频制作方案</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+:root{--bg:#0f1118;--card:#1a1d2e;--card2:#222640;--accent:#e8a838;--accent-l:#f5c96a;--accent-d:#a07020;--text:#e8e6e1;--dim:#9a97a0;--bright:#fff;--border:#2e3250;--green:#4ecdc4;--red:#ff6b6b;--blue:#6c9ce8;--pink:#e87ea1;--orange:#f0915a;--purple:#b48ee0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-serif;line-height:1.7}
+.hero{position:relative;padding:70px 40px 50px;text-align:center;background:linear-gradient(135deg,#1a1230,#0f1118 40%,#121820);overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 50%,rgba(232,168,56,.06) 0%,transparent 60%),radial-gradient(ellipse at 70% 30%,rgba(78,205,196,.04) 0%,transparent 50%);animation:fl 20s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:translate(0,0)}50%{transform:translate(15px,-10px)}}
+.hero-c{position:relative;z-index:1}
+.badge{display:inline-block;padding:5px 18px;border:1px solid var(--accent-d);border-radius:20px;font-size:12px;color:var(--accent-l);letter-spacing:4px;margin-bottom:20px}
+.hero h1{font-family:'Noto Serif SC',serif;font-size:52px;font-weight:700;color:var(--bright);letter-spacing:8px;margin-bottom:6px}
+.hero .sub{font-size:17px;color:var(--dim);margin-bottom:28px;font-weight:300}
+.hero-m{display:flex;justify-content:center;gap:28px;flex-wrap:wrap}
+.hero-mi{display:flex;align-items:center;gap:7px;color:var(--dim);font-size:13px}
+.hero-mi .ic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.container{max-width:1160px;margin:0 auto;padding:0 22px}
+.sec{padding:55px 0;border-top:1px solid var(--border)}
+.sec-n{font-size:11px;color:var(--accent);letter-spacing:3px;font-weight:700;margin-bottom:6px}
+.sec-t{font-family:'Noto Serif SC',serif;font-size:30px;font-weight:700;color:var(--bright);margin-bottom:6px}
+.sec-d{font-size:14px;color:var(--dim);max-width:680px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:22px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px;transition:transform .2s,border-color .3s}
+.card:hover{transform:translateY(-2px);border-color:var(--accent-d)}
+.c-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px}
+.c-t{font-weight:600;font-size:15px;color:var(--bright);margin-bottom:7px}
+.c-p{font-size:13px;color:var(--dim);line-height:1.8}
+.c-p strong{color:var(--text)}
+.c-p em{color:var(--accent-l);font-style:normal}
+.char-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:22px}
+.ch{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:22px;position:relative;overflow:hidden}
+.ch::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px}
+.ch1::before{background:var(--accent)}.ch2::before{background:var(--blue)}.ch3::before{background:var(--green)}.ch4::before{background:var(--pink)}.ch5::before{background:var(--orange)}
+.ch-n{font-family:'Noto Serif SC',serif;font-size:19px;font-weight:700;color:var(--bright);margin-bottom:3px}
+.ch-r{font-size:11px;color:var(--accent);margin-bottom:10px;letter-spacing:1px}
+.ch-d{font-size:12.5px;color:var(--dim);line-height:1.8}
+.quote{margin:22px 0;padding:22px 26px;border-left:3px solid var(--accent);background:var(--card);border-radius:0 13px 13px 0}
+.quote p{font-family:'Noto Serif SC',serif;font-size:14px;color:var(--text);line-height:2;font-style:italic}
+.quote .src{font-size:11px;color:var(--dim);margin-top:6px;font-style:normal}
+.dual{margin-top:28px;padding:26px;background:var(--card);border:1px solid var(--border);border-radius:14px}
+.dual h4{font-size:15px;color:var(--bright);margin-bottom:18px}
+.lr{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+.ld{width:10px;height:10px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.ll{font-size:12.5px;font-weight:600;margin-bottom:2px}
+.lde{font-size:12.5px;color:var(--dim)}
+.tl{position:relative;padding-left:38px;margin-top:28px}
+.tl::before{content:'';position:absolute;left:14px;top:0;width:2px;height:100%;background:linear-gradient(to bottom,var(--accent),var(--border))}
+.ti{position:relative;margin-bottom:30px;padding:22px;background:var(--card);border:1px solid var(--border);border-radius:13px;transition:border-color .3s}
+.ti:hover{border-color:var(--accent-d)}
+.ti::before{content:'';position:absolute;left:-32px;top:28px;width:11px;height:11px;border-radius:50%;border:2px solid var(--accent);background:var(--bg)}
+.tl-a{font-size:10.5px;color:var(--accent);letter-spacing:2px;font-weight:700;margin-bottom:5px}
+.tl-t{font-size:16px;font-weight:600;color:var(--bright);margin-bottom:7px}
+.tl-p{font-size:13px;color:var(--dim);line-height:1.8}
+.tl-p em{color:var(--accent-l);font-style:normal}
+.tag{display:inline-block;padding:2px 9px;border-radius:4px;font-size:10.5px;margin-top:8px;margin-right:5px}
+.te{background:rgba(232,168,56,.14);color:var(--accent-l)}.tc{background:rgba(255,107,107,.14);color:var(--red)}.tt{background:rgba(78,205,196,.14);color:var(--green)}.td{background:rgba(108,156,232,.14);color:var(--blue)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-top:22px}
+.st{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:22px;text-align:center}
+.st-v{font-size:34px;font-weight:700;color:var(--accent);font-family:'Noto Serif SC',serif}
+.st-l{font-size:12px;color:var(--dim);margin-top:3px}
+.sb{display:flex;flex-direction:column;gap:24px;margin-top:28px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:transform .2s}
+.sc:hover{transform:translateY(-2px)}
+.sc-h{display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--border);background:var(--card2)}
+.sn{width:46px;height:46px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent-d));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;color:#fff;flex-shrink:0}
+.sm{flex:1}.s-t{font-size:16px;font-weight:600;color:var(--bright)}.s-i{font-size:11.5px;color:var(--dim);margin-top:2px}
+.sd{padding:4px 11px;border-radius:6px;background:rgba(232,168,56,.11);color:var(--accent-l);font-size:12.5px;font-weight:600;white-space:nowrap}
+.sc-b{padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.sf{}.sf-l{font-size:10.5px;color:var(--accent);letter-spacing:1px;font-weight:700;margin-bottom:5px}
+.sf-c{font-size:13px;color:var(--text);line-height:1.8}
+.sf-c em{color:var(--accent-l);font-style:normal}
+.tbl{width:100%;border-collapse:separate;border-spacing:0;margin-top:22px;border-radius:13px;overflow:hidden;border:1px solid var(--border)}
+.tbl thead th{background:var(--card2);padding:13px 16px;font-size:11.5px;color:var(--accent);letter-spacing:1px;font-weight:700;text-align:left;border-bottom:1px solid var(--border)}
+.tbl tbody td{padding:13px 16px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);background:var(--card)}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:var(--card2)}
+.style-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:22px}
+.si{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:22px;text-align:center}
+.s-clr{width:54px;height:54px;border-radius:12px;margin:0 auto 12px}
+.s-la{font-size:13px;font-weight:600;color:var(--bright);margin-bottom:3px}
+.s-de{font-size:11.5px;color:var(--dim)}
+.ft{text-align:center;padding:36px;border-top:1px solid var(--border);color:var(--dim);font-size:12px}
+.divider{height:1px;background:linear-gradient(to right,transparent,var(--border),transparent);margin:10px 0}
+@media(max-width:768px){.hero h1{font-size:32px;letter-spacing:3px}.sc-b{grid-template-columns:1fr}.hero-m{gap:14px}}
+</style>
+</head>
+<body>
+
+<section class="hero"><div class="hero-c">
+<div class="badge">分镜拆解 · 视频方案</div>
+<h1>马兰花</h1>
+<p class="sub">李德霞 · 小小说 · 善良与信任的回响</p>
+<div class="hero-m">
+<div class="hero-mi"><div class="ic" style="background:rgba(232,168,56,.12)">📖</div>原著：李德霞</div>
+<div class="hero-mi"><div class="ic" style="background:rgba(78,205,196,.12)">🎬</div>8组分镜</div>
+<div class="hero-mi"><div class="ic" style="background:rgba(108,156,232,.12)">⏱</div>建议3-5分钟</div>
+<div class="hero-mi"><div class="ic" style="background:rgba(232,126,161,.12)">🎭</div>5位角色</div>
+</div>
+</div></section>
+
+<div class="container">
+
+<!-- PART 01 故事概述 -->
+<section class="sec">
+<div class="sec-n">PART 01</div>
+<h2 class="sec-t">故事概述与核心主旨</h2>
+<p class="sec-d">一个关于善良不问回报、信任终有回响的市井故事</p>
+
+<div class="quote">
+<p>大清早，马兰花从蔬菜批发市场接了满满一车菜回来……</p>
+<p>马兰花读着信，读出满眼的泪水……</p>
+<div class="src">—— 李德霞《马兰花》首尾句</div>
+</div>
+
+<div class="grid4">
+<div class="card"><div class="c-icon" style="background:rgba(232,168,56,.12)">💡</div><div class="c-t">核心主题</div><div class="c-p">善良是无条件的给予，信任是不求回报的坚守。六百块钱的借款，在生死面前不值一提，但马兰花的善良最终换来了超乎想象的回报——不仅是钱，更是一份居所。</div></div>
+<div class="card"><div class="c-icon" style="background:rgba(78,205,196,.12)">🔄</div><div class="c-t">叙事结构</div><div class="c-p">经典<strong>双线结构</strong>：明线是马兰花夫妻围绕六百元的矛盾冲突；暗线是麻婶女儿发现借款记录后默默还款报恩的过程。明暗交织，最终在信件处汇合完成戏剧反转。</div></div>
+<div class="card"><div class="c-icon" style="background:rgba(108,156,232,.12)">⚡</div><div class="c-t">戏剧张力</div><div class="c-p">张力源于"善与利"的撕扯——丈夫的世俗算计 vs 马兰花的善良本心。三次冲突递进（医院争执→回家怒吼→饭桌爆发），情感浓度持续攀升，直到信件到来完成释放。</div></div>
+<div class="card"><div class="c-icon" style="background:rgba(232,126,161,.12)">🎭</div><div class="c-t">情感弧线</div><div class="c-p">平静→担忧→争执→悲痛→压抑→爆发→沉寂→惊喜→感动。整体呈<em>"V字型"</em>情感曲线——中段跌入低谷，结尾冲上高峰，观众情绪被牢牢牵动。</div></div>
+</div>
+
+<div class="dual">
+<h4>🔗 明暗双线结构解析</h4>
+<div class="lr"><div class="ld" style="background:var(--accent)"></div><div><div class="ll" style="color:var(--accent-l)">明线 —— 夫妻借款冲突</div><div class="lde">借钱给麻婶 → 医院没提钱 → 丈夫不满 → 麻婶去世 → 丈夫大怒 → 持续抱怨 → 饭桌爆发 → 丈夫沉默离去</div></div></div>
+<div class="lr"><div class="ld" style="background:var(--green)"></div><div><div class="ll" style="color:var(--green)">暗线 —— 麻婶女儿还款</div><div class="lde">麻婶住院 → 去世 → 女儿带回遗物 → 发现借款小本 → 汇款1000元 + 写信 + 让出房子 → 信到马兰花手中</div></div></div>
+<div class="lr" style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)"><div class="ld" style="background:var(--red)"></div><div><div class="ll" style="color:var(--red)">交汇点 —— 那封信</div><div class="lde">暗线以"一封信"浮出水面与明线汇合。信中不仅还了钱，还揭露关键细节：<em>"你就是没提母亲借钱的事"</em>——马兰花的沉默善良，对方全看在眼里。</div></div></div>
+</div>
+</section>
+
+<!-- PART 02 人物分析 -->
+<section class="sec">
+<div class="sec-n">PART 02</div>
+<h2 class="sec-t">人物角色图谱</h2>
+<p class="sec-d">五个人物，五种立场，构成完整的人性坐标系</p>
+
+<div class="char-grid">
+<div class="ch ch1"><div class="ch-n">马兰花</div><div class="ch-r">主角 · 菜摊女主</div><div class="ch-d">善良本分、重情重义。面对丈夫反复逼讨始终不肯去讨债，因为她把麻婶当人而不是当债主。<em>"不就六百块钱吗？是个命"</em>——她人格的注脚。核心矛盾：善良在现实压力下的坚守。</div></div>
+<div class="ch ch2"><div class="ch-n">男人（丈夫）</div><div class="ch-r">对立面 · 出租车司机</div><div class="ch-d">务实焦虑、耿直嘴硬。并非坏人，而是底层劳动者的生存焦虑——<em>"住的房子还是租来的"</em>。结尾"做了香喷喷一桌饭菜"说明他本质善良，只是嘴硬心软。</div></div>
+<div class="ch ch3"><div class="ch-n">麻婶</div><div class="ch-r">暗线灵魂 · 卖咸菜老太太</div><div class="ch-d">全程未直接出场说话，却是故事的关键锚点。借钱记在小本本上——从不赖账；和马兰花"说说话聊聊天"——两人亲近；突发脑溢血去世——命运无常。<strong>小本本是全剧最重要的道具。</strong></div></div>
+<div class="ch ch4"><div class="ch-n">麻婶女儿</div><div class="ch-r">暗线执行者 · 来自上海</div><div class="ch-d">知恩图报、做事体面。发现借款记录后不仅归还本金，还多给400元补偿，甚至让出房子。信中那句话——<em>"你就是没提母亲借钱的事"</em>——她被马兰花的品格深深打动。</div></div>
+<div class="ch ch5"><div class="ch-n">三孬</div><div class="ch-r">信息枢纽 · 卖水果小贩</div><div class="ch-d">市井信息传递者，推动情节发展的"旁白型"角色。第一个告知麻婶出事，第一个提醒要钱。代表市井中"好事要张罗"的热心与多嘴。</div></div>
+</div>
+</section>
+
+<!-- PART 03 情节设计 -->
+<section class="sec">
+<div class="sec-n">PART 03</div>
+<h2 class="sec-t">情节设计 · 三幕五段式</h2>
+<p class="sec-d">从市井日常到情感高潮，再到意外之喜——经典叙事弧线</p>
+
+<div class="tl">
+<div class="ti">
+<div class="tl-a">第一幕 · 起</div>
+<div class="tl-t">🥬 市井日常与突发噩耗</div>
+<div class="tl-p">大清早，马兰花照常批发蔬菜。三孬告知麻婶突发脑溢血住院，顺便提醒六百元借款。马兰花整天心神不宁，望着空摊位发呆——回忆两人日常的亲近与互助。<br><br><strong>叙事任务：</strong>建立日常真实感，交代人物关系和借款前情，为后续冲突埋下引线。</div>
+<span class="tag td">交代关系</span><span class="tag te">牵挂</span>
+</div>
+<div class="ti">
+<div class="tl-a">第一幕 · 承</div>
+<div class="tl-t">🏥 医院探望与第一次冲突</div>
+<div class="tl-p">丈夫主动提出开车陪去医院，但动机是"顺便跟麻婶女儿提钱"。马兰花看到麻婶女儿哭成泪人，只安慰几句就走——始终没提钱。丈夫追上来质问，马兰花反问<em>"这是提钱的时候吗？"</em>丈夫铁青着脸，车开得飞快。<br><br><strong>叙事任务：</strong>第一次冲突，揭示夫妻价值观差异——一个重情，一个重利。</div>
+<span class="tag tc">第一次冲突</span><span class="tag te">隐忍</span>
+</div>
+<div class="ti">
+<div class="tl-a">第二幕 · 转（上）</div>
+<div class="tl-t">💀 麻婶去世与丈夫暴怒</div>
+<div class="tl-p">麻婶没能救过来，女儿火化后连夜飞回上海。丈夫冲马兰花怒吼<em>"老子就没见过你这么傻的女人！"</em>一脚踢翻菜篓子，红艳艳的西红柿滚了一地——极具视觉冲击力。<br><br><strong>叙事任务：</strong>冲突推到新高度。丈夫的暴怒不仅因为钱，更因为"连要钱的机会都没了"的无力感。滚落的西红柿象征马兰花内心的狼藉。</div>
+<span class="tag tc">第二次冲突</span><span class="tag td">意象：西红柿</span>
+</div>
+<div class="ti">
+<div class="tl-a">第二幕 · 转（下）</div>
+<div class="tl-t">🍚 持续抱怨与情感爆发</div>
+<div class="tl-p">丈夫耿耿于怀，没事就把六百块挂在嘴边。马兰花一直沉默。直到某天饭桌上，丈夫说出<em>"住的房子还是租来的，你拿六百块打了水漂"</em>——马兰花终于爆发：<br><em>"你有完没完？不就六百块钱吗？是个命……就当麻婶是我干妈，我孝敬了干妈，成了吧？"</em><br>丈夫摔门而去，门响如雷。<br><br><strong>叙事任务：</strong>全剧情感最高点。马兰花的爆发是委屈与原则的碰撞——她不是不知道钱重要，但更知道人比钱重要。</div>
+<span class="tag tc">第三次冲突（高潮）</span><span class="tag te">爆发</span>
+</div>
+<div class="ti">
+<div class="tl-a">第三幕 · 合</div>
+<div class="tl-t">💌 意外来信与善有善报</div>
+<div class="tl-p">"日子水一样流淌"——一个月后，马兰花回家看到丈夫破天荒做了一桌好菜。麻婶女儿从上海寄来1000元（多出400元补偿），还让马兰花搬进麻婶的房子——<em>"就当帮我看房子了"</em>。信中最动人的一句：<em>"你就是没提母亲借钱的事"</em>——她什么都看在眼里。马兰花读着信，读出满眼的泪水。<br><br><strong>叙事任务：</strong>戏剧反转，明暗线汇合。善良不是没有代价，而是代价终会被看见。结尾的泪水是感动、释然、也是委屈终于被理解的释放。</div>
+<span class="tag tt">反转</span><span class="tag te">感动</span>
+</div>
+</div>
+</section>
+
+<!-- PART 04 分镜拆解 -->
+<section class="sec">
+<div class="sec-n">PART 04</div>
+<h2 class="sec-t">分镜拆解 · 8组镜头</h2>
+<p class="sec-d">每组镜头包含画面、旁白、音效、时长和拍摄建议的完整设计</p>
+
+<div class="stats">
+<div class="st"><div class="st-v">8</div><div class="st-l">分镜组数</div></div>
+<div class="st"><div class="st-v">3-5′</div><div class="st-l">建议总时长</div></div>
+<div class="st"><div class="st-v">3</div><div class="st-l">冲突场次</div></div>
+<div class="st"><div class="st-v">1</div><div class="st-l">反转场次</div></div>
+</div>
+
+<div class="sb">
+
+<!-- 分镜01 -->
+<div class="sc">
+<div class="sc-h"><div class="sn">01</div><div class="sm"><div class="s-t">市井清晨 · 日常开场</div><div class="s-i">场景：菜市场 | 时间：清晨 | 情绪：平静温馨</div></div><div class="sd">25-30s</div></div>
+<div class="sc-b">
+<div class="sf"><div class="sf-l">📸 画面描述</div><div class="sf-c">【全景】清晨菜市场，摊位依次排开，晨光斜照。<br>【中景】马兰花的菜摊，菜摆得整整齐齐，旁边空摊位残留咸菜坛痕迹。<br>【近景】三孬急匆匆跑来凑近马兰花耳语。<br>【特写】马兰花一惊的表情。</div></div>
+<div class="sf"><div class="sf-l">📝 旁白/台词</div><div class="sf-c">旁白：菜市场的一天从凌晨开始。马兰花的菜摊旁边，是麻婶的咸菜摊。两人做了多年邻居，不忙的时候说说话，忙的时候搭把手。<br>三孬：<em>"兰花姐，卖咸菜的麻婶出事了！"</em><br>马兰花：<em>"出啥事啦？"</em></div></div>
+<div class="sf"><div class="sf-l">🎵 音效/配乐</div><div class="sf-c">环境音：菜市场嘈杂声、叫卖声。<br>配乐：温暖的民谣吉他或手风琴，轻柔铺垫。<br>三孬说话时音乐渐弱，制造紧张感。</div></div>
+<div class="sf"><div class="sf-l">🎯 拍摄要点</div><div class="sf-c">· 空摊位暗示麻婶缺席<br>· 回忆画面用暖色调+轻微虚化<br>· 三孬跑来用手持跟拍增加紧迫感</div></div>
+</div></div>
+
+<!-- 分镜02 -->
+<div class="sc">
+<div class="sc-h"><div class="sn">02</div><div class="sm"><div class="s-t">空摊发呆 · 牵挂与回忆</div><div class="s-i">场景：菜摊 | 时间：上午 | 情绪：忧虑惆怅</div></div><div class="sd">20-25s</div></div>
+<div class="sc-b">
+<div class="sf"><div class="sf-l">📸 画面描述</div><div class="sf-c">【近景】马兰花无精打采守摊，眼神频频飘向旁边空位。<br>【闪回·暖调】麻婶和马兰花有说有笑；麻婶帮马兰花招呼顾客。<br>【特写】马兰花手里的菜掉落，她没察觉。<br>【全景】空荡荡的咸菜摊位，阳光照在空桌上。</div></div>
+<div class="sf"><div class="sf-l">📝 旁白/台词</div><div class="sf-c">旁白：整整一个上午，马兰花都提不起精神，不时地瞅着菜摊旁边那块空地发呆……<br>三孬（画外音）：<em>"麻婶借钱不够，不是借了你六百块吗？你最好跟她说说去……"</em></div></div>
+<div class="sf"><div class="sf-l">🎵 音效/配乐</div><div class="sf-c">环境音：市场声渐弱，只剩风声。<br>闪回配乐：温暖钢琴旋律，有年代感。<br>三孬提醒时：轻微金属碰撞声（暗示钱）。</div></div>
+<div class="sf"><div class="sf-l">🎯 拍摄要点</div><div class="sf-c">· 闪回用4:3画幅+暖黄色调区分现实<br>· 空摊位拍特写，制造"人在心不在"<br>· 三孬声音以画外音出现，不打断内心世界</div></div>
+</div></div>
+
+<!-- 分镜03 -->
+<div class="sc">
+<div class="sc-h"><div class="sn">03</div><div class="sm"><div class="s-t">医院探望 · 第一次交锋</div><div class="s-i">场景：医院走廊 | 时间：中午 | 情绪：紧张压抑</div></div><div class="sd">30-35s</div></div>
+<div class="sc-b">
+<div class="sf"><div class="sf-l">📸 画面描述</div><div class="sf-c">【中景】马兰花抱着水果，跟着男人走进医院走廊。<br>【近景】重症监护室外，麻婶女儿泪流满面。<br>【双人】马兰花安慰麻婶女儿，放下水果。<br>【走廊双人】男人追上来急切质问。<br>【特写】马兰花坚定眼神：<em>"这是提钱的时候吗？"</em></div></div>
+<div class="sf"><div class="sf-l">📝 旁白/台词</div><div class="sf-c">男人：<em>"我碰你好几次，你咋不提麻婶借钱的事？"</em><br>马兰花：<em>"你也不看看，这是提钱的时候吗？"</em><br>男人：<em>"万一麻婶救不过来，你找谁要去？"</em><br>马兰花：<em>"你咋尽往坏处想啊？啥人啊？"</em></div></div>
+<div class="sf"><div class="sf-l">🎵 音效/配乐</div><div class="sf-c">环境音：医院仪器滴答、走廊脚步声。<br>配乐：低沉弦乐，暗流涌动。<br>争吵时配乐停顿，只留人声和环境音。<br>上车时引擎声刺耳。</div></div>
+<div class="sf"><div class="sf-l">🎯 拍摄要点</div><div class="sf-c">· 医院用冷白光，与菜市场暖光对比<br>· 争吵用手持跟拍贴近面部<br>· 车速加快用窗外模糊树影表现<br>· 马兰花副驾沉默，窗玻璃倒映她的脸</div></div>
+</div></div>
+
+<!-- 分镜04 -->
+<div class="sc">
+<div class="sc-h"><div class="sn">04</div><div class="sm"><div class="s-t">噩耗传来 · 暴怒与崩溃</div><div class="s-i">场景：菜摊 | 时间：次日 | 情绪：震惊愤怒</div></div><div class="sd">25-30s</div></div>
+<div class="sc-b">
+<div class="sf"><div class="sf-l">📸 画面描述</div><div class="sf-c">【字幕卡】"第二天"<br>【中景】男人冲进菜摊怒气冲冲。<br>【特写】男人吼叫的脸，青筋暴起。<br>【慢动作·特写】一脚踢翻菜篓子，<em>红艳艳的西红柿滚落一地</em>。<br>【特写】马兰花眼眶含泪，嘴唇微颤，强忍不落。<br>【俯拍】满地滚动的西红柿，如散落的血珠。</div></div>
+<div class="sf"><div class="sf-l">📝 旁白/台词</div><div class="sf-c">旁白：麻婶没能救过来，她的女儿火化了遗体，带着骨灰连夜飞回了上海。<br>男人：<em>"钱呢？老子就没见过你这么傻的女人！"</em><br>旁白：马兰花的眼泪在眼眶里打转转。</div></div>
+<div class="sf"><div class="sf-l">🎵 音效/配乐</div><div class="sf-c">踢翻菜篓：慢放音效，低频轰鸣。<br>西红柿滚落：每个触地声放大。<br>配乐：大提琴独奏，沉重悲怆。<br>"眼泪打转"时音乐骤停，只留心跳声。</div></div>
+<div class="sf"><div class="sf-l">🎯 拍摄要点</div><div class="sf-c">· <strong>西红柿滚落是全片最重要意象镜头</strong>，必须慢放+特写<br>· 红色西红柿在灰色地面的视觉冲击——生命的热烈与破碎<br>· "眼泪打转但不落"的特写需精准控制<br>· 俯拍满地西红柿后直接黑屏过渡，留白</div></div>
+</div></div>
+
+<!-- 分镜05 -->
+<div class="sc">
+<div class="sc-h"><div class="sn">05</div><div class="sm"><div class="s-t">持续煎熬 · 琐碎的折磨</div><div class="s-i">场景：出租屋/菜摊 | 时间：数周间 | 情绪：压抑沉闷</div></div><div class="sd">20-25s</div></div>
+<div class="sc-b">
+<div class="sf"><div class="sf-l">📸 画面描述</div><div class="sf-c">【蒙太奇·快切】<br>① 男人在出租屋翻找东西嘟囔<br>② 马兰花低头择菜假装没听见<br>③ 男人开车时自言自语<br>④ 马兰花背对男人叠衣服<br>⑤ 男人数钱时叹气<br>【空镜】出租屋简陋墙面，剥落的墙皮——暗示生活的拮据。</div></div>
+<div class="sf"><div class="sf-l">📝 旁白/台词</div><div class="sf-c">旁白：从此，男人耿耿于怀，有事没事就把六百块钱的事挂在嘴边。马兰花只当没听见。<br>男人（背景音·碎片化）：<em>"六百块……""打了水漂……""租来的房子……"</em></div></div>
+<div class="sf"><div class="sf-l">🎵 音效/配乐</div><div class="sf-c">配乐：极简钢琴，单音重复，如钟摆般压迫感。<br>每切一个画面，音调微升，暗示压力递增。<br>男人嘟囔混在配乐里，似有似无。</div></div>
+<div class="sf"><div class="sf-l">🎯 拍摄要点</div><div class="sf-c">· 蒙太奇快速剪辑，节奏递进<br>· 出租屋逼仄感用低角度+窄景深<br>· 马兰花始终沉默，用背影和侧脸表现隐忍<br>· 段落要短但节奏要密——像钝刀反复磨</div></div>
+</div></div>
+
+<!-- 分镜06 -->
+<div class="sc">
+<div class="sc-h"><div class="sn">06</div><div class="sm"><div class="s-t">饭桌爆发 · 情感最高潮</div><div class="s-i">场景：出租屋饭桌 | 时间：某天晚餐 | 情绪：崩溃决堤</div></div><div class="sd">25-30s</div></div>
+<div class="sc-b">
+<div class="sf"><div class="sf-l">📸 画面描述</div><div class="sf-c">【中景】两人面对面吃饭，气氛沉闷。<br>【近景】男人放下筷子，说六百块的事。<br>【特写】马兰花攥紧筷子，指节发白。<br>【近景→特写】马兰花猛然抬头，眼里含泪：<em>"你有完没完？"</em><br>【全景】男人一撂碗，拂袖而去。<br>【慢放·特写】门被狠狠摔上，画面震动。马兰花独坐桌前，泪流满面。</div></div>
+<div class="sf"><div class="sf-l">📝 旁白/台词</div><div class="sf-c">男人：<em>"咱都进城好几年了，住的房子还是租来的。你倒好，拿六百块钱打了水漂儿……"</em><br>马兰花（爆发）：<em>"你有完没完？不就六百块钱吗？是个命……就当麻婶是我干妈，我孝敬了干妈，成了吧？"</em><br>旁白：男人一撂碗，拂袖而去，把屋门摔得山响。</div></div>
+<div class="sf"><div class="sf-l">🎵 音效/配乐</div><div class="sf-c">碗碟碰撞声、门摔上的巨响。<br>马兰花爆发时配乐骤停→3秒静默→弦乐缓慢涌起。<br>门响时低频共振，画面可轻微抖动效果。</div></div>
+<div class="sf"><div class="sf-l">🎯 拍摄要点</div><div class="sf-c">· 这是全片情感制高点，<strong>必须留足呼吸空间</strong><br>· 马兰花爆发前有2秒沉默酝酿<br>· "是个命"三个字用最慢语速，一字一顿<br>· 摔门后镜头不动，停留在空桌前5秒以上</div></div>
+</div></div>
+
+<!-- 分镜07 -->
+<div class="sc">
+<div class="sc-h"><div class="sn">07</div><div class="sm"><div class="s-t">日子流淌 · 沉寂与等待</div><div class="s-i">场景：菜摊/出租屋 | 时间：一个月后 | 情绪：平静沉寂</div></div><div class="sd">15-20s</div></div>
+<div class="sc-b">
+<div class="sf"><div class="sf-l">📸 画面描述</div><div class="sf-c">【蒙太奇·缓慢】<br>① 马兰花卖菜，面无表情<br>② 日历翻页<br>③ 出租屋夜晚，两人各在一方<br>④ 马兰花收摊，拖着疲惫的步伐回家<br>【过渡】男人系着围裙在厨房忙碌——画面一转，温暖的灯光。</div></div>
+<div class="sf"><div class="sf-l">📝 旁白/台词</div><div class="sf-c">旁白：日子水一样流淌。转眼，一个月过去。<br>（安静5秒）<br>旁白：这天，马兰花卖完菜回到家。一进门，就看见男人系着围裙，做了香喷喷的一桌饭菜。</div></div>
+<div class="sf"><div class="sf-l">🎵 音效/配乐</div><div class="sf-c">配乐：极简钢琴单音，缓慢节奏。<br>日历翻页音效。<br>看到饭菜时：钢琴转为温暖和弦，预示转机。<br>女儿说话时加入轻快弦乐。</div></div>
+<div class="sf"><div class="sf-l">🎯 拍摄要点</div><div class="sf-c">· "日子水一样流淌"是原文最美的句子，用慢镜头+水纹转场<br>· 从冷色调（沉寂期）到暖色调（饭菜）的突变<br>· 男人系围裙的画面要有反差喜感<br>· 女儿嘴快说出"阿姨寄钱"时，马兰花表情变化要多机位捕捉</div></div>
+</div></div>
+
+<!-- 分镜08 -->
+<div class="sc">
+<div class="sc-h"><div class="sn">08</div><div class="sm"><div class="s-t">读信 · 善良被看见</div><div class="s-i">场景：出租屋 | 时间：晚上 | 情绪：感动释放</div></div><div class="sd">35-40s</div></div>
+<div class="sc-b">
+<div class="sf"><div class="sf-l">📸 画面描述</div><div class="sf-c">【特写】男人从抽屉取出汇款单和信递给马兰花。<br>【近景】马兰花接过信，就着灯光看。<br>【信件画面·叠加】信的内容以手写字体逐行浮现。<br>【闪回·极短】医院里马兰花安慰麻婶女儿的画面——<em>"你就是没提母亲借钱的事"</em><br>【特写】马兰花的眼睛，泪水盈满，一滴滑落。<br>【全景→慢拉】灯光温暖的小屋，马兰花拿着信，泪流满面却嘴角微扬。<br>【终画面】窗外月光，渐黑。片名浮现：<em>马兰花</em></div></div>
+<div class="sf"><div class="sf-l">📝 旁白/台词</div><div class="sf-c">女儿：<em>"妈妈，是有位阿姨给你寄来了钱和信……"</em><br>马兰花：<em>"到底咋回事？"</em><br>男人：<em>"是麻婶的女儿从上海寄来的。"</em><br>信（旁白读）：<em>"兰花姐，实在是对不起了……我意外地发现了一个小本本，上面记着她借你六百块钱的事……你就是没提母亲借钱的事……汇去一千元……大姐如果不嫌弃，就搬过去住吧……"</em><br>旁白：马兰花读着信，读出满眼的泪水。</div></div>
+<div class="sf"><div class="sf-l">🎵 音效/配乐</div><div class="sf-c">配乐：从温暖弦乐渐入，信件内容朗读时配乐极简。<br>关键句"你就是没提"时音乐停顿1秒→大提琴独奏缓缓涌起。<br>泪水滑落时钢琴单音。<br>结尾：手风琴或吉他回到开头的旋律，首尾呼应。</div></div>
+<div class="sf"><div class="sf-l">🎯 拍摄要点</div><div class="sf-c">· <strong>信件内容用手写字体逐行浮现</strong>，配合旁白朗读节奏<br>· "你就是没提"这句必须重点处理——闪回+停顿+特写<br>· 泪水流下但嘴角微扬——<em>苦尽甘来的感动</em><br>· 结尾缓慢拉远，留足余韵<br>· 片名浮现后黑屏3秒，音乐渐弱至无</div></div>
+</div></div>
+
+</div>
+</section>
+
+<!-- PART 05 视频制作方案 -->
+<section class="sec">
+<div class="sec-n">PART 05</div>
+<h2 class="sec-t">视频制作方案</h2>
+<p class="sec-d">从风格定位到技术参数的完整制作指南</p>
+
+<h3 style="font-size:18px;color:var(--bright);margin-top:28px;margin-bottom:16px">🎬 整体风格定位</h3>
+
+<div class="style-grid">
+<div class="si"><div class="s-clr" style="background:linear-gradient(135deg,#a08050,#d4a860)"></div><div class="s-la">暖黄主调</div><div class="s-de">菜市场/日常场景<br>温暖市井气息</div></div>
+<div class="si"><div class="s-clr" style="background:linear-gradient(135deg,#4a6a8a,#8ab4d8)"></div><div class="s-la">冷蓝对比</div><div class="s-de">医院/冲突场景<br>疏离压抑氛围</div></div>
+<div class="si"><div class="s-clr" style="background:linear-gradient(135deg,#8a3030,#e06050)"></div><div class="s-la">红色意象</div><div class="s-de">西红柿滚落<br>全片核心象征</div></div>
+<div class="si"><div class="s-clr" style="background:linear-gradient(135deg,#f0e8d0,#fffaed)"></div><div class="s-la">暖白结尾</div><div class="s-de">读信/感动<br>善良的光芒</div></div>
+<div class="si"><div class="s-clr" style="background:linear-gradient(135deg,#3a3a3a,#6a6a6a)"></div><div class="s-la">灰色沉寂</div><div class="s-de">压抑蒙太奇<br>生活磨砺感</div></div>
+</div>
+
+<h3 style="font-size:18px;color:var(--bright);margin-top:36px;margin-bottom:16px">📊 制作参数总览</h3>
+
+<table class="tbl">
+<thead><tr><th>项目</th><th>参数/说明</th></tr></thead>
+<tbody>
+<tr><td>建议时长</td><td>3分30秒 - 5分钟（可根据用途裁剪为60s/90s短版）</td></tr>
+<tr><td>画幅比例</td><td>16:9（横版）/ 9:16（竖版需重新构图）</td></tr>
+<tr><td>分辨率</td><td>1080p / 4K</td></tr>
+<tr><td>帧率</td><td>24fps（电影感）/ 30fps（流畅）</td></tr>
+<tr><td>视频风格</td><td>现实主义市井题材 / 温暖人文短片</td></tr>
+<tr><td>拍摄方式</td><td>实拍 / AI生成+实拍混合 / 纯AI分镜动画</td></tr>
+<tr><td>配音方案</td><td>旁白女声（温暖中年）+ 角色对话原声</td></tr>
+<tr><td>配乐风格</td><td>民谣吉他/手风琴（日常）+ 弦乐（情感）</td></tr>
+<tr><td>色调方案</td><td>暖黄→冷蓝→灰色→暖白，随情绪流转</td></tr>
+</tbody>
+</table>
+
+<h3 style="font-size:18px;color:var(--bright);margin-top:36px;margin-bottom:16px">📋 各分镜时长分配</h3>
+
+<table class="tbl">
+<thead><tr><th>分镜</th><th>场景</th><th>时长</th><th>情绪</th><th>色调</th></tr></thead>
+<tbody>
+<tr><td>01</td><td>市井清晨·日常开场</td><td>25-30s</td><td>平静温馨</td><td>暖黄</td></tr>
+<tr><td>02</td><td>空摊发呆·牵挂回忆</td><td>20-25s</td><td>忧虑惆怅</td><td>暖黄→褪色</td></tr>
+<tr><td>03</td><td>医院探望·第一次交锋</td><td>30-35s</td><td>紧张压抑</td><td>冷蓝</td></tr>
+<tr><td>04</td><td>噩耗传来·暴怒崩溃</td><td>25-30s</td><td>震惊愤怒</td><td>冷蓝+红</td></tr>
+<tr><td>05</td><td>持续煎熬·琐碎折磨</td><td>20-25s</td><td>压抑沉闷</td><td>灰色</td></tr>
+<tr><td>06</td><td>饭桌爆发·情感高潮</td><td>25-30s</td><td>崩溃决堤</td><td>灰色→暗</td></tr>
+<tr><td>07</td><td>日子流淌·沉寂等待</td><td>15-20s</td><td>平静转暖</td><td>灰→暖</td></tr>
+<tr><td>08</td><td>读信·善良被看见</td><td>35-40s</td><td>感动释放</td><td>暖白</td></tr>
+<tr style="font-weight:600"><td>合计</td><td>—</td><td>195-235s</td><td>—</td><td>—</td></tr>
+</tbody>
+</table>
+
+<h3 style="font-size:18px;color:var(--bright);margin-top:36px;margin-bottom:16px">🛠 三种制作路径建议</h3>
+
+<div class="grid4">
+<div class="card" style="border-left:3px solid var(--accent)">
+<div class="c-t">路径A · 实拍短片</div>
+<div class="c-p"><strong>适合：</strong>专业影视制作、参赛短片<br><br>· 找菜市场实地取景<br>· 选角：中年女演员+出租车司机男演员<br>· 西红柿慢镜需高速摄影机<br>· 预算：2-5万<br>· 周期：3-5天拍摄+2周后期</div>
+</div>
+<div class="card" style="border-left:3px solid var(--green)">
+<div class="c-t">路径B · AI动画分镜</div>
+<div class="c-p"><strong>适合：</strong>自媒体内容、教学演示<br><br>· 用AI图生视频（如可灵/Runway）<br>· 每组分镜先生成关键帧图，再转视频<br>· 配音用Azure TTS或录制<br>· 预算：500-2000元<br>· 周期：3-5天</div>
+</div>
+<div class="card" style="border-left:3px solid var(--blue)">
+<div class="c-t">路径C · 图文+配音混剪</div>
+<div class="c-p"><strong>适合：</strong>公众号视频号、B站投稿<br><br>· 手绘/Illustration风格分镜插图<br>· 配旁白+字幕+音效<br>· Ken Burns效果让画面动起来<br>· 预算：几乎为零<br>· 周期：1-2天</div>
+</div>
+</div>
+
+<h3 style="font-size:18px;color:var(--bright);margin-top:36px;margin-bottom:16px">🎯 关键意象清单</h3>
+
+<table class="tbl">
+<thead><tr><th>意象</th><th>象征意义</th><th>出现分镜</th><th>处理方式</th></tr></thead>
+<tbody>
+<tr><td>🍅 西红柿滚落</td><td>马兰花内心的狼藉与破碎；生命的脆弱</td><td>04</td><td>慢动作+特写，全片视觉锚点</td></tr>
+<tr><td>🪑 空摊位</td><td>麻婶的缺席；死亡的留白</td><td>01/02</td><td>反复出现，从有人到无人的对比</td></tr>
+<tr><td>🏠 租来的房子</td><td>底层生活的拮据与无根感</td><td>05/06</td><td>剥落墙皮、逼仄空间的反复强调</td></tr>
+<tr><td>📒 小本本</td><td>麻婶的守信；善意的种子</td><td>08（信中提及）</td><td>不直接出现，以信件文字呈现</td></tr>
+<tr><td>💌 信</td><td>明暗线交汇；善良被看见的证据</td><td>08</td><td>手写字体逐行浮现+旁白朗读</td></tr>
+<tr><td>🚕 出租车</td><td>丈夫的生存工具；冲突的空间载体</td><td>03</td><td>车内封闭空间放大紧张感</td></tr>
+</tbody>
+</table>
+
+</section>
+
+<!-- PART 06 道具与注意事项 -->
+<section class="sec">
+<div class="sec-n">PART 06</div>
+<h2 class="sec-t">制作注意事项与建议</h2>
+<p class="sec-d">确保视频情感表达到位的关键提醒</p>
+
+<div class="grid4">
+<div class="card"><div class="c-icon" style="background:rgba(255,107,107,.12)">⚠️</div><div class="c-t">节奏控制</div><div class="c-p">分镜06（饭桌爆发）后必须有足够长的"留白期"——分镜07的沉寂不能太短，否则反转到来时情感释放不够有力。<strong>建议07不少于15秒。</strong></div></div>
+<div class="card"><div class="c-icon" style="background:rgba(78,205,196,.12)">🔑</div><div class="c-t">核心金句</div><div class="c-p">两句话必须重点处理：<br>① <em>"不就六百块钱吗？是个命"</em>——全片价值观的核心<br>② <em>"你就是没提母亲借钱的事"</em>——善良被看见的瞬间</div></div>
+<div class="card"><div class="c-icon" style="background:rgba(232,168,56,.12)">🎨</div><div class="c-t">色调流转</div><div class="c-p">暖→冷→灰→暖的色调变化必须明确。菜市场暖黄、医院冷蓝、出租屋灰色、读信暖白——<strong>观众即使关掉声音也能感受到情绪变化。</strong></div></div>
+<div class="card"><div class="c-icon" style="background:rgba(108,156,232,.12)">🎵</div><div class="c-t">音乐首尾</div><div class="c-p">开头和结尾使用同一段旋律的不同编曲——开头轻柔吉他，结尾加入弦乐和手风琴，形成情感闭环。<strong>首尾呼应让观众产生"走了一遭"的满足感。</strong></div></div>
+</div>
+</section>
+
+</div>
+
+<div class="ft">
+<p>《马兰花》分镜拆解与视频制作方案 · 原著：李德霞 · 分析制作：AI协作</p>
+<p style="margin-top:4px;font-size:11px;opacity:.6">善良不是没有代价，而是代价终会被看见。</p>
+</div>
+
+</body>
+</html>

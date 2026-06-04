@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高考志愿填报公众号 · 内容策划方案</title>
+<style>
+  :root {
+    --primary: #1a56db;
+    --primary-light: #e8f0fe;
+    --accent: #e02424;
+    --accent-light: #fde8e8;
+    --green: #057a55;
+    --green-light: #def7ec;
+    --orange: #d03801;
+    --orange-light: #feecdc;
+    --bg: #f8fafc;
+    --card: #fff;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 12px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7;
+    padding: 24px 16px 60px;
+  }
+  .container { max-width: 860px; margin:0 auto; }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #1e40af, #3b82f6);
+    color: #fff; border-radius: var(--radius); padding: 32px 28px;
+    margin-bottom: 24px; text-align: center;
+  }
+  .header .badge {
+    display: inline-block; background: rgba(255,255,255,.2);
+    padding: 4px 14px; border-radius: 20px; font-size: 13px;
+    margin-bottom: 12px;
+  }
+  .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+  .header .date { font-size: 14px; opacity: .85; }
+  .header .countdown {
+    margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.25);
+  }
+  .header .countdown .num {
+    display: inline-block; background: var(--accent); color: #fff;
+    font-size: 36px; font-weight: 800; padding: 6px 18px; border-radius: 10px;
+    margin:0 4px; vertical-align: middle;
+  }
+  .header .countdown span { font-size: 15px; vertical-align: middle; }
+
+  /* Timeline */
+  .timeline-section { margin-bottom: 32px; }
+  .section-title {
+    font-size: 19px; font-weight: 700; color: var(--primary);
+    padding-left: 14px; border-left: 4px solid var(--primary);
+    margin-bottom: 16px; line-height: 1.4;
+  }
+  .phase-card {
+    background: var(--card); border-radius: var(--radius); border: 1px solid var(--border);
+    padding: 20px 22px; margin-bottom: 16px;
+  }
+  .phase-card .phase-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+  }
+  .phase-card .phase-tag {
+    font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px;
+    text-transform: uppercase; letter-spacing: .5px;
+  }
+  .phase-tag.urgent { background: var(--accent-light); color: var(--accent); }
+  .phase-tag.preparation { background: var(--orange-light); color: var(--orange); }
+  .phase-tag.execution { background: var(--green-light); color: var(--green); }
+  .phase-card .phase-date { font-size: 14px; color: var(--text-muted); font-weight: 600; }
+
+  /* Article list */
+  .article-list { list-style: none; }
+  .article-item {
+    padding: 12px 16px; border-radius: 8px; margin-bottom: 8px;
+    background: #f8fafc; border: 1px solid #f1f5f9;
+    transition: background .15s;
+  }
+  .article-item:hover { background: var(--primary-light); border-color: #bfdbfe; }
+  .article-item .num {
+    display: inline-block; width: 24px; height: 24px; line-height: 24px;
+    text-align: center; background: var(--primary); color: #fff;
+    border-radius: 6px; font-size: 12px; font-weight: 700; margin-right: 10px;
+    vertical-align: middle;
+  }
+  .article-item .title {
+    font-weight: 600; color: var(--text); vertical-align: middle;
+  }
+  .article-item .meta {
+    display: inline-block; margin-left: 12px; font-size: 12px; color: var(--text-muted);
+    vertical-align: middle;
+  }
+  .article-item .tag {
+    display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px;
+    margin-left: 8px; vertical-align: middle; font-weight: 600;
+  }
+  .tag.hot { background: #fde8e8; color: #c81e1e; }
+  .tag.must { background: #fef3c7; color: #92400e; }
+  .tag.tip { background: #def7ec; color: #03543f; }
+  .article-item .desc {
+    margin-top: 4px; margin-left: 34px; font-size: 13px; color: var(--text-muted);
+  }
+
+  /* Strategy cards */
+  .strategy-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 14px; margin-bottom: 24px;
+  }
+  .strategy-card {
+    background: var(--card); border-radius: var(--radius); border: 1px solid var(--border);
+    padding: 18px;
+  }
+  .strategy-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--primary); }
+  .strategy-card p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  /* Data highlight */
+  .data-box {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-radius: var(--radius); padding: 20px 24px; margin-bottom: 20px;
+    border: 1px solid #bfdbfe;
+  }
+  .data-box h4 { font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+  .data-row {
+    display: flex; flex-wrap: wrap; gap: 12px;
+  }
+  .data-item {
+    background: #fff; border-radius: 8px; padding: 10px 16px; text-align: center;
+    min-width: 100px; flex:1;
+  }
+  .data-item .val { font-size: 22px; font-weight: 800; color: var(--primary); }
+  .data-item .lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  /* Table */
+  .insight-table { width:100%; border-collapse: collapse; margin-bottom: 16px; font-size: 13px; }
+  .insight-table th {
+    background: #f1f5f9; padding: 10px 12px; text-align: left;
+    font-weight: 600; border-bottom: 2px solid var(--border);
+  }
+  .insight-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  .insight-table tr:hover td { background: #f8fafc; }
+
+  .footer-note {
+    background: #fff7ed; border: 1px solid #fed7aa; border-radius: var(--radius);
+    padding: 16px 20px; font-size: 13px; color: #9a3412; margin-top: 30px;
+  }
+  .footer-note strong { color: var(--orange); }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ====== HEADER ====== -->
+<div class="header">
+  <div class="badge">微信公众号内容策划方案</div>
+  <h1>高考志愿填报 · 近期内容发布日历</h1>
+  <div class="date">策划日期：2026年5月27日 · 距高考仅剩</div>
+  <div class="countdown">
+    <span class="num">11</span><span>天</span>
+  </div>
+</div>
+
+<!-- ====== 市场概览 ====== -->
+<h3 class="section-title">📊 2026年高考关键数据速览</h3>
+<div class="data-box">
+  <div class="data-row">
+    <div class="data-item"><div class="val">1400万+</div><div class="lbl">预计报考人数</div></div>
+    <div class="data-item"><div class="val">~40%</div><div class="lbl">本科录取率</div></div>
+    <div class="data-item"><div class="val">10.9亿</div><div class="lbl">志愿填报付费市场(元)</div></div>
+    <div class="data-item"><div class="val">95%+</div><div class="lbl">理工农医要求物化捆绑</div></div>
+    <div class="data-item"><div class="val">38个</div><div class="lbl">2026年新增本科专业</div></div>
+    <div class="data-item"><div class="val">50.7%</div><div class="lbl">考生刚开始准备志愿</div></div>
+  </div>
+</div>
+
+<!-- ====== 2026年四大核心新规 ====== -->
+<h3 class="section-title">🔥 2026年志愿填报四大新规（必做内容选题）</h3>
+<table class="insight-table">
+  <tr>
+    <th style="width:22%">新规</th>
+    <th style="width:38%">核心变化</th>
+    <th style="width:40%">对考生的影响</th>
+  </tr>
+  <tr>
+    <td><strong>1. 选科要求全面收紧</strong></td>
+    <td>理工农医类 95%+ 专业强制要求物理+化学捆绑选科；警校/法学必选政治</td>
+    <td>仅选物理不选化学，基本无缘工科/医学/农学。必须逐专业核对选科要求！</td>
+  </tr>
+  <tr>
+    <td><strong>2. 大类招生大幅收紧</strong></td>
+    <td>教育部严格限制大类招生，医学等重点专业严禁打包招生</td>
+    <td>"先进校再转专业"时代结束，录取后专业基本锁定，必须优先重视专业适配度</td>
+  </tr>
+  <tr>
+    <td><strong>3. 批次合并+两种模式</strong></td>
+    <td>本一/本二合并为普通本科批次。7省采用"专业+院校"模式，21省用"院校专业组"</td>
+    <td>填报方式完全不同，必须明确本省模式。专业组内调剂仅限同组！</td>
+  </tr>
+  <tr>
+    <td><strong>4. 新增38个本科专业</strong></td>
+    <td>新增具身智能、生物制造、脑机科学、数字文旅等交叉学科</td>
+    <td>新兴专业贴合产业趋势，但无历史录取数据可参考，需谨慎评估</td>
+  </tr>
+</table>
+
+<!-- ====== 内容日历 ====== -->
+<h3 class="section-title">📅 5月27日 - 6月25日 内容发布日历</h3>
+
+<!-- Phase 1 -->
+<div class="phase-card">
+  <div class="phase-header">
+    <span class="phase-tag urgent">阶段一</span>
+    <span class="phase-date">5月27日 — 6月6日 · 考前冲刺+志愿准备期</span>
+  </div>
+  <ul class="article-list">
+    <li class="article-item">
+      <span class="num">1</span><span class="title">距离高考只剩11天，家长这5件事千万别做！</span>
+      <span class="tag hot">爆款潜力</span>
+      <div class="desc">切中家长焦虑，列出考前高频错误行为（如过度关心、频繁沟通成绩等），给出正确做法。</div>
+    </li>
+    <li class="article-item">
+      <span class="num">2</span><span class="title">2026高考四大新规深度解读：选科不对，600分也白费！</span>
+      <span class="tag must">必读</span>
+      <div class="desc">逐条拆解四大核心新规，附各省填报模式对照表，帮助家长考生快速定位。</div>
+    </li>
+    <li class="article-item">
+      <span class="num">3</span><span class="title">2026全国31省本科线/特控线预估出炉！你的省份是涨是跌？</span>
+      <span class="tag hot">爆款潜力</span>
+      <div class="desc">附完整数据表格，结合近三年趋势分析，强调"位次比分数更重要"。</div>
+    </li>
+    <li class="article-item">
+      <span class="num">4</span><span class="title">AI时代来了，大学学什么专业才不会被淘汰？</span>
+      <span class="tag hot">爆款潜力</span>
+      <div class="desc">结合2026年新增专业+艾媒就业数据，分析哪些专业抗AI、哪些最容易被替代。</div>
+    </li>
+    <li class="article-item">
+      <span class="num">5</span><span class="title">5月底了，志愿填报该从哪一步开始？六步准备法请收好</span>
+      <span class="tag tip">工具型</span>
+      <div class="desc">实操指南：从"吃透本省政策"→"锁定权威信息渠道"→"初筛院校专业"六步清晰给出。</div>
+    </li>
+    <li class="article-item">
+      <span class="num">6</span><span class="title">考前最后一周，考生饮食/作息/心态调整全攻略</span>
+      <span class="tag tip">实用</span>
+      <div class="desc">包含三餐建议、睡眠调整方案、考前一晚具体操作清单。</div>
+    </li>
+  </ul>
+</div>
+
+<!-- Phase 2 -->
+<div class="phase-card">
+  <div class="phase-header">
+    <span class="phase-tag execution">阶段二</span>
+    <span class="phase-date">6月7日 — 6月10日 · 高考进行时</span>
+  </div>
+  <ul class="article-list">
+    <li class="article-item">
+      <span class="num">7</span><span class="title">2026高考第一天，这10件事家长一定要做对</span>
+      <span class="tag hot">时效热点</span>
+      <div class="desc">涵盖送考注意、考后不追问题目、午餐安排、明天科目准备等具体建议。</div>
+    </li>
+    <li class="article-item">
+      <span class="num">8</span><span class="title">考完了！出分前的15天，比备考更关键的志愿准备期</span>
+      <span class="tag must">必读</span>
+      <div class="desc">强调"出分前15天是志愿准备的黄金窗口"，给出具体每天做什么的清单。</div>
+    </li>
+  </ul>
+</div>
+
+<!-- Phase 3 -->
+<div class="phase-card">
+  <div class="phase-header">
+    <span class="phase-tag preparation">阶段三</span>
+    <span class="phase-date">6月11日 — 6月24日 · 估分+志愿规划黄金期</span>
+  </div>
+  <ul class="article-list">
+    <li class="article-item">
+      <span class="num">9</span><span class="title">别等出分再准备！志愿填报"冲稳保"梯度方案详解</span>
+      <span class="tag must">必读</span>
+      <div class="desc">用具体数字：冲刺位次靠前1000-2000名、稳妥持平、保底靠后2000-3000名，附各省志愿数量对照表。</div>
+    </li>
+    <li class="article-item">
+      <span class="num">10</span><span class="title">高考志愿填报四大"天坑"：每年上万人因此滑档退档</span>
+      <span class="tag hot">爆款潜力</span>
+      <div class="desc">四个高频误区：不核对选科要求、盲目扎堆热门专业、轻视服从调剂、只看学校不看专业。</div>
+    </li>
+    <li class="article-item">
+      <span class="num">11</span><span class="title">张雪峰2026年志愿填报100条精华提炼：这10条最关键</span>
+      <span class="tag hot">爆款潜力</span>
+      <div class="desc">结合张雪峰公开讲座/直播内容提炼，实用导向。</div>
+    </li>
+    <li class="article-item">
+      <span class="num">12</span><span class="title">一分一段表怎么看？手把手教你用位次定位目标院校</span>
+      <span class="tag tip">工具型</span>
+      <div class="desc">图文教程，用示例演示如何换算等位分、如何用位次筛选院校。</div>
+    </li>
+    <li class="article-item">
+      <span class="num">13</span><span class="title">分数不高不低的中等生，志愿填报的最优策略是什么？</span>
+      <span class="tag tip">细分人群</span>
+      <div class="desc">针对中等分数段考生，"保专业、稳院校"策略，推荐省属重点+行业特色院校。</div>
+    </li>
+    <li class="article-item">
+      <span class="num">14</span><span class="title">2026年38个新增本科专业全解读：哪些值得报？</span>
+      <span class="tag hot">爆款潜力</span>
+      <div class="desc">逐专业分析就业前景、开设院校、适合哪类考生，重点推荐具身智能、生物制造等。</div>
+    </li>
+    <li class="article-item">
+      <span class="num">15</span><span class="title">想去一线城市读书？2026年城市选择全维度对比</span>
+      <span class="tag tip">数据型</span>
+      <div class="desc">结合艾媒数据"39.8%考生倾向一线/新一线"，对比生活成本、就业机会、高校密度。</div>
+    </li>
+  </ul>
+</div>
+
+<!-- Phase 4 -->
+<div class="phase-card">
+  <div class="phase-header">
+    <span class="phase-tag urgent">阶段四</span>
+    <span class="phase-date">6月25日 — 7月初 · 出分+正式填报期</span>
+  </div>
+  <ul class="article-list">
+    <li class="article-item">
+      <span class="num">16</span><span class="title">2026各省高考分数线正式公布！第一时间解读+志愿调整建议</span>
+      <span class="tag hot">时效热点</span>
+      <div class="desc">分省对比预估vs实际，给出因分数线变化需要调整志愿方向的具体建议。</div>
+    </li>
+    <li class="article-item">
+      <span class="num">17</span><span class="title">出分后72小时，志愿填报完整操作流程（附各省填报入口）</span>
+      <span class="tag must">必读</span>
+      <div class="desc">从登录系统到确认提交的全流程教程，附各省时间节点和官方入口链接。</div>
+    </li>
+    <li class="article-item">
+      <span class="num">18</span><span class="title">"专业+院校"vs"院校专业组"，你的省份怎么填才不会出错？</span>
+      <span class="tag tip">工具型</span>
+      <div class="desc">两种模式的填报策略分别详解，用实际案例演示。</div>
+    </li>
+    <li class="article-item">
+      <span class="num">19</span><span class="title">压线考生的救命指南：征集志愿、地方专项、降分录取机会全汇总</span>
+      <span class="tag tip">细分人群</span>
+      <div class="desc">为低分考生提供所有可能的"逆袭"路径。</div>
+    </li>
+    <li class="article-item">
+      <span class="num">20</span><span class="title">志愿提交前最后一轮检查清单：这8个细节漏了可能白填</span>
+      <span class="tag must">必读</span>
+      <div class="desc">选科核对、体检限制、单科要求、调剂选项、确认提交……逐项checklist。</div>
+    </li>
+  </ul>
+</div>
+
+<!-- ====== 内容策略总结 ====== -->
+<h3 class="section-title">🎯 内容策略要点</h3>
+<div class="strategy-grid">
+  <div class="strategy-card">
+    <h4>📌 60/30/10 内容配比</h4>
+    <p>60% 价值内容（政策解读、数据分析、策略指导）<br>30% 情感/社区内容（考前心态、家长陪伴、考生故事）<br>10% 商业转化（付费咨询引导、资料推荐）</p>
+  </div>
+  <div class="strategy-card">
+    <h4>📌 发布频率</h4>
+    <p>考前阶段（5/27-6/6）：<strong>每2天1篇</strong><br>高考期间（6/7-6/10）：<strong>每天1篇</strong><br>估分期（6/11-6/24）：<strong>每2天1篇</strong><br>出分+填报期（6/25-7月初）：<strong>每天1-2篇</strong></p>
+  </div>
+  <div class="strategy-card">
+    <h4>📌 爆款标题公式</h4>
+    <p>数字+紧迫感+利益点<br>例："只剩11天，家长这5件事千万别做！"<br>对比+痛点<br>例："选科不对，600分也白费！"</p>
+  </div>
+  <div class="strategy-card">
+    <h4>📌 互动留存策略</h4>
+    <p>每篇文章末尾设"留言互动"：<br>• "你家孩子模考多少分？评论区聊聊"<br>• "你最想了解哪个省的政策？留言优先安排"<br>• 文末附"加个人微信免费领取XX资料"</p>
+  </div>
+</div>
+
+<!-- ====== 细分人群内容方案 ====== -->
+<h3 class="section-title">👥 按人群细分的内容方向</h3>
+<table class="insight-table">
+  <tr><th>人群</th><th>核心痛点</th><th>推荐选题方向</th></tr>
+  <tr>
+    <td><strong>高三家长</strong></td>
+    <td>焦虑、信息不对称、怕填错</td>
+    <td>"家长该做和不该做的事"系列、"0基础看懂志愿填报"系列、各省政策对比</td>
+  </tr>
+  <tr>
+    <td><strong>高分考生</strong></td>
+    <td>选名校还是选专业、985/211抉择</td>
+    <td>双一流王牌专业PK、新兴交叉学科前景分析、名校冷门vs普校热门对比</td>
+  </tr>
+  <tr>
+    <td><strong>中等分数考生</strong></td>
+    <td>怎么"不浪费每一分"</td>
+    <td>"省属重点+行业特色"院校推荐、专业优先vs地域优先策略</td>
+  </tr>
+  <tr>
+    <td><strong>压线/低分考生</strong></td>
+    <td>能不能上本科、有没有逆袭机会</td>
+    <td>征集志愿全攻略、地方/农村专项政策、专科优质专业推荐</td>
+  </tr>
+  <tr>
+    <td><strong>复读考虑者</strong></td>
+    <td>该不该复读、复读风险</td>
+    <td>复读决策分析框架、哪些情况适合/不适合复读</td>
+  </tr>
+</table>
+
+<!-- ====== 热点话题与差异化建议 ====== -->
+<h3 class="section-title">💡 差异化竞争：你的公众号可以这样打出特色</h3>
+<table class="insight-table">
+  <tr><th style="width:20%">差异化方向</th><th>具体做法</th></tr>
+  <tr>
+    <td><strong>数据驱动型</strong></td>
+    <td>每篇文章附原创数据图表，如各省分数线变动折线图、专业就业率对比条形图。数据是别人抄不走的护城河。</td>
+  </tr>
+  <tr>
+    <td><strong>省份定制化</strong></td>
+    <td>先覆盖你公众号粉丝最多的1-2个省份，做深度内容。如"湖北考生专属：2026湖北志愿填报完全手册"。</td>
+  </tr>
+  <tr>
+    <td><strong>真实案例复盘</strong></td>
+    <td>用往年真实录取案例（匿名处理），分析"这个人为什么滑档""那个人为什么低分捡漏"——故事感+数据感都强。</td>
+  </tr>
+  <tr>
+    <td><strong>短视频导流</strong></td>
+    <td>每篇公众号文章配套一条60秒短视频（抖音/B站/视频号），提炼最核心的一个知识点，文末放视频二维码。</td>
+  </tr>
+  <tr>
+    <td><strong>工具型内容</strong></td>
+    <td>开发/提供简易工具：位次换算器、选科-专业匹配表、冲稳保计算表等。文章=工具说明书+下载入口，拉新留存活客。</td>
+  </tr>
+</table>
+
+<!-- ====== 关键时间节点 ====== -->
+<h3 class="section-title">⏰ 2026年高考志愿填报关键时间轴</h3>
+<div class="data-box">
+  <table class="insight-table" style="margin-bottom:0">
+    <tr><th>时间</th><th>关键事项</th><th>公众号内容重点</th></tr>
+    <tr><td><strong>5月</strong></td><td>高校招生章程陆续发布、特殊类型招生合格名单公示</td><td>章程解读、政策变化分析</td></tr>
+    <tr><td><strong>6月7-10日</strong></td><td>全国高考</td><td>考前提醒、每日陪考、考后规划引导</td></tr>
+    <tr><td><strong>6月11-24日</strong></td><td>估分期，模拟志愿填报陆续开放</td><td>志愿策略、位次分析、专业选择（黄金内容期）</td></tr>
+    <tr><td><strong>6月25日前后</strong></td><td>各省陆续公布分数线和一分一段表</td><td>分数线解读、志愿方案调整（流量高峰期）</td></tr>
+    <tr><td><strong>6月26日-7月初</strong></td><td>各省志愿填报窗口期</td><td>实操教程、最后检查清单（转化高峰期）</td></tr>
+    <tr><td><strong>7月-8月</strong></td><td>录取结果公布、征集志愿</td><td>录取动态、征集志愿攻略、复读决策</td></tr>
+  </table>
+</div>
+
+<!-- ====== 页脚提示 ====== -->
+<div class="footer-note">
+  <strong>⚡ 立即行动建议：</strong><br>
+  1. <strong>今天就发第1篇</strong>——"距离高考只剩11天，家长这5件事千万别做！"，这个选题在考前10天左右时效性最强。<br>
+  2. <strong>提前2-3天备稿</strong>——6月7日高考当天和6月25日出分当天是流量高峰，文章必须提前写好、只等当天加最新数据微调即可发布。<br>
+  3. <strong>开启菜单引导</strong>——在公众号底部菜单设置"分数线查询""填报攻略""1对1咨询"三个入口，承接高考季流量。<br>
+  4. <strong>关键词自动回复</strong>——设置"省份名+分数线"类关键词自动回复，如用户回复"湖北分数线"自动推送相关文章。
+</div>
+
+</div>
+</body>
+</html>
