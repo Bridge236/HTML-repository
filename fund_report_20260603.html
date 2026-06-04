@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>基金对比分析报告 · 稳健型投资者入场方案</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f0f4f8; color: #1a202c; line-height: 1.6; }
+
+  /* 顶部横幅 */
+  .banner {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 60%, #4a9fd4 100%);
+    color: white; padding: 40px 32px 32px; position: relative; overflow: hidden;
+  }
+  .banner::before {
+    content: ''; position: absolute; top: -60px; right: -60px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  .banner-tag {
+    display: inline-block; background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3); border-radius: 20px;
+    padding: 3px 14px; font-size: 12px; margin-bottom: 12px; letter-spacing: 1px;
+  }
+  .banner h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+  .banner .sub { font-size: 14px; opacity: 0.8; }
+  .banner .meta { margin-top: 18px; font-size: 13px; opacity: 0.7; display: flex; gap: 24px; }
+  .banner .meta span::before { content: '· '; }
+
+  /* 布局 */
+  .container { max-width: 1000px; margin: 0 auto; padding: 24px 16px 48px; }
+
+  /* Section 标题 */
+  .section-title {
+    font-size: 17px; font-weight: 700; color: #1e3a5f;
+    border-left: 4px solid #2d6a9f; padding-left: 12px;
+    margin: 32px 0 16px;
+  }
+
+  /* 卡片 */
+  .card {
+    background: white; border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    padding: 20px 24px; margin-bottom: 16px;
+  }
+
+  /* 用户画像 */
+  .profile-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px;
+  }
+  .profile-item {
+    background: #f7faff; border-radius: 10px; padding: 14px 16px;
+    border: 1px solid #dce8f8;
+  }
+  .profile-item .label { font-size: 12px; color: #718096; margin-bottom: 4px; }
+  .profile-item .value { font-size: 14px; font-weight: 600; color: #1e3a5f; }
+
+  /* 市场状态 */
+  .market-bar {
+    background: linear-gradient(90deg, #fff7ed, #fffbf0);
+    border: 1px solid #fed7aa; border-radius: 10px;
+    padding: 14px 18px; display: flex; align-items: center; gap: 14px;
+  }
+  .market-icon { font-size: 28px; }
+  .market-text .title { font-size: 14px; font-weight: 600; color: #c05621; }
+  .market-text .desc { font-size: 13px; color: #744210; margin-top: 2px; }
+
+  /* 基金对比表格 */
+  .fund-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .fund-table thead tr { background: #1e3a5f; color: white; }
+  .fund-table thead th { padding: 11px 14px; text-align: left; font-weight: 500; }
+  .fund-table tbody tr { border-bottom: 1px solid #edf2f7; transition: background 0.15s; }
+  .fund-table tbody tr:hover { background: #f7faff; }
+  .fund-table tbody td { padding: 11px 14px; vertical-align: middle; }
+  .fund-table .fund-name { font-weight: 600; color: #1e3a5f; }
+  .fund-table .fund-code { font-size: 11px; color: #718096; margin-top: 2px; }
+
+  /* 标签 */
+  .tag {
+    display: inline-block; padding: 2px 9px; border-radius: 12px;
+    font-size: 11px; font-weight: 500; white-space: nowrap;
+  }
+  .tag-bond { background: #e6f4ea; color: #276749; }
+  .tag-bond2 { background: #e8f4fd; color: #1a5e8a; }
+  .tag-mixed { background: #fef3c7; color: #92400e; }
+  .tag-r2 { background: #dcfce7; color: #15803d; }
+  .tag-r3 { background: #fff7ed; color: #c2410c; }
+  .tag-watch { background: #f3e8ff; color: #6d28d9; }
+  .tag-recommend { background: #dbeafe; color: #1d4ed8; }
+
+  /* 收益数字 */
+  .num-up { color: #c53030; font-weight: 600; }
+  .num-down { color: #276749; font-weight: 600; }
+  .num-neutral { color: #4a5568; }
+
+  /* 推荐基金卡片 */
+  .fund-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .fund-card {
+    background: white; border-radius: 12px; padding: 18px 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07); border-top: 3px solid;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .fund-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+  .fund-card.tier1 { border-color: #2d6a9f; }
+  .fund-card.tier2 { border-color: #38a169; }
+  .fund-card .fc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .fund-card .fc-name { font-size: 14px; font-weight: 700; color: #1e3a5f; }
+  .fund-card .fc-code { font-size: 11px; color: #a0aec0; margin-top: 2px; }
+  .fund-card .fc-returns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 12px 0; }
+  .fund-card .fc-ret-item { text-align: center; }
+  .fund-card .fc-ret-item .r-label { font-size: 11px; color: #718096; }
+  .fund-card .fc-ret-item .r-value { font-size: 15px; font-weight: 700; color: #c53030; margin-top: 2px; }
+  .fund-card .fc-ret-item .r-value.green { color: #276749; }
+  .fund-card .fc-reason { font-size: 12.5px; color: #4a5568; background: #f8fafc; border-radius: 8px; padding: 10px 12px; line-height: 1.6; }
+  .fund-card .fc-reason strong { color: #1e3a5f; }
+
+  /* 分层标记 */
+  .tier-badge {
+    display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px;
+    border-radius: 10px; white-space: nowrap;
+  }
+  .tier1-badge { background: #dbeafe; color: #1d4ed8; }
+  .tier2-badge { background: #d1fae5; color: #065f46; }
+
+  /* 图表容器 */
+  .chart-wrap { position: relative; height: 280px; margin-top: 8px; }
+  .chart-wrap-sm { position: relative; height: 220px; margin-top: 8px; }
+
+  /* 入场方案 */
+  .plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .plan-card {
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border: 1px solid #bae6fd; border-radius: 12px; padding: 18px 20px;
+  }
+  .plan-card .step-num {
+    width: 28px; height: 28px; background: #2d6a9f; color: white;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; margin-bottom: 10px;
+  }
+  .plan-card h4 { font-size: 14px; font-weight: 700; color: #1e3a5f; margin-bottom: 6px; }
+  .plan-card p { font-size: 13px; color: #2c5282; line-height: 1.6; }
+
+  /* 配比方案 */
+  .alloc-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .alloc-label { font-size: 13px; width: 140px; flex-shrink: 0; color: #2d3748; }
+  .alloc-bar-wrap { flex: 1; background: #edf2f7; border-radius: 6px; height: 20px; overflow: hidden; }
+  .alloc-bar { height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; }
+  .alloc-bar span { font-size: 12px; font-weight: 600; color: white; }
+
+  /* 风险提示 */
+  .risk-notice {
+    background: #fff5f5; border: 1px solid #fed7d7; border-radius: 10px;
+    padding: 14px 18px; margin-top: 24px; font-size: 12.5px; color: #742a2a; line-height: 1.7;
+  }
+  .risk-notice strong { font-size: 13px; }
+
+  /* 操作步骤 */
+  .steps { counter-reset: step; }
+  .step-item {
+    counter-increment: step; display: flex; gap: 14px;
+    margin-bottom: 14px; align-items: flex-start;
+  }
+  .step-item::before {
+    content: counter(step); min-width: 26px; height: 26px;
+    background: #2d6a9f; color: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+  }
+  .step-item .step-content h4 { font-size: 14px; font-weight: 600; color: #1e3a5f; margin-bottom: 4px; }
+  .step-item .step-content p { font-size: 13px; color: #4a5568; line-height: 1.6; }
+  .step-item .step-content .hint {
+    display: inline-block; margin-top: 6px; background: #ebf8ff;
+    border: 1px solid #bee3f8; border-radius: 6px;
+    padding: 4px 10px; font-size: 12px; color: #2c5282;
+  }
+
+  /* 分隔线 */
+  hr.divider { border: none; border-top: 1px solid #e2e8f0; margin: 8px 0; }
+
+  /* 底部 */
+  .footer { text-align: center; font-size: 12px; color: #a0aec0; padding: 24px 0 8px; }
+
+  @media (max-width: 600px) {
+    .banner h1 { font-size: 20px; }
+    .fund-cards { grid-template-columns: 1fr; }
+    .plan-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部横幅 -->
+<div class="banner">
+  <div class="banner-tag">📊 个人投资分析报告</div>
+  <h1>稳健型投资者 · 基金对比与入场方案</h1>
+  <div class="sub">基于你的投资风格量身定制，2年以上长期定投规划</div>
+  <div class="meta">
+    <span>生成日期：2026-06-03</span>
+    <span>数据来源：天天基金</span>
+    <span>投资期限：2年以上</span>
+    <span>风险偏好：稳健型 R2-R3</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 一、投资者画像 -->
+  <div class="section-title">一、你的投资者画像</div>
+  <div class="card">
+    <div class="profile-grid">
+      <div class="profile-item">
+        <div class="label">风险偏好</div>
+        <div class="value">稳健型（R2~R3）</div>
+      </div>
+      <div class="profile-item">
+        <div class="label">投资目标</div>
+        <div class="value">跑赢银行存款 & 市场均值</div>
+      </div>
+      <div class="profile-item">
+        <div class="label">持仓现状</div>
+        <div class="value">空仓，未入场</div>
+      </div>
+      <div class="profile-item">
+        <div class="label">投资方式</div>
+        <div class="value">定投为主（普通定投）</div>
+      </div>
+      <div class="profile-item">
+        <div class="label">投资期限</div>
+        <div class="value">2年以上（长期）</div>
+      </div>
+      <div class="profile-item">
+        <div class="label">禁忌</div>
+        <div class="value">不炒股，不追涨杀跌</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 二、当前市场环境 -->
+  <div class="section-title">二、当前市场环境（2026-06-03）</div>
+  <div class="card">
+    <div class="market-bar" style="margin-bottom:14px;">
+      <div class="market-icon">🌧️</div>
+      <div class="market-text">
+        <div class="title">债市今日偏弱：整体为"雨"，多数债券价格下跌</div>
+        <div class="desc">利率债信号偏空，信用债多云；短期内可能有小幅波动，不影响长期趋势判断</div>
+      </div>
+    </div>
+    <div class="market-bar" style="background: linear-gradient(90deg, #fff0f0, #fff5f5); border-color: #fecaca;">
+      <div class="market-icon">⚠️</div>
+      <div class="market-text">
+        <div class="title" style="color:#b91c1c;">沪深300指数处于高估区间（PE百分位约96.5%）</div>
+        <div class="desc" style="color:#7f1d1d;">你的3只慧定投均因此停扣——这是市场给你的提示：偏股类基金当前时机不佳</div>
+      </div>
+    </div>
+    <div style="margin-top:14px; font-size:13px; color:#4a5568; line-height:1.8;">
+      <strong style="color:#1e3a5f;">对你的意义：</strong><br>
+      ✅ 纯债/偏债基金 → <strong>与股市相关性低，受估值影响小，当前可以入场</strong><br>
+      ❌ 偏股混合基金 → 与沪深300联动强，高估区间入场性价比低，建议暂缓或减少比例
+    </div>
+  </div>
+
+  <!-- 三、自选基金现状 -->
+  <div class="section-title">三、你的自选基金现状分析</div>
+  <div class="card" style="overflow-x:auto;">
+    <table class="fund-table">
+      <thead>
+        <tr>
+          <th>基金名称</th>
+          <th>类型</th>
+          <th>风险</th>
+          <th>近1年</th>
+          <th>成立以来</th>
+          <th>今日涨跌</th>
+          <th>入场建议</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="fund-name">华安智联混合(LOF)A</div>
+            <div class="fund-code">501073 · 华安基金</div>
+          </td>
+          <td><span class="tag tag-mixed">混合型-偏债</span></td>
+          <td><span class="tag tag-r3">R3</span></td>
+          <td><span class="num-up">+95.94%</span></td>
+          <td><span class="num-up">+120.3%</span></td>
+          <td><span class="num-up">+2.82%</span></td>
+          <td><span class="tag tag-watch">观望，高估期暂缓</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="fund-name">华夏磐泰混合(LOF)A</div>
+            <div class="fund-code">160323 · 华夏基金</div>
+          </td>
+          <td><span class="tag tag-mixed">混合型-偏债</span></td>
+          <td><span class="tag tag-r3">R3</span></td>
+          <td><span class="num-up">+8.39%</span></td>
+          <td><span class="num-up">+86.96%</span></td>
+          <td><span class="num-down">-0.31%</span></td>
+          <td><span class="tag tag-watch">观望，近1年弱</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="fund-name">兴业聚华混合A</div>
+            <div class="fund-code">005984 · 兴业基金</div>
+          </td>
+          <td><span class="tag tag-mixed">混合型-偏债</span></td>
+          <td><span class="tag tag-r3">R3</span></td>
+          <td><span class="num-up">+24.39%</span></td>
+          <td><span class="num-up">+86.77%</span></td>
+          <td><span class="num-up">+0.24%</span></td>
+          <td><span class="tag tag-watch">观望，偏股风险</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="fund-name">富国久利稳健配置混合A</div>
+            <div class="fund-code">003877 · 富国基金</div>
+          </td>
+          <td><span class="tag tag-mixed">混合型-偏债</span></td>
+          <td><span class="tag tag-r3">R3</span></td>
+          <td><span class="num-up">+25.31%</span></td>
+          <td><span class="num-up">+85.3%</span></td>
+          <td><span class="num-down">-0.17%</span></td>
+          <td><span class="tag tag-recommend">可配置（偏债成分高）</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="margin-top:14px;font-size:12.5px;color:#718096;background:#f8fafc;padding:10px 14px;border-radius:8px;">
+      ⚠️ <strong>问题诊断：</strong>4只基金全为偏股混合型，类型高度集中 · 当前均无持仓，定投停扣超1周相当于完全空仓 · 成立以来收益虽高，但主要来自股市行情，稳健属性较弱
+    </div>
+  </div>
+
+  <!-- 四、推荐基金对比 -->
+  <div class="section-title">四、适合你的基金推荐对比</div>
+  <p style="font-size:13px;color:#718096;margin-bottom:16px;">基于"稳健+长期+跑赢存款"目标，精选5只基金分两个层次：</p>
+
+  <!-- 收益对比图 -->
+  <div class="card">
+    <div style="font-size:14px;font-weight:600;color:#1e3a5f;margin-bottom:4px;">近1年 vs 成立以来 收益率对比</div>
+    <div style="font-size:12px;color:#718096;margin-bottom:12px;">（红色 = 近1年，蓝色 = 成立以来）</div>
+    <div class="chart-wrap">
+      <canvas id="returnChart"></canvas>
+    </div>
+  </div>
+
+  <!-- 基金卡片 -->
+  <div class="fund-cards">
+
+    <div class="fund-card tier1">
+      <div class="fc-header">
+        <div>
+          <div class="fc-name">鹏华丰禄债券</div>
+          <div class="fc-code">003547 · 鹏华基金</div>
+        </div>
+        <span class="tier-badge tier1-badge">🔵 纯债首选</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <span class="tag tag-bond">债券型-长债</span>
+        <span class="tag tag-r2">R2低风险</span>
+      </div>
+      <div class="fc-returns">
+        <div class="fc-ret-item">
+          <div class="r-label">近1年</div>
+          <div class="r-value">+2.24%</div>
+        </div>
+        <div class="fc-ret-item">
+          <div class="r-label">近3年*</div>
+          <div class="r-value">+11.79%</div>
+        </div>
+        <div class="fc-ret-item">
+          <div class="r-label">成立以来</div>
+          <div class="r-value">+59.88%</div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="fc-reason">
+        <strong>推荐理由：</strong>R2纯债，波动极低，近3年累计+11.79%，折合年化约3.8%，稳定跑赢银行定存。鹏华基金体量大（管理规模7428亿），管理稳定性强。<strong>最适合作为定投底仓。</strong>
+      </div>
+    </div>
+
+    <div class="fund-card tier1">
+      <div class="fc-header">
+        <div>
+          <div class="fc-name">广发中债7-10年国开债A</div>
+          <div class="fc-code">003376 · 广发基金</div>
+        </div>
+        <span class="tier-badge tier1-badge">🔵 利率债指数</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <span class="tag tag-bond">指数型-固收</span>
+        <span class="tag tag-r2">R2低风险</span>
+      </div>
+      <div class="fc-returns">
+        <div class="fc-ret-item">
+          <div class="r-label">近1年</div>
+          <div class="r-value">+2.63%</div>
+        </div>
+        <div class="fc-ret-item">
+          <div class="r-label">近3年*</div>
+          <div class="r-value">+17.35%</div>
+        </div>
+        <div class="fc-ret-item">
+          <div class="r-label">成立以来</div>
+          <div class="r-value">+51.37%</div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="fc-reason">
+        <strong>推荐理由：</strong>追踪国开债7-10年指数，属于利率债（国家信用），信用风险为零。近3年+17.35%，折合年化约5.5%，是纯债中表现较好的。<strong>降息周期中长债受益明显。</strong>
+      </div>
+    </div>
+
+    <div class="fund-card tier1">
+      <div class="fc-header">
+        <div>
+          <div class="fc-name">中加纯债债券</div>
+          <div class="fc-code">000914 · 中加基金</div>
+        </div>
+        <span class="tier-badge tier1-badge">🔵 纯债稳健</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <span class="tag tag-bond">债券型-长债</span>
+        <span class="tag tag-r2">R2低风险</span>
+      </div>
+      <div class="fc-returns">
+        <div class="fc-ret-item">
+          <div class="r-label">近1年</div>
+          <div class="r-value">+2.13%</div>
+        </div>
+        <div class="fc-ret-item">
+          <div class="r-label">近3年*</div>
+          <div class="r-value">+10.19%</div>
+        </div>
+        <div class="fc-ret-item">
+          <div class="r-label">成立以来</div>
+          <div class="r-value">+67.49%</div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="fc-reason">
+        <strong>推荐理由：</strong>成立以来+67.49%，创立于2015年，穿越多轮债市牛熊，净值曲线平滑。适合分散配置，与003547形成搭配，降低单只基金集中风险。
+      </div>
+    </div>
+
+    <div class="fund-card tier2">
+      <div class="fc-header">
+        <div>
+          <div class="fc-name">易方达安心回报债券A</div>
+          <div class="fc-code">110027 · 易方达基金</div>
+        </div>
+        <span class="tier-badge tier2-badge">🟢 弹性增强</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <span class="tag tag-bond2">债券型-混合二级</span>
+        <span class="tag tag-r3">R3中风险</span>
+      </div>
+      <div class="fc-returns">
+        <div class="fc-ret-item">
+          <div class="r-label">近1年</div>
+          <div class="r-value">+13.89%</div>
+        </div>
+        <div class="fc-ret-item">
+          <div class="r-label">近3年*</div>
+          <div class="r-value">+23.86%</div>
+        </div>
+        <div class="fc-ret-item">
+          <div class="r-label">成立以来</div>
+          <div class="r-value">+339.99%</div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="fc-reason">
+        <strong>推荐理由：</strong>易方达旗舰债基，成立近20年，穿越多轮牛熊。二级债基（可投不超过20%股票），近1年+13.89%表现突出。<strong>适合作为你的"弹性增强"配置，小比例持有可显著提升组合收益。</strong>
+      </div>
+    </div>
+
+    <div class="fund-card tier2">
+      <div class="fc-header">
+        <div>
+          <div class="fc-name">富国久利稳健配置混合A</div>
+          <div class="fc-code">003877 · 富国基金</div>
+        </div>
+        <span class="tier-badge tier2-badge">🟢 自选留存</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <span class="tag tag-mixed">混合型-偏债</span>
+        <span class="tag tag-r3">R3中风险</span>
+      </div>
+      <div class="fc-returns">
+        <div class="fc-ret-item">
+          <div class="r-label">近1年</div>
+          <div class="r-value">+25.31%</div>
+        </div>
+        <div class="fc-ret-item">
+          <div class="r-label">近3年*</div>
+          <div class="r-value green">+65.22%</div>
+        </div>
+        <div class="fc-ret-item">
+          <div class="r-label">成立以来</div>
+          <div class="r-value green">+85.3%</div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="fc-reason">
+        <strong>推荐理由：</strong>你现有自选中最值得留下的一只，近3年+65.22%在偏债混合类中表现优秀。债券仓位高，股票配比适中，与纯债基金形成互补。<strong>可保留并小比例定投。</strong>
+      </div>
+    </div>
+
+  </div>
+  <div style="font-size:12px;color:#a0aec0;margin-top:8px;">*近3年数据来源：上期历史报告整理，近1年及成立以来数据来源：天天基金2026-06-02。</div>
+
+  <!-- 五、收益风险雷达图 -->
+  <div class="section-title">五、综合评分对比</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div class="card">
+      <div style="font-size:14px;font-weight:600;color:#1e3a5f;margin-bottom:12px;">近1年收益排名</div>
+      <div class="chart-wrap-sm">
+        <canvas id="bar1yChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:600;color:#1e3a5f;margin-bottom:12px;">适合你的综合评分（满分10分）</div>
+      <div class="chart-wrap-sm">
+        <canvas id="radarChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- 六、推荐配置方案 -->
+  <div class="section-title">六、推荐定投配置方案（2年以上）</div>
+  <div class="card">
+    <div style="font-size:14px;color:#4a5568;margin-bottom:20px;">
+      以每月定投<strong>1000元</strong>为例（可等比例调整），建议如下分配：
+    </div>
+
+    <div class="alloc-row">
+      <div class="alloc-label">🔵 003376 广发国开债A</div>
+      <div class="alloc-bar-wrap">
+        <div class="alloc-bar" style="width:30%;background:linear-gradient(90deg,#2d6a9f,#4a9fd4);">
+          <span>30%・300元</span>
+        </div>
+      </div>
+    </div>
+    <div class="alloc-row">
+      <div class="alloc-label">🔵 003547 鹏华丰禄债</div>
+      <div class="alloc-bar-wrap">
+        <div class="alloc-bar" style="width:25%;background:linear-gradient(90deg,#2d6a9f,#4a9fd4);">
+          <span>25%・250元</span>
+        </div>
+      </div>
+    </div>
+    <div class="alloc-row">
+      <div class="alloc-label">🟢 110027 易方达安心</div>
+      <div class="alloc-bar-wrap">
+        <div class="alloc-bar" style="width:25%;background:linear-gradient(90deg,#38a169,#68d391);">
+          <span>25%・250元</span>
+        </div>
+      </div>
+    </div>
+    <div class="alloc-row">
+      <div class="alloc-label">🟢 003877 富国久利稳</div>
+      <div class="alloc-bar-wrap">
+        <div class="alloc-bar" style="width:20%;background:linear-gradient(90deg,#38a169,#68d391);">
+          <span>20%・200元</span>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider" style="margin:18px 0;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;font-size:13px;">
+      <div style="background:#f0f9ff;border-radius:8px;padding:12px;">
+        <div style="color:#718096;font-size:12px;margin-bottom:4px;">预期年化收益</div>
+        <div style="font-size:18px;font-weight:700;color:#c53030;">4%~8%</div>
+        <div style="color:#a0aec0;font-size:11px;">优于当前活期/定存</div>
+      </div>
+      <div style="background:#f0fff4;border-radius:8px;padding:12px;">
+        <div style="color:#718096;font-size:12px;margin-bottom:4px;">组合最大回撤（估）</div>
+        <div style="font-size:18px;font-weight:700;color:#276749;">约3%~8%</div>
+        <div style="color:#a0aec0;font-size:11px;">远低于纯股票基金</div>
+      </div>
+      <div style="background:#fffbf0;border-radius:8px;padding:12px;">
+        <div style="color:#718096;font-size:12px;margin-bottom:4px;">债/混合股权比例</div>
+        <div style="font-size:18px;font-weight:700;color:#c2410c;">75% / 25%</div>
+        <div style="color:#a0aec0;font-size:11px;">稳健配置结构</div>
+      </div>
+      <div style="background:#faf5ff;border-radius:8px;padding:12px;">
+        <div style="color:#718096;font-size:12px;margin-bottom:4px;">定投方式</div>
+        <div style="font-size:18px;font-weight:700;color:#6d28d9;">普通定投</div>
+        <div style="color:#a0aec0;font-size:11px;">每月固定日期扣款</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 七、入场行动步骤 -->
+  <div class="section-title">七、入场行动步骤（你现在该怎么做）</div>
+  <div class="card">
+    <div class="steps">
+      <div class="step-item">
+        <div class="step-content">
+          <h4>终止现有3只慧定投</h4>
+          <p>在天天基金APP → 我的 → 定投管理，将3只慧定投全部终止。慧定投与指数估值绑定，高估会停扣，不适合你的稳健诉求。</p>
+          <div class="hint">📱 APP路径：我的 → 定投管理 → 选中计划 → 终止</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-content">
+          <h4>清理自选基金，添加新标的</h4>
+          <p>建议将原有4只自选中，501073、160323、005984三只偏股混合基金移出（或降低关注优先级），新增003376、003547、000914、110027到自选。</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-content">
+          <h4>建立第一笔普通定投</h4>
+          <p>选一只纯债基金（推荐003376广发国开债A）作为起点，设置每月固定日期（如每月8日）的普通定投，金额灵活，300~500元即可启动。</p>
+          <div class="hint">📱 APP路径：基金详情 → 定投 → 普通定投 → 设置金额和日期</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-content">
+          <h4>逐步扩展，建立完整组合</h4>
+          <p>第1个月先投1只，熟悉操作后第2-3个月逐步增加其他3只基金的定投计划，最终形成4只基金的分散组合。不要一次性全部投入。</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-content">
+          <h4>坚持2年以上，不要中途止损</h4>
+          <p>定投的最大敌人是"看见亏损就赎回"。纯债基金短期可能有小幅回撤（债市调整），只要基本面未发生重大变化，坚持扣款摊薄成本才能实现预期收益。</p>
+          <div class="hint">💡 目标：2年后总收益跑赢银行3年定存（当前约2.35%/年）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 八、入场时机判断 -->
+  <div class="section-title">八、现在入场纯债合适吗？</div>
+  <div class="card">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:13.5px;">
+      <div style="background:#f0fff4;border-radius:10px;padding:16px;">
+        <div style="font-size:14px;font-weight:700;color:#276749;margin-bottom:10px;">✅ 支持入场的理由</div>
+        <ul style="list-style:none;color:#2f855a;line-height:2;">
+          <li>· 国内降息周期未完，债券价格仍有上行空间</li>
+          <li>· 纯债基金与沪深300相关性低，不受高估影响</li>
+          <li>· 当前银行存款利率持续下行，债基相对吸引力提升</li>
+          <li>· 长期定投可抹平短期波动，入场时机敏感性低</li>
+        </ul>
+      </div>
+      <div style="background:#fffbf0;border-radius:10px;padding:16px;">
+        <div style="font-size:14px;font-weight:700;color:#c2410c;margin-bottom:10px;">⚠️ 需要注意的风险</div>
+        <ul style="list-style:none;color:#92400e;line-height:2;">
+          <li>· 债市今日偏弱，短期可能有回调</li>
+          <li>· 若经济超预期复苏，利率可能上行压债价</li>
+          <li>· 110027含股票仓位，股市下跌会有影响</li>
+          <li>· 二级债基003877波动略高于纯债，需有心理准备</li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top:14px;background:#f7faff;border-radius:8px;padding:14px;font-size:13.5px;color:#2c5282;border-left:3px solid #2d6a9f;">
+      <strong>综合判断：</strong>当前是启动纯债/偏债定投的合适时机。债市短期小幅回调不影响长期定投逻辑，等"完美时机"往往会错过最佳建仓期。<strong>定投的本质是利用时间换空间，现在就可以开始。</strong>
+    </div>
+  </div>
+
+  <!-- 风险提示 -->
+  <div class="risk-notice">
+    <strong>⚠️ 风险提示</strong><br>
+    本报告基于公开数据整理，仅供参考，不构成投资建议。基金历史收益不代表未来表现，基金投资有风险，购买前请结合自身风险承受能力审慎决策。过往业绩不预示未来收益，市场存在不确定性，请理性投资。
+  </div>
+
+  <div class="footer">基金对比分析报告 · 2026-06-03 · 数据来源：天天基金</div>
+
+</div>
+
+<script>
+// 图1：近1年 vs 成立以来收益对比（所有基金）
+const ctx1 = document.getElementById('returnChart').getContext('2d');
+new Chart(ctx1, {
+  type: 'bar',
+  data: {
+    labels: ['003547鹏华丰禄', '000914中加纯债', '003376广发国开债', '110027易方达安心', '003877富国久利稳'],
+    datasets: [
+      {
+        label: '近1年收益(%)',
+        data: [2.24, 2.13, 2.63, 13.89, 25.31],
+        backgroundColor: 'rgba(229, 62, 62, 0.75)',
+        borderRadius: 4
+      },
+      {
+        label: '成立以来收益(%)',
+        data: [59.88, 67.49, 51.37, 339.99, 85.30],
+        backgroundColor: 'rgba(45, 106, 159, 0.7)',
+        borderRadius: 4
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { labels: { font: { size: 12 }, boxWidth: 14 } }
+    },
+    scales: {
+      x: { ticks: { font: { size: 11 } } },
+      y: { ticks: { font: { size: 11 }, callback: v => v + '%' } }
+    }
+  }
+});
+
+// 图2：近1年排名条形图
+const ctx2 = document.getElementById('bar1yChart').getContext('2d');
+new Chart(ctx2, {
+  type: 'bar',
+  data: {
+    labels: ['003877\n富国久利', '110027\n易方达', '003376\n广发国开', '003547\n鹏华丰禄', '000914\n中加纯债'],
+    datasets: [{
+      label: '近1年收益(%)',
+      data: [25.31, 13.89, 2.63, 2.24, 2.13],
+      backgroundColor: [
+        'rgba(56, 161, 105, 0.8)',
+        'rgba(56, 161, 105, 0.8)',
+        'rgba(45, 106, 159, 0.8)',
+        'rgba(45, 106, 159, 0.8)',
+        'rgba(45, 106, 159, 0.8)'
+      ],
+      borderRadius: 5
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { callback: v => v + '%', font: { size: 11 } } },
+      y: { ticks: { font: { size: 11 } } }
+    }
+  }
+});
+
+// 图3：综合评分雷达图
+const ctx3 = document.getElementById('radarChart').getContext('2d');
+new Chart(ctx3, {
+  type: 'radar',
+  data: {
+    labels: ['稳定性', '长期收益', '低波动', '适合定投', '分散价值'],
+    datasets: [
+      {
+        label: '003547鹏华丰禄',
+        data: [9.5, 7.0, 9.5, 9.5, 8.0],
+        fill: true, backgroundColor: 'rgba(45,106,159,0.12)',
+        borderColor: '#2d6a9f', pointBackgroundColor: '#2d6a9f',
+        borderWidth: 2, pointRadius: 3
+      },
+      {
+        label: '110027易方达安心',
+        data: [8.0, 9.5, 7.5, 8.5, 9.0],
+        fill: true, backgroundColor: 'rgba(56,161,105,0.12)',
+        borderColor: '#38a169', pointBackgroundColor: '#38a169',
+        borderWidth: 2, pointRadius: 3
+      },
+      {
+        label: '003376广发国开债',
+        data: [9.0, 8.5, 9.0, 9.0, 8.5],
+        fill: true, backgroundColor: 'rgba(214,158,46,0.12)',
+        borderColor: '#d69e2e', pointBackgroundColor: '#d69e2e',
+        borderWidth: 2, pointRadius: 3
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { font: { size: 11 }, boxWidth: 12 } } },
+    scales: {
+      r: {
+        min: 0, max: 10, ticks: { display: false, stepSize: 2 },
+        pointLabels: { font: { size: 11 } }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
