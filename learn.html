@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学习中心 · Fortune Tarot</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#ffd700;--gold2:#b8860b;--green:#4ade80;--text:#e0d6c2;--muted:#7a7a90;--card-bg:rgba(22,33,62,0.92);--radius:20px;}
+body{font-family:'Noto Serif SC','STSong','SimSun',serif;background:linear-gradient(160deg,#0d0d1a 0%,#16213e 60%,#0f3460 100%);color:var(--text);min-height:100vh;background-attachment:fixed}
+a{text-decoration:none;color:inherit}
+.stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--dur) ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.1}50%{opacity:.7}}
+.page{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 20px 80px}
+header{display:flex;align-items:center;justify-content:space-between;padding:24px 0 0;flex-wrap:wrap;gap:10px}
+.logo{font-size:20px;font-weight:900;color:var(--gold);letter-spacing:2px}
+.nav-links{display:flex;gap:6px}
+.nav-btn{padding:7px 14px;border-radius:30px;font-size:13px;border:1px solid rgba(255,215,0,0.25);color:#b0a880;cursor:pointer;background:transparent;transition:.25s;font-family:inherit}
+.nav-btn:hover,.nav-btn.active{background:rgba(255,215,0,0.1);border-color:var(--gold);color:var(--gold)}
+.sec-title{text-align:center;margin:40px 0 30px}
+.sec-title h2{font-size:34px;font-weight:900;color:var(--gold);letter-spacing:3px;margin-bottom:8px}
+.sec-title p{font-size:15px;color:var(--muted)}
+
+/* Tab bar */
+.tab-bar{display:flex;gap:0;border-bottom:1px solid rgba(255,215,0,0.15);margin-bottom:32px}
+.tab{padding:12px 24px;font-size:14px;color:var(--muted);cursor:pointer;transition:.25s;border-bottom:2px solid transparent;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none;margin-bottom:-1px;letter-spacing:1px}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* Panel */
+.panel{display:none;animation:fadeIn .4s ease}
+.panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* Prose card */
+.prose-card{background:var(--card-bg);border:1px solid rgba(255,215,0,0.18);border-radius:var(--radius);padding:28px;margin-bottom:20px}
+.prose-card h3{font-size:22px;color:var(--gold);font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.prose-card p{font-size:15px;color:#c0b8b0;line-height:1.9;margin-bottom:12px}
+.prose-card p:last-child{margin-bottom:0}
+
+/* Two-col boxes */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.mini-box{border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,.07)}
+.mini-box h4{font-size:15px;color:var(--gold);margin-bottom:8px}
+.mini-box p{font-size:13px;color:#a0a0b0;line-height:1.7}
+.gold-box{background:rgba(255,215,0,0.05);border-color:rgba(255,215,0,0.2)}
+.grey-box{background:rgba(255,255,255,0.03)}
+
+/* Flow steps */
+.flow-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:18px 0}
+.flow-item{background:rgba(26,26,46,.8);border:1px solid rgba(255,215,0,.15);border-radius:14px;padding:18px 14px;text-align:center}
+.flow-num{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1a2e;font-weight:900;font-size:16px;line-height:36px;margin:0 auto 10px;display:block}
+.flow-title{font-size:14px;font-weight:600;color:var(--gold);display:block;margin-bottom:6px}
+.flow-desc{font-size:12px;color:var(--muted);line-height:1.6}
+
+/* Spread table */
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:14px}
+th{background:rgba(255,215,0,0.08);color:var(--gold);padding:11px 14px;text-align:left;font-size:13px;font-weight:600;border-bottom:1px solid rgba(255,215,0,0.2)}
+td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05);color:#c0b8b0}
+tr:hover td{background:rgba(255,215,0,0.02)}
+
+/* Suit cards */
+.suit-row{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:14px 0}
+.suit-card{padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.07)}
+.suit-card .stitle{font-size:15px;font-weight:700;margin-bottom:4px}
+.suit-card p{font-size:13px;color:#a0a0b0}
+.wands-c{background:rgba(249,115,22,.05);border-color:rgba(249,115,22,.2)}.wands-c .stitle{color:#f97316}
+.cups-c{background:rgba(59,130,246,.05);border-color:rgba(59,130,246,.2)}.cups-c .stitle{color:#3b82f6}
+.swords-c{background:rgba(251,191,36,.05);border-color:rgba(251,191,36,.2)}.swords-c .stitle{color:#fbbf24}
+.pentacles-c{background:rgba(74,222,128,.05);border-color:rgba(74,222,128,.2)}.pentacles-c .stitle{color:var(--green)}
+
+/* Highlight */
+.hl{background:linear-gradient(135deg,rgba(74,222,128,.08),rgba(74,222,128,.03));border-left:3px solid var(--green);border-radius:0 12px 12px 0;padding:14px 18px;margin:14px 0;font-size:15px;color:var(--green);font-weight:500}
+
+/* Tip */
+.tip{background:rgba(59,130,246,.07);border-left:3px solid #3b82f6;border-radius:0 10px 10px 0;padding:12px 16px;margin:12px 0;font-size:13px;color:#93c5fd;line-height:1.7}
+
+/* Beginner steps */
+.bg-steps{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:14px 0}
+.bg-step{background:var(--card-bg);border:1px solid rgba(255,215,0,.15);border-radius:14px;padding:18px}
+.bg-step .bnum{font-size:28px;font-weight:900;color:rgba(255,215,0,.2);line-height:1;margin-bottom:8px}
+.bg-step h4{font-size:15px;color:var(--gold);margin-bottom:6px}
+.bg-step p{font-size:13px;color:#a0a0b0;line-height:1.7}
+.site-footer{text-align:center;padding:32px 20px 20px;margin-top:20px}
+.site-footer p{font-size:12px;color:rgba(122,122,144,.55);line-height:1.9;max-width:620px;margin:0 auto}
+
+@media(max-width:600px){.two-col,.suit-row,.bg-steps{grid-template-columns:1fr}.tab{padding:10px 14px;font-size:12px}}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<div class="page">
+  <header>
+    <a href="index.html" class="logo">🃏 FORTUNE TAROT</a>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="location.href='index.html'">首页</button>
+      <button class="nav-btn" onclick="location.href='single.html'">单牌</button>
+      <button class="nav-btn" onclick="location.href='multi.html'">多牌</button>
+      <button class="nav-btn active">学习</button>
+      <button class="nav-btn" onclick="location.href='encyclopedia.html'">百科</button>
+    </div>
+  </header>
+
+  <div class="sec-title">
+    <h2>📖 学习中心</h2>
+    <p>从零开始了解塔罗，掌握占卜的完整体系</p>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('intro',this)">塔罗简介</button>
+    <button class="tab" onclick="switchTab('flow',this)">占卜流程</button>
+    <button class="tab" onclick="switchTab('spreads',this)">牌阵详解</button>
+    <button class="tab" onclick="switchTab('beginner',this)">新手指南</button>
+  </div>
+
+  <!-- Panel 1: 塔罗简介 -->
+  <div class="panel active" id="panel-intro">
+    <div class="prose-card">
+      <h3>🃏 什么是塔罗牌？</h3>
+      <p>塔罗牌（Tarot）起源于 15 世纪的意大利，最初是一种名为「塔罗奇」的纸牌游戏。到了 18 世纪，神秘学家们发现这套牌中蕴含着深刻的象征体系，由此开启了塔罗作为占卜与自我探索工具的历史。</p>
+      <p>一套完整的塔罗牌共 <strong style="color:var(--gold)">78 张</strong>，分为大阿尔卡纳（22 张）和小阿尔卡纳（56 张）两大部分。</p>
+    </div>
+    <div class="two-col">
+      <div class="mini-box gold-box">
+        <h4>🜂 大阿尔卡纳（22 张）</h4>
+        <p>刻画人生重大课题与精神旅程——从「愚者」的天真出发，到「世界」的圆满完成，是一幅完整的灵魂成长地图。每张大牌代表一个原型力量或人生阶段转折。</p>
+      </div>
+      <div class="mini-box grey-box">
+        <h4>🜁 小阿尔卡纳（56 张）</h4>
+        <p>描绘日常生活的细节与事件，分为四组花色，每组 14 张（含数字牌 Ace~10 与宫廷牌侍从、骑士、皇后、国王）。它们是日常气象的晴雨表。</p>
+      </div>
+    </div>
+    <div class="prose-card">
+      <h3>🌿 小阿尔卡纳四花色</h3>
+      <div class="suit-row">
+        <div class="suit-card wands-c"><div class="stitle">🔥 权杖（Wands）</div><p>元素：火 &emsp; 领域：行动、热情、事业、创造力</p></div>
+        <div class="suit-card cups-c"><div class="stitle">💧 圣杯（Cups）</div><p>元素：水 &emsp; 领域：情感、直觉、关系、灵性</p></div>
+        <div class="suit-card swords-c"><div class="stitle">🌬️ 宝剑（Swords）</div><p>元素：风 &emsp; 领域：思维、沟通、冲突、真理</p></div>
+        <div class="suit-card pentacles-c"><div class="stitle">🌿 星币（Pentacles）</div><p>元素：土 &emsp; 领域：物质、财富、健康、现实基础</p></div>
+      </div>
+    </div>
+    <div class="prose-card">
+      <h3>🔄 正位与逆位</h3>
+      <p>每张牌都有两种方向——正位（直立）与逆位（倒置）。正位通常表示能量顺畅表达；逆位暗示受阻、内化或被压抑的能量。</p>
+      <div class="hl">逆位并不等于「坏」——更多时候是一种提醒：这张牌的能量正在以另一种方式运作，需要你格外留意。</div>
+    </div>
+  </div>
+
+  <!-- Panel 2: 占卜流程 -->
+  <div class="panel" id="panel-flow">
+    <div class="prose-card">
+      <h3>🌀 七步完整流程</h3>
+      <p>一次完整的塔罗读牌，是一个由外向内、由模糊到清晰的过程。</p>
+      <div class="flow-grid">
+        <div class="flow-item"><span class="flow-num">1</span><span class="flow-title">静心 & 设问</span><div class="flow-desc">创造安静空间，把模糊的念头变成一句具体的问题</div></div>
+        <div class="flow-item"><span class="flow-num">2</span><span class="flow-title">洗牌 & 切牌</span><div class="flow-desc">默念问题，将能量注入牌堆；切牌三次重新整合</div></div>
+        <div class="flow-item"><span class="flow-num">3</span><span class="flow-title">选择牌阵</span><div class="flow-desc">根据问题复杂度选定合适的牌阵框架</div></div>
+        <div class="flow-item"><span class="flow-num">4</span><span class="flow-title">抽牌 & 摆牌</span><div class="flow-desc">依次抽出牌，面朝下放入位置，全部摆好再翻</div></div>
+        <div class="flow-item"><span class="flow-num">5</span><span class="flow-title">逐张解读</span><div class="flow-desc">结合牌义 + 位置 + 正逆位 + 邻牌关系分析</div></div>
+        <div class="flow-item"><span class="flow-num">6</span><span class="flow-title">串联故事线</span><div class="flow-desc">把孤立的牌义织成一段有逻辑的完整叙事</div></div>
+        <div class="flow-item"><span class="flow-num">7</span><span class="flow-title">得出启示</span><div class="flow-desc">提炼可以带走的反思方向，有温度地收尾</div></div>
+      </div>
+    </div>
+    <div class="prose-card">
+      <h3>🔍 五维度解牌法</h3>
+      <p>每张牌都需要同时从五个维度来理解：</p>
+      <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+        <div style="padding:12px 16px;background:rgba(255,215,0,.04);border-radius:10px;border-left:2px solid var(--gold)"><strong style="color:var(--gold)">① 基本牌义</strong> — 这张牌最核心的象征是什么？人物、颜色、动作、符号在说什么？</div>
+        <div style="padding:12px 16px;background:rgba(255,215,0,.04);border-radius:10px;border-left:2px solid var(--gold)"><strong style="color:var(--gold)">② 位置含义</strong> — 同一张牌在「过去」和「建议」位置，意义完全不同。牌位决定上下文。</div>
+        <div style="padding:12px 16px;background:rgba(74,222,128,.04);border-radius:10px;border-left:2px solid var(--green)"><strong style="color:var(--green)">③ 正位/逆位偏向</strong> — 正位能量向外显化；逆位能量向内受阻，是提醒而非惩罚。</div>
+        <div style="padding:12px 16px;background:rgba(255,255,255,.03);border-radius:10px;border-left:2px solid #a0a8c0"><strong style="color:#a0a8c0">④ 大牌/小牌权重</strong> — 大阿尔卡纳居多 = 人生重大课题；小阿尔卡纳居多 = 日常事件与情绪。</div>
+        <div style="padding:12px 16px;background:rgba(255,255,255,.03);border-radius:10px;border-left:2px solid #a0a8c0"><strong style="color:#a0a8c0">⑤ 元素比例</strong> — 全是权杖？行动力过旺。全是宝剑？思维焦虑。火水风土的分布揭示整体能量状态。</div>
+      </div>
+    </div>
+    <div class="prose-card">
+      <h3>💡 好问题 vs 不好的问题</h3>
+      <div class="two-col">
+        <div class="mini-box gold-box">
+          <h4 style="color:var(--green)">✓ 好问题</h4>
+          <p>开放式、关于自我成长、指向反思的<br><br>「在这段感情里，我最需要看清的是什么？」<br>「此刻是什么力量阻碍了我前进？」</p>
+        </div>
+        <div class="mini-box grey-box">
+          <h4 style="color:#ef4444">✕ 避免</h4>
+          <p>是/否问题、替他人算命、涉及医疗/法律<br><br>「他爱我吗？」<br>「我的病会好吗？」</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel 3: 牌阵 -->
+  <div class="panel" id="panel-spreads">
+    <div class="prose-card">
+      <h3>🗺️ 常见牌阵对比</h3>
+      <p style="margin-bottom:0">牌阵是预先定义好的「位置蓝图」——每个位置代表一个观察角度，决定了这张牌的叙事上下文。</p>
+      <div style="overflow-x:auto;margin-top:4px">
+        <table>
+          <thead><tr><th>牌阵名称</th><th>张数</th><th>适合场景</th><th>位置示例</th></tr></thead>
+          <tbody>
+            <tr><td><strong>单张牌</strong></td><td>1</td><td>每日指引、快速灵感</td><td>今天的能量主题</td></tr>
+            <tr><td><strong>三张牌</strong></td><td>3</td><td>情感走向、短期趋势</td><td>过去 / 现在 / 未来</td></tr>
+            <tr><td><strong>五张牌</strong></td><td>5</td><td>感情结构、中等复杂</td><td>你 / 对方 / 关系 / 障碍 / 结果</td></tr>
+            <tr><td><strong>马蹄形</strong></td><td>7</td><td>扩展情境分析</td><td>过去/现在/隐藏/障碍/环境/建议/结果</td></tr>
+            <tr><td><strong>凯尔特十字</strong></td><td>10</td><td>深层人生课题</td><td>核心/交叉/根基/过去/潜能/近期/自我/环境/希望/结果</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="prose-card">
+      <h3>✦ 三张牌阵：最灵活的入门选择</h3>
+      <p>三张牌阵是练习「串联」能力的黄金起点，它足够灵活覆盖大多数日常问题，又不会因为牌太多而信息过载。</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px">
+        <div style="text-align:center;padding:14px;background:rgba(255,215,0,.05);border-radius:12px;border:1px solid rgba(255,215,0,.15)"><div style="font-size:24px;margin-bottom:8px">🌅</div><div style="font-size:13px;color:var(--gold);font-weight:700">过去</div><div style="font-size:11px;color:var(--muted);margin-top:4px">促成当前状态的根源</div></div>
+        <div style="text-align:center;padding:14px;background:rgba(255,215,0,.08);border-radius:12px;border:1px solid rgba(255,215,0,.25)"><div style="font-size:24px;margin-bottom:8px">☀️</div><div style="font-size:13px;color:var(--gold);font-weight:700">现在</div><div style="font-size:11px;color:var(--muted);margin-top:4px">当下真实的处境与能量</div></div>
+        <div style="text-align:center;padding:14px;background:rgba(74,222,128,.05);border-radius:12px;border:1px solid rgba(74,222,128,.15)"><div style="font-size:24px;margin-bottom:8px">⭐</div><div style="font-size:13px;color:var(--green);font-weight:700">未来</div><div style="font-size:11px;color:var(--muted);margin-top:4px">如果保持当前方向的走势</div></div>
+      </div>
+      <div class="tip" style="margin-top:16px">💡 「未来」位置不是命运的宣判，而是「如果继续现有模式，事情会朝这个方向走」的提示——你随时可以改变它。</div>
+    </div>
+    <div class="prose-card">
+      <h3>⊕ 凯尔特十字：最完整的系统</h3>
+      <p>10 张牌分别照亮问题的所有维度——从显意识到潜意识，从内在状态到外部环境，是处理复杂人生课题的终极工具。</p>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px">
+        <div style="padding:10px 8px;background:rgba(255,215,0,.05);border-radius:8px;border:1px solid rgba(255,215,0,.12);text-align:center"><div style="font-size:11px;color:var(--gold);font-weight:700">①核心</div><div style="font-size:10px;color:var(--muted);margin-top:2px">当前核心问题</div></div>
+        <div style="padding:10px 8px;background:rgba(255,215,0,.05);border-radius:8px;border:1px solid rgba(255,215,0,.12);text-align:center"><div style="font-size:11px;color:var(--gold);font-weight:700">②交叉</div><div style="font-size:10px;color:var(--muted);margin-top:2px">阻碍或帮助</div></div>
+        <div style="padding:10px 8px;background:rgba(255,215,0,.05);border-radius:8px;border:1px solid rgba(255,215,0,.12);text-align:center"><div style="font-size:11px;color:var(--gold);font-weight:700">③根基</div><div style="font-size:10px;color:var(--muted);margin-top:2px">潜意识根源</div></div>
+        <div style="padding:10px 8px;background:rgba(255,215,0,.05);border-radius:8px;border:1px solid rgba(255,215,0,.12);text-align:center"><div style="font-size:11px;color:var(--gold);font-weight:700">④过去</div><div style="font-size:10px;color:var(--muted);margin-top:2px">近期过去影响</div></div>
+        <div style="padding:10px 8px;background:rgba(255,215,0,.05);border-radius:8px;border:1px solid rgba(255,215,0,.12);text-align:center"><div style="font-size:11px;color:var(--gold);font-weight:700">⑤潜能</div><div style="font-size:10px;color:var(--muted);margin-top:2px">可能的发展</div></div>
+        <div style="padding:10px 8px;background:rgba(74,222,128,.04);border-radius:8px;border:1px solid rgba(74,222,128,.15);text-align:center"><div style="font-size:11px;color:var(--green);font-weight:700">⑥近期</div><div style="font-size:10px;color:var(--muted);margin-top:2px">即将发生的事</div></div>
+        <div style="padding:10px 8px;background:rgba(74,222,128,.04);border-radius:8px;border:1px solid rgba(74,222,128,.15);text-align:center"><div style="font-size:11px;color:var(--green);font-weight:700">⑦你</div><div style="font-size:10px;color:var(--muted);margin-top:2px">你的态度与立场</div></div>
+        <div style="padding:10px 8px;background:rgba(74,222,128,.04);border-radius:8px;border:1px solid rgba(74,222,128,.15);text-align:center"><div style="font-size:11px;color:var(--green);font-weight:700">⑧环境</div><div style="font-size:10px;color:var(--muted);margin-top:2px">外部环境影响</div></div>
+        <div style="padding:10px 8px;background:rgba(74,222,128,.04);border-radius:8px;border:1px solid rgba(74,222,128,.15);text-align:center"><div style="font-size:11px;color:var(--green);font-weight:700">⑨希望</div><div style="font-size:10px;color:var(--muted);margin-top:2px">希望与恐惧</div></div>
+        <div style="padding:10px 8px;background:rgba(74,222,128,.07);border-radius:8px;border:1px solid rgba(74,222,128,.25);text-align:center"><div style="font-size:11px;color:var(--green);font-weight:700">⑩结果</div><div style="font-size:10px;color:var(--muted);margin-top:2px">最终走向</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel 4: 新手指南 -->
+  <div class="panel" id="panel-beginner">
+    <div class="prose-card">
+      <h3>🌱 新手四步走</h3>
+      <div class="bg-steps">
+        <div class="bg-step"><div class="bnum">01</div><h4>选一副你喜欢的牌</h4><p>经典韦特塔罗（Rider-Waite-Smith）是最推荐的入门牌，画面清晰、象征丰富、学习资源最多。看着顺眼最重要——你和牌之间需要建立连接。</p></div>
+        <div class="bg-step"><div class="bnum">02</div><h4>每天抽一张日运牌</h4><p>不需要牌阵，每天早上抽一张，感受这一天的能量主题。晚上回顾：这张牌的意象在今天的哪些时刻出现过？这是最快建立直觉的方式。</p></div>
+        <div class="bg-step"><div class="bnum">03</div><h4>从三张牌开始练习</h4><p>单张太简单，凯尔特十字太复杂。三张牌的「过去—现在—未来」阵是练习「串联」能力的黄金起点。坚持一个月你会发现巨大进步。</p></div>
+        <div class="bg-step"><div class="bnum">04</div><h4>记录你的解读日记</h4><p>准备一本塔罗日记，记录每次抽牌、你的解读和后续发展。回头看时，你会发现那些当初看不懂的牌，其实早就说了对的话。</p></div>
+      </div>
+    </div>
+    <div class="prose-card">
+      <h3>💬 常见问题解答</h3>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="padding:16px;background:rgba(255,215,0,.04);border-radius:12px;border:1px solid rgba(255,215,0,.12)">
+          <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px">Q：同一个问题可以抽多次吗？</div>
+          <div style="font-size:13px;color:#a0a0b0;line-height:1.7">建议同一个问题当天只抽一次。如果答案让你不满意，那恰恰可能是它说了你不想听的真相。给自己至少一天的时间消化，再重新提问。</div>
+        </div>
+        <div style="padding:16px;background:rgba(255,215,0,.04);border-radius:12px;border:1px solid rgba(255,215,0,.12)">
+          <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px">Q：逆位牌一定是坏事吗？</div>
+          <div style="font-size:13px;color:#a0a0b0;line-height:1.7">完全不是。逆位更多是提醒——这张牌的能量正在以更内向或受阻的方式运作。「逆位星星」不代表没有希望，而是提醒你现在可能看不见它，需要主动寻找。</div>
+        </div>
+        <div style="padding:16px;background:rgba(255,215,0,.04);border-radius:12px;border:1px solid rgba(255,215,0,.12)">
+          <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px">Q：抽到「死神」「塔」是很坏的预兆吗？</div>
+          <div style="font-size:13px;color:#a0a0b0;line-height:1.7">这是新手最常见的误解。「死神」代表转化与蜕变，「塔」代表清除虚假结构——它们都是成长的信号，而非灾难的预言。塔罗中没有绝对的「坏牌」。</div>
+        </div>
+        <div style="padding:16px;background:rgba(255,215,0,.04);border-radius:12px;border:1px solid rgba(255,215,0,.12)">
+          <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px">Q：塔罗能预测具体的未来事件吗？</div>
+          <div style="font-size:13px;color:#a0a0b0;line-height:1.7">塔罗是象征性映射，不是预言机器。它告诉你当前的能量走向，但未来因你的选择而随时改变。最好把塔罗当成一面镜子——它照出的是你此刻的内心状态，而非固定的命运剧本。</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--card-bg);border:1px solid rgba(255,215,0,.18);border-radius:var(--radius);padding:28px;text-align:center;margin-top:20px">
+      <div style="font-size:17px;font-style:italic;color:rgba(255,215,0,.75);line-height:2">
+        「塔罗不是预测未来的水晶球，它是一面镜子。<br>
+        你看到的，从来不是牌在说什么，<br>
+        而是你通过牌看到了自己心底早已知道、却一直不敢面对的东西。」
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>⚠️ 塔罗牌是一种自我探索与心理映射的工具，牌面解读仅为象征性启发，不构成对命运、未来或具体事件的确定性判断。请以开放心态参考，理性看待，最终决定权始终在你手中。</p>
+  </footer>
+</div>
+
+<script src="tarot-data.js"></script>
+<script>
+(function(){const c=document.getElementById('stars');for(let i=0;i<60;i++){const s=document.createElement('div');s.className='star';const sz=Math.random()*2+.5;s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--dur:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s`;c.appendChild(s)}})();
+
+function switchTab(id, btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+}
+</script>
+</body>
+</html>

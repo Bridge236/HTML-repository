@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>单牌占卜 · Fortune Tarot</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg1:#0d0d1a;--bg2:#16213e;
+  --gold:#ffd700;--gold2:#b8860b;
+  --green:#4ade80;--text:#e0d6c2;--muted:#7a7a90;
+  --card-bg:rgba(22,33,62,0.92);--radius:20px;
+}
+body{font-family:'Noto Serif SC','STSong','SimSun',serif;background:linear-gradient(160deg,#0d0d1a 0%,#16213e 60%,#0f3460 100%);color:var(--text);min-height:100vh;background-attachment:fixed}
+a{text-decoration:none;color:inherit}
+
+.stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--dur) ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.1}50%{opacity:.7}}
+
+.page{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 20px 80px}
+
+header{display:flex;align-items:center;justify-content:space-between;padding:24px 0 0}
+.logo{font-size:20px;font-weight:900;color:var(--gold);letter-spacing:2px}
+.nav-links{display:flex;gap:6px}
+.nav-btn{padding:7px 14px;border-radius:30px;font-size:13px;border:1px solid rgba(255,215,0,0.25);color:#b0a880;cursor:pointer;background:transparent;transition:all .25s;font-family:inherit}
+.nav-btn:hover,.nav-btn.active{background:rgba(255,215,0,0.1);border-color:var(--gold);color:var(--gold)}
+
+/* Section title */
+.sec-title{text-align:center;margin:40px 0 30px}
+.sec-title h2{font-size:34px;font-weight:900;color:var(--gold);letter-spacing:3px;margin-bottom:8px}
+.sec-title p{font-size:15px;color:var(--muted)}
+
+/* Question input */
+.question-wrap{background:var(--card-bg);border:1px solid rgba(255,215,0,0.2);border-radius:var(--radius);padding:24px;margin-bottom:28px}
+.question-wrap label{display:block;font-size:13px;color:var(--muted);letter-spacing:2px;margin-bottom:10px}
+.question-wrap textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,215,0,0.2);border-radius:12px;padding:14px;color:var(--text);font-size:15px;font-family:inherit;resize:none;outline:none;height:80px;transition:.25s;line-height:1.7}
+.question-wrap textarea:focus{border-color:var(--gold)}
+.quick-btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.qbtn{padding:6px 14px;border-radius:20px;font-size:12px;background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.2);color:#b0a060;cursor:pointer;font-family:inherit;transition:.2s}
+.qbtn:hover{background:rgba(255,215,0,0.15);color:var(--gold)}
+
+/* Draw button */
+.draw-zone{text-align:center;margin:30px 0}
+.deck-wrap{position:relative;width:120px;height:168px;margin:0 auto 28px;cursor:pointer}
+.deck-card{position:absolute;width:120px;height:168px;border-radius:12px;background:linear-gradient(135deg,#1a2a5a,#0d1a40);border:1px solid rgba(255,215,0,0.3);transition:.25s}
+.deck-card:nth-child(1){transform:rotate(-3deg) translateY(-4px)}
+.deck-card:nth-child(2){transform:rotate(1deg)}
+.deck-card:nth-child(3){transform:rotate(-1deg) translateY(2px);background:linear-gradient(135deg,#1a3060,#0d1a40)}
+.deck-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:36px;position:relative}
+.deck-inner::after{content:'';position:absolute;inset:8px;border:1px solid rgba(255,215,0,0.2);border-radius:8px}
+.deck-wrap:hover .deck-card{border-color:rgba(255,215,0,0.5);box-shadow:0 0 20px rgba(255,215,0,0.15)}
+
+.draw-btn{padding:16px 56px;border-radius:40px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1a2e;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;border:none;letter-spacing:2px;transition:all .3s;box-shadow:0 4px 24px rgba(255,215,0,0.25)}
+.draw-btn:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(255,215,0,0.4)}
+.draw-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* Card reveal */
+.card-scene{perspective:1000px;width:220px;height:308px;margin:0 auto}
+.card-flipper{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.4,0,.2,1)}
+.card-flipper.flipped{transform:rotateY(180deg)}
+.card-face,.card-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:16px;overflow:hidden;border:2px solid rgba(255,215,0,0.3);box-shadow:0 8px 40px rgba(0,0,0,0.4)}
+.card-back{background:linear-gradient(135deg,#1a2a5a,#0d1a40);display:flex;align-items:center;justify-content:center;font-size:64px}
+.card-back::after{content:'';position:absolute;inset:10px;border:1px solid rgba(255,215,0,0.2);border-radius:10px}
+.card-face{background:#0d1a30;transform:rotateY(180deg)}
+.card-face img{width:100%;height:100%;object-fit:cover;transition:.3s}
+.card-face.reversed img{transform:rotate(180deg)}
+
+/* Result */
+.result-wrap{margin-top:36px;animation:fadeUp .6s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.card-info{background:var(--card-bg);border:1px solid rgba(255,215,0,0.2);border-radius:var(--radius);padding:28px;margin-bottom:16px}
+.card-info .c-name{font-size:28px;font-weight:900;color:var(--gold);margin-bottom:4px}
+.card-info .c-en{font-size:14px;color:var(--muted);margin-bottom:12px}
+.orientation-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:600;margin-bottom:14px}
+.upright-badge{background:rgba(74,222,128,0.12);color:var(--green);border:1px solid rgba(74,222,128,0.3)}
+.reversed-badge{background:rgba(239,68,68,0.12);color:#ef4444;border:1px solid rgba(239,68,68,0.3)}
+.keywords{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.kw{background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.2);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--gold)}
+.meaning{font-size:15px;color:#c8c0b0;line-height:1.9;padding:16px;background:rgba(255,255,255,0.02);border-radius:12px;border-left:2px solid var(--gold)}
+
+/* AI block */
+.ai-block{background:var(--card-bg);border:1px solid rgba(74,222,128,0.25);border-radius:var(--radius);padding:28px}
+.ai-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.ai-header h4{font-size:18px;color:var(--green);margin-bottom:0;font-weight:600}
+.copy-btn{padding:6px 14px;border-radius:20px;font-size:12px;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.25);color:var(--gold);cursor:pointer;font-family:inherit;transition:.2s;white-space:nowrap}
+.copy-btn:hover{background:rgba(255,215,0,0.18)}
+.copy-btn.copied{background:rgba(74,222,128,0.15);border-color:var(--green);color:var(--green)}
+.ai-text{font-size:15px;color:#c0c8b8;line-height:2;white-space:pre-wrap}
+.ai-loading{display:flex;align-items:center;gap:10px;color:var(--muted)}
+.dot-pulse{display:flex;gap:4px}
+.dot-pulse span{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.2s ease-in-out infinite}
+.dot-pulse span:nth-child(2){animation-delay:.2s}
+.dot-pulse span:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+.ai-hint{font-size:13px;color:var(--muted);padding:16px;background:rgba(255,255,255,0.02);border-radius:10px}
+.ai-hint a{color:var(--gold);cursor:pointer;text-decoration:underline}
+
+/* Soul quote */
+.soul-quote{text-align:center;font-size:18px;font-style:italic;color:rgba(255,215,0,.75);padding:24px 20px;margin-top:16px;border-top:1px solid rgba(255,215,0,0.1)}
+
+/* Reset */
+.reset-btn{display:block;margin:28px auto 0;padding:12px 36px;border-radius:30px;background:transparent;border:1px solid rgba(255,215,0,0.3);color:var(--gold);font-size:14px;font-family:inherit;cursor:pointer;transition:.25s}
+.reset-btn:hover{background:rgba(255,215,0,0.08)}
+
+.hidden{display:none}
+
+/* ── Enhanced shuffle animations ── */
+.sparkle{position:absolute;border-radius:50%;background:var(--gold);pointer-events:none;z-index:10;animation:sparkleBurst .75s ease-out forwards}
+@keyframes sparkleBurst{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--sx),var(--sy)) scale(0)}}
+.card-back.glowing{animation:cardBreathe 2s ease-in-out infinite}
+@keyframes cardBreathe{0%,100%{box-shadow:0 0 20px rgba(255,215,0,.12),0 0 40px rgba(255,215,0,.04)}50%{box-shadow:0 0 45px rgba(255,215,0,.45),0 0 90px rgba(255,215,0,.22),0 0 140px rgba(255,215,0,.08)}}
+.reveal-hint{font-size:13px;color:var(--muted);margin-top:10px;transition:opacity .3s}
+.deck-wrap.shuffling .deck-card{border-color:rgba(255,215,0,.5);box-shadow:0 0 20px rgba(255,215,0,.15)}
+/* Card face revelation — golden flash after flip */
+.card-face.revealing{animation:revealGlow .7s ease-out}
+@keyframes revealGlow{0%{box-shadow:inset 0 0 50px rgba(255,215,0,.55),0 0 50px rgba(255,215,0,.7),0 0 100px rgba(255,215,0,.3)}100%{box-shadow:inset 0 0 0px rgba(255,215,0,0),0 0 8px rgba(255,215,0,.08)}}
+.site-footer{text-align:center;padding:32px 20px 20px;margin-top:10px}
+.site-footer p{font-size:12px;color:rgba(122,122,144,.5);line-height:1.9;max-width:620px;margin:0 auto}
+
+@media(max-width:600px){header{flex-wrap:wrap;gap:10px}.draw-btn{padding:14px 40px}}
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="page">
+  <header>
+    <a href="index.html" class="logo">🃏 FORTUNE TAROT</a>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="location.href='index.html'">首页</button>
+      <button class="nav-btn active">单牌</button>
+      <button class="nav-btn" onclick="location.href='multi.html'">多牌</button>
+      <button class="nav-btn" onclick="location.href='learn.html'">学习</button>
+      <button class="nav-btn" onclick="location.href='encyclopedia.html'">百科</button>
+    </div>
+  </header>
+
+  <div class="sec-title">
+    <h2>🔮 单牌占卜</h2>
+    <p>翻开一张牌，让它照亮你此刻最需要看清的事</p>
+  </div>
+
+  <!-- Question -->
+  <div class="question-wrap">
+    <label>✦ 你想询问什么？（可选）</label>
+    <textarea id="questionInput" placeholder="在心中或此处写下你的问题……专注于它，然后抽牌"></textarea>
+    <div class="quick-btns">
+      <button class="qbtn" onclick="setQ('在感情方面，我现在最需要看清的是什么？')">感情方向</button>
+      <button class="qbtn" onclick="setQ('关于我目前的事业/工作，牌想告诉我什么？')">事业发展</button>
+      <button class="qbtn" onclick="setQ('此刻我内心最需要关注的课题是什么？')">当下内心</button>
+    </div>
+  </div>
+
+  <!-- Draw zone -->
+  <div class="draw-zone" id="drawZone">
+    <div class="deck-wrap" onclick="doDrawCard()" id="deckWrap">
+      <div class="deck-card"><div class="deck-inner">🌟</div></div>
+      <div class="deck-card"></div>
+      <div class="deck-card"></div>
+    </div>
+    <br>
+    <button class="draw-btn" id="drawBtn" onclick="doDrawCard()">✨ 抽出这张牌</button>
+  </div>
+
+  <!-- Card reveal (hidden initially) -->
+  <div id="revealZone" class="hidden" style="text-align:center;margin:10px 0 24px">
+    <div class="card-scene">
+      <div class="card-flipper" id="cardFlipper">
+        <div class="card-back">🌟</div>
+        <div class="card-face" id="cardFace">
+          <img id="cardImg" src="" alt="">
+        </div>
+      </div>
+    </div>
+    <p class="reveal-hint">✦ 点击卡牌，揭开命运 ✦</p>
+  </div>
+
+  <!-- Result (hidden initially) -->
+  <div id="resultWrap" class="hidden result-wrap">
+    <div class="card-info">
+      <div class="c-name" id="cName"></div>
+      <div class="c-en" id="cEn"></div>
+      <span class="orientation-badge" id="orientBadge"></span>
+      <div class="keywords" id="cKeywords"></div>
+      <div class="meaning" id="cMeaning"></div>
+    </div>
+
+    <div class="ai-block">
+      <div class="ai-header">
+        <h4>✦ AI 深度解读</h4>
+        <button class="copy-btn" onclick="copySinglePrompt()" title="复制为提示词，可粘贴到其他AI工具中获取解读">📋 复制提示词</button>
+      </div>
+      <div id="aiContent">
+        <div class="ai-loading">
+          <div class="dot-pulse"><span></span><span></span><span></span></div>
+          <span style="font-size:14px">正在为你解读…</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="soul-quote" id="soulQuote"></div>
+    <button class="reset-btn" onclick="resetDraw()">↺ 重新占卜</button>
+  </div>
+
+  <footer class="site-footer">
+    <p>⚠️ 塔罗牌是一种自我探索与心理映射的工具，牌面解读仅为象征性启发，不构成对命运、未来或具体事件的确定性判断。请以开放心态参考，理性看待，最终决定权始终在你手中。</p>
+  </footer>
+</div>
+
+<script src="tarot-data.js"></script>
+<script>
+// Stars
+(function(){const c=document.getElementById('stars');for(let i=0;i<60;i++){const s=document.createElement('div');s.className='star';const sz=Math.random()*2+.5;s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--dur:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s`;c.appendChild(s)}})();
+
+let drawnCard = null;
+let flipped = false;
+
+function setQ(t){document.getElementById('questionInput').value=t}
+
+function spawnSparkles(parent,count){
+  const r=parent.getBoundingClientRect();
+  const cx=r.width/2,cy=r.height/2;
+  for(let i=0;i<count;i++){
+    const s=document.createElement('div');s.className='sparkle';
+    const a=Math.random()*Math.PI*2,d=40+Math.random()*80;
+    const sz=3+Math.random()*6;
+    const colors=['#ffd700','#ffec8b','#fff8dc','#daa520'];
+    s.style.cssText=`left:${cx}px;top:${cy}px;--sx:${Math.cos(a)*d}px;--sy:${Math.sin(a)*d}px;width:${sz}px;height:${sz}px;background:${colors[Math.floor(Math.random()*colors.length)]}`;
+    parent.appendChild(s);setTimeout(()=>s.remove(),900);
+  }
+}
+
+function doDrawCard(){
+  if(drawnCard) return;
+  const btn=document.getElementById('drawBtn');
+  btn.disabled=true;btn.textContent='✨ 正在洗牌…';
+
+  const deck=document.getElementById('deckWrap');
+  deck.classList.add('shuffling');
+  const cards=deck.querySelectorAll('.deck-card');
+
+  /* Phase 1: cards burst upward & outward — 0~0.6s */
+  cards.forEach((c,i)=>{
+    c.style.transition='transform .55s cubic-bezier(.22,.61,.36,1)';
+    c.style.transform=`translate(${(i-1)*35}px, -${70+i*35}px) rotate(${(i-1)*45}deg) scale(.78)`;
+  });
+  spawnSparkles(deck,20);
+
+  /* Phase 2: wild chaotic shuffle — 0.6~1.35s */
+  setTimeout(()=>{
+    cards.forEach((c,i)=>{
+      c.style.transition='transform .65s cubic-bezier(.25,.1,.25,1)';
+      const rx=(Math.random()-.5)*100, ry=25+Math.random()*60, rr=(Math.random()-.5)*140;
+      c.style.transform=`translate(${rx}px, -${ry}px) rotate(${rr}deg) scale(.8)`;
+    });
+    spawnSparkles(deck,16);
+  }, 600);
+
+  /* Phase 3: cards settle — 1.35~1.7s */
+  setTimeout(()=>{
+    cards.forEach((c,i)=>{
+      c.style.transition='transform .35s cubic-bezier(.4,0,.2,1)';
+      c.style.transform='';
+    });
+    deck.classList.remove('shuffling');
+    setTimeout(()=>{
+      drawnCard=drawCards(1)[0];
+      showReveal();
+    }, 350);
+  }, 1350);
+}
+
+function showReveal(){
+  document.getElementById('drawZone').classList.add('hidden');
+  const rz=document.getElementById('revealZone');
+  rz.classList.remove('hidden');
+
+  const face=document.getElementById('cardFace');
+  document.getElementById('cardImg').src=drawnCard.img;
+  if(drawnCard.reversed) face.classList.add('reversed');
+
+  /* breathing glow on card back */
+  const cardBack=document.querySelector('#revealZone .card-back');
+  cardBack.classList.add('glowing');
+
+  const flipper=document.getElementById('cardFlipper');
+  const doFlip=()=>{
+    cardBack.classList.remove('glowing');
+    revealCard();
+  };
+  flipper.addEventListener('click',doFlip,{once:true});
+  /* auto-flip after 1.5s — give time to feel the suspense */
+  setTimeout(doFlip,1500);
+}
+
+function revealCard(){
+  if(flipped) return;
+  flipped=true;
+  const flipper=document.getElementById('cardFlipper');
+  flipper.classList.add('flipped');
+  document.querySelector('#revealZone p').textContent='';
+
+  /* after 3D flip, card face glows with golden light before interpretation */
+  setTimeout(()=>{
+    const face=document.getElementById('cardFace');
+    face.classList.add('revealing');
+    setTimeout(showResult, 700);
+  }, 800);
+}
+
+function showResult(){
+  const rw=document.getElementById('resultWrap');
+  rw.classList.remove('hidden');
+
+  const c=drawnCard;
+  document.getElementById('cName').textContent=`${c.name}  ${c.id <= 21 ? `（${['0','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX','XXI'][c.id]}）` : ''}`;
+  document.getElementById('cEn').textContent=c.en;
+  const badge=document.getElementById('orientBadge');
+  if(c.reversed){badge.textContent='逆位';badge.className='orientation-badge reversed-badge';}
+  else{badge.textContent='正位';badge.className='orientation-badge upright-badge';}
+  const kws=document.getElementById('cKeywords');
+  kws.innerHTML=c.keywords.map(k=>`<span class="kw">${k}</span>`).join('');
+  document.getElementById('cMeaning').textContent=c.reversed?c.reversed:c.upright;
+  document.getElementById('soulQuote').textContent=`「 ${c.soul} 」`;
+
+  rw.scrollIntoView({behavior:'smooth',block:'start'});
+  requestAI(c);
+}
+
+async function requestAI(card){
+  const q=document.getElementById('questionInput').value.trim();
+  const aiDiv=document.getElementById('aiContent');
+
+  if(!Settings.hasKey()){
+    aiDiv.innerHTML=`<div class="ai-hint">💡 尚未配置 AI Key。<a onclick="openSettingsFromPage()">点此设置</a>，配置后可获得结合你问题的个性化深度解读。<br><br>当前展示预设解读：<br><br><em style="color:#c0c8b0;line-height:2">${card.reversed?card.reversed:card.upright}</em></div>`;
+    return;
+  }
+
+  const prompt=`本次塔罗占卜信息如下：
+- 用户问题：${q||'（未填写，做一般性解读）'}
+- 抽到的牌：${card.name}（${card.en}）
+- 方位：${card.reversed?'逆位':'正位'}
+- 牌的核心关键词：${card.keywords.join('、')}
+- 牌的基本含义：${card.reversed?card.reversed:card.upright}
+
+请结合用户的具体问题，给出一段温柔而有深度的塔罗解读。`;
+
+  try{
+    const text=await callAI(prompt,Settings.apiKey,Settings.baseUrl);
+    aiDiv.innerHTML=`<div class="ai-text">${text}</div>`;
+    History.push({cards:card.name,question:q,ts:Date.now()});
+  }catch(e){
+    aiDiv.innerHTML=`<div class="ai-hint" style="color:#ef9999">AI 解读失败：${e.message}<br>请检查 API Key 和网络连接。<br><br>预设解读：<em style="color:#c0c8b0">${card.reversed?card.reversed:card.upright}</em></div>`;
+  }
+}
+
+function openSettingsFromPage(){
+  // Simple inline modal trigger
+  const key=prompt('请输入你的 API Key（仅存本地）：');
+  if(key){Settings.apiKey=key.trim();requestAI(drawnCard);}
+}
+
+function copySinglePrompt(){
+  const q=document.getElementById('questionInput').value.trim();
+  const c=drawnCard;
+  if(!c){alert('请先完成占卜');return;}
+  const prompt=`你是一位资深塔罗解读师。请严格根据以下牌面信息，为用户提供专业解读。
+
+【用户的问题】
+${q||'（未填写具体问题，请做一般性解读）'}
+
+【牌面信息】
+牌名：${c.name}（${c.en}）
+方位：${c.reversed?'逆位':'正位'}
+核心关键词：${c.keywords.join('、')}
+牌义基础：${c.reversed?c.reversed:c.upright}
+
+【输出格式】
+请按以下结构组织回复，段落间使用空行分隔：
+
+🔮 核心启示
+用2-3句话点明这张牌对用户问题的核心回应，概括牌面的整体能量。
+
+📖 深度解读
+结合牌的象征意义和用户问题展开。从牌面意象、方位、关键词出发，自然映射到用户当下的处境。语言柔和有深度，避免绝对化预言。
+
+💡 反思方向
+提出1-2个用户可以思考的问题或觉察方向，帮助其从牌中获得自我启发。
+
+⚠️ 重要声明
+塔罗牌是一种自我探索与心理映射的工具，以上解读仅为象征性启发，不构成对命运、未来或具体事件的确定性判断。请以开放心态参考，最终决定权始终在你手中。`;
+
+  navigator.clipboard.writeText(prompt).then(()=>{
+    const btn=document.querySelector('.copy-btn');
+    btn.textContent='✓ 已复制';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 复制提示词';btn.classList.remove('copied')},2000);
+  }).catch(()=>{alert('复制失败，请手动复制')});
+}
+
+function resetDraw(){
+  drawnCard=null;flipped=false;
+  document.getElementById('drawZone').classList.remove('hidden');
+  document.getElementById('revealZone').classList.add('hidden');
+  document.getElementById('resultWrap').classList.add('hidden');
+  document.getElementById('drawBtn').disabled=false;
+  document.getElementById('drawBtn').textContent='✨ 抽出这张牌';
+  document.getElementById('cardFlipper').classList.remove('flipped');
+  document.getElementById('cardFace').classList.remove('reversed','revealing');
+  document.getElementById('questionInput').value='';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

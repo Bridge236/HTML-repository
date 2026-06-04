@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>塔罗牌占卜 · Fortune Tarot</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg1:#0d0d1a;--bg2:#16213e;--bg3:#1a2744;
+  --gold:#ffd700;--gold2:#b8860b;--gold-dim:rgba(255,215,0,0.15);
+  --green:#4ade80;--text:#e0d6c2;--muted:#7a7a90;
+  --card-bg:rgba(22,33,62,0.92);--radius:20px;
+}
+body{font-family:'Noto Serif SC','STSong','SimSun',serif;background:var(--bg1);color:var(--text);min-height:100vh;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+
+/* Stars background */
+.stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--dur) ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:0.1}50%{opacity:0.8}}
+
+/* Layout */
+.page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 20px 60px}
+
+/* Header */
+header{width:100%;max-width:960px;display:flex;align-items:center;justify-content:space-between;padding:24px 0 0}
+.logo{font-size:22px;font-weight:900;color:var(--gold);letter-spacing:3px;text-shadow:0 0 20px rgba(255,215,0,0.4)}
+.nav-links{display:flex;gap:6px}
+.nav-btn{padding:8px 16px;border-radius:30px;font-size:13px;border:1px solid rgba(255,215,0,0.25);color:#b0a880;cursor:pointer;background:transparent;transition:all .25s;font-family:inherit}
+.nav-btn:hover,.nav-btn.active{background:rgba(255,215,0,0.1);border-color:var(--gold);color:var(--gold)}
+.nav-btn.settings-btn{padding:8px 12px}
+
+/* Hero */
+.hero{text-align:center;padding:60px 20px 50px;max-width:700px}
+.hero-icon{font-size:80px;margin-bottom:20px;animation:float 3s ease-in-out infinite;display:block}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.hero h1{font-size:46px;font-weight:900;color:var(--gold);letter-spacing:4px;margin-bottom:14px;text-shadow:0 0 40px rgba(255,215,0,0.3)}
+.hero p{font-size:16px;color:var(--muted);line-height:1.8;letter-spacing:1px}
+
+/* Daily card strip */
+.daily-strip{background:linear-gradient(135deg,rgba(255,215,0,0.05),rgba(255,215,0,0.02));border:1px solid rgba(255,215,0,0.2);border-radius:16px;padding:16px 28px;margin:10px 0 40px;display:flex;align-items:center;gap:18px;max-width:680px;width:100%}
+.daily-card-mini{width:52px;height:72px;border-radius:8px;overflow:hidden;border:1px solid rgba(255,215,0,0.3);flex-shrink:0}
+.daily-card-mini img{width:100%;height:100%;object-fit:cover}
+.daily-info{flex:1}
+.daily-label{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+.daily-name{font-size:18px;font-weight:700;color:var(--gold);margin:2px 0 4px}
+.daily-text{font-size:13px;color:#a0a8b0}
+
+/* Grid of nav cards */
+.nav-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:760px;width:100%}
+.nav-card{background:var(--card-bg);border:1px solid rgba(255,215,0,0.18);border-radius:var(--radius);padding:36px 28px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px}
+.nav-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:.3s}
+.nav-card:hover{border-color:rgba(255,215,0,0.5);transform:translateY(-4px);box-shadow:0 12px 50px rgba(0,0,0,0.4)}
+.nav-card:hover::before{opacity:1}
+.nav-card .icon{font-size:40px;line-height:1}
+.nav-card h3{font-size:22px;font-weight:700;color:var(--gold)}
+.nav-card p{font-size:14px;color:var(--muted);line-height:1.7}
+.nav-card .arrow{font-size:20px;color:rgba(255,215,0,0.4);align-self:flex-end;margin-top:auto;transition:.3s}
+.nav-card:hover .arrow{color:var(--gold);transform:translateX(4px)}
+
+/* Quote */
+.quote-wrap{max-width:600px;width:100%;margin:40px 0 0;text-align:center}
+.quote-text{font-size:17px;font-style:italic;color:rgba(255,215,0,0.7);letter-spacing:1px}
+
+/* Settings Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:linear-gradient(145deg,#12183a,#1a2744);border:1px solid rgba(255,215,0,0.3);border-radius:24px;padding:36px;width:100%;max-width:460px;position:relative}
+.modal h2{color:var(--gold);font-size:22px;margin-bottom:24px;font-weight:700}
+.modal label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;margin-top:16px;letter-spacing:1px}
+.modal input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,215,0,0.25);border-radius:10px;padding:12px 14px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:.25s}
+.modal input:focus{border-color:var(--gold)}
+.modal .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.6}
+.modal .btn-row{display:flex;gap:10px;margin-top:24px}
+.btn{padding:12px 28px;border-radius:30px;font-size:14px;font-family:inherit;cursor:pointer;border:none;transition:.25s;font-weight:600}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1a2e}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,215,0,0.3);color:var(--gold)}
+.btn-ghost:hover{background:rgba(255,215,0,0.08)}
+.modal .close-btn{position:absolute;top:18px;right:18px;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
+.modal .close-btn:hover{color:var(--text)}
+
+/* History section */
+.history-section{max-width:760px;width:100%;margin-top:48px}
+.section-label{font-size:13px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,215,0,0.2),transparent)}
+.history-list{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px}
+  .history-item{flex:0 0 200px;background:rgba(22,33,62,0.8);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px;cursor:pointer;transition:.25s}
+  .history-item:hover{border-color:rgba(255,215,0,0.25)}
+  .h-date{font-size:11px;color:var(--muted);margin-bottom:6px}
+  .h-cards{font-size:13px;color:var(--gold);font-weight:600;margin-bottom:4px}
+  .h-q{font-size:12px;color:#8a8a9a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .site-footer{text-align:center;padding:40px 20px 20px;margin-top:20px}
+  .site-footer p{font-size:12px;color:rgba(122,122,144,.5);line-height:1.9;max-width:620px;margin:0 auto}
+
+@media(max-width:600px){
+  .nav-grid{grid-template-columns:1fr}
+  .hero h1{font-size:32px}
+  header{flex-wrap:wrap;gap:12px}
+}
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="page">
+  <header>
+    <div class="logo">🃏 FORTUNE TAROT</div>
+    <div class="nav-links">
+      <button class="nav-btn active" onclick="location.href='index.html'">首页</button>
+      <button class="nav-btn" onclick="location.href='single.html'">单牌</button>
+      <button class="nav-btn" onclick="location.href='multi.html'">多牌</button>
+      <button class="nav-btn" onclick="location.href='learn.html'">学习</button>
+      <button class="nav-btn" onclick="location.href='encyclopedia.html'">百科</button>
+      <button class="nav-btn settings-btn" onclick="openSettings()" title="AI设置">⚙️</button>
+    </div>
+  </header>
+
+  <div class="hero">
+    <span class="hero-icon">✨</span>
+    <h1>塔罗牌占卜</h1>
+    <p>翻开一张牌，听听宇宙想说什么<br>每一次解读，都是与内心的深度对话</p>
+  </div>
+
+  <!-- Daily Card -->
+  <div class="daily-strip" id="dailyStrip">
+    <div class="daily-card-mini"><img id="dailyImg" src="" alt=""></div>
+    <div class="daily-info">
+      <div class="daily-label">✦ 今日塔罗</div>
+      <div class="daily-name" id="dailyName">—</div>
+      <div class="daily-text" id="dailyText">—</div>
+    </div>
+  </div>
+
+  <!-- Main Navigation Grid -->
+  <div class="nav-grid">
+    <a href="single.html" class="nav-card">
+      <div class="icon">🔮</div>
+      <h3>单牌占卜</h3>
+      <p>翻开一张牌，获得今日指引。简单、直接，适合每日的快速感悟。</p>
+      <div class="arrow">→</div>
+    </a>
+    <a href="multi.html" class="nav-card">
+      <div class="icon">🌌</div>
+      <h3>多牌占卜</h3>
+      <p>选择三张牌或凯尔特十字阵，从多个维度深度解析你的问题。</p>
+      <div class="arrow">→</div>
+    </a>
+    <a href="learn.html" class="nav-card">
+      <div class="icon">📖</div>
+      <h3>学习中心</h3>
+      <p>塔罗入门全指南——78张牌的奥秘、七步占卜流程、牌阵详解。</p>
+      <div class="arrow">→</div>
+    </a>
+    <a href="encyclopedia.html" class="nav-card">
+      <div class="icon">📚</div>
+      <h3>牌义百科</h3>
+      <p>22张大阿尔卡纳完整词典，正逆位含义、适用场景一览无遗。</p>
+      <div class="arrow">→</div>
+    </a>
+  </div>
+
+  <!-- Quote -->
+  <div class="quote-wrap">
+    <div class="quote-text" id="quoteText">—</div>
+  </div>
+
+  <!-- History -->
+  <div class="history-section" id="historySection" style="display:none">
+    <div class="section-label">最近占卜</div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+
+  <footer class="site-footer">
+    <p>⚠️ 塔罗牌是一种自我探索与心理映射的工具，牌面解读仅为象征性启发，不构成对命运、未来或具体事件的确定性判断。请以开放心态参考，理性看待，最终决定权始终在你手中。</p>
+  </footer>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <button class="close-btn" onclick="closeSettings()">✕</button>
+    <h2>⚙️ AI 解读配置</h2>
+    <label>API Key</label>
+    <input type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off">
+    <p class="hint">你的 Key 仅存储在本地浏览器，不会上传至任何服务器。支持 OpenAI 及任何兼容接口。</p>
+    <label>模型名称（默认智谱）</label>
+    <input type="text" id="modelInput" placeholder="glm-4.7-flash">
+    <p class="hint">智谱填 glm-4.7-flash；OpenAI 填 gpt-4o-mini</p>
+    <label>API 地址（默认智谱）</label>
+    <input type="text" id="baseUrlInput" placeholder="https://open.bigmodel.cn/api/paas/v4/chat/completions">
+    <p class="hint">换成 OpenAI：https://api.openai.com/v1/chat/completions</p>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveSettings()">保存</button>
+      <button class="btn btn-ghost" onclick="clearSettings()">清除 Key</button>
+    </div>
+  </div>
+</div>
+
+<script src="tarot-data.js"></script>
+<script>
+// Stars
+(function(){
+  const c=document.getElementById('stars');
+  for(let i=0;i<80;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const sz=Math.random()*2.5+0.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--dur:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s`;
+    c.appendChild(s);
+  }
+})();
+
+// Daily card
+const dc=getDailyCard();
+document.getElementById('dailyImg').src=dc.img;
+document.getElementById('dailyName').textContent=`${dc.name}  ${dc.reversed?'（逆位）':'（正位）'}`;
+document.getElementById('dailyText').textContent=dc.upright.slice(0,40)+'…';
+// Fix daily reversed based on date
+Object.defineProperty(dc,'reversed',{value:new Date().getDate()%2===0});
+
+// Quote
+document.getElementById('quoteText').textContent=`「 ${randomQuote()} 」`;
+
+// History
+const h=History.list();
+if(h.length>0){
+  document.getElementById('historySection').style.display='';
+  const list=document.getElementById('historyList');
+  h.forEach(item=>{
+    const d=new Date(item.ts);
+    const div=document.createElement('div');
+    div.className='history-item';
+    div.innerHTML=`<div class="h-date">${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}</div>
+    <div class="h-cards">${item.cards||'—'}</div>
+    <div class="h-q">${item.question||'无问题'}</div>`;
+    list.appendChild(div);
+  });
+}
+
+// Settings
+function openSettings(){
+  document.getElementById('apiKeyInput').value=Settings.apiKey;
+  document.getElementById('baseUrlInput').value=Settings.baseUrl;
+  document.getElementById('modelInput').value=Settings.model;
+  document.getElementById('settingsModal').classList.add('open');
+}
+function closeSettings(){document.getElementById('settingsModal').classList.remove('open')}
+function saveSettings(){
+  Settings.apiKey=document.getElementById('apiKeyInput').value.trim();
+  Settings.baseUrl=document.getElementById('baseUrlInput').value.trim()||'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+  Settings.model=document.getElementById('modelInput').value.trim()||'glm-4.7-flash';
+  closeSettings();
+  showToast('设置已保存 ✓');
+}
+function clearSettings(){Settings.apiKey='';document.getElementById('apiKeyInput').value='';showToast('已清除')}
+
+function showToast(msg){
+  const t=document.createElement('div');
+  t.textContent=msg;
+  t.style.cssText='position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(255,215,0,0.9);color:#1a1a2e;padding:10px 24px;border-radius:30px;font-size:14px;font-weight:600;z-index:999;transition:opacity .5s';
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),500)},1800);
+}
+
+document.getElementById('settingsModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSettings()});
+</script>
+</body>
+</html>

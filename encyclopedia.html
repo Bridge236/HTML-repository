@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>牌义百科 · Fortune Tarot</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#ffd700;--gold2:#b8860b;--green:#4ade80;--text:#e0d6c2;--muted:#7a7a90;--card-bg:rgba(22,33,62,0.92);--radius:16px;}
+body{font-family:'Noto Serif SC','STSong','SimSun',serif;background:linear-gradient(160deg,#0d0d1a 0%,#16213e 60%,#0f3460 100%);color:var(--text);min-height:100vh;background-attachment:fixed}
+a{text-decoration:none;color:inherit}
+.stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--dur) ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.1}50%{opacity:.7}}
+.page{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 20px 80px}
+header{display:flex;align-items:center;justify-content:space-between;padding:24px 0 0;flex-wrap:wrap;gap:10px}
+.logo{font-size:20px;font-weight:900;color:var(--gold);letter-spacing:2px}
+.nav-links{display:flex;gap:6px}
+.nav-btn{padding:7px 14px;border-radius:30px;font-size:13px;border:1px solid rgba(255,215,0,0.25);color:#b0a880;cursor:pointer;background:transparent;transition:.25s;font-family:inherit}
+.nav-btn:hover,.nav-btn.active{background:rgba(255,215,0,0.1);border-color:var(--gold);color:var(--gold)}
+.sec-title{text-align:center;margin:40px 0 30px}
+.sec-title h2{font-size:34px;font-weight:900;color:var(--gold);letter-spacing:3px;margin-bottom:8px}
+.sec-title p{font-size:15px;color:var(--muted)}
+
+/* Filter bar */
+.filter-bar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:28px}
+.filter-btn{padding:8px 20px;border-radius:30px;font-size:13px;border:1px solid rgba(255,215,0,0.2);color:var(--muted);cursor:pointer;background:transparent;transition:.25s;font-family:inherit}
+.filter-btn:hover,.filter-btn.active{background:rgba(255,215,0,0.1);border-color:var(--gold);color:var(--gold)}
+
+/* Card grid */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px}
+.enc-card{background:var(--card-bg);border:1px solid rgba(255,215,0,0.15);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:.3s;position:relative}
+.enc-card:hover{border-color:rgba(255,215,0,0.5);transform:translateY(-4px);box-shadow:0 8px 36px rgba(0,0,0,0.3)}
+.enc-card img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}
+.enc-card .img-fallback{width:100%;aspect-ratio:2/3;background:linear-gradient(135deg,#1a2a5a,#0d1a40);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:24px;color:var(--gold)}
+.enc-card .card-foot{padding:10px;text-align:center}
+.enc-card .c-name{font-size:13px;font-weight:700;color:var(--gold)}
+.enc-card .c-en{font-size:10px;color:var(--muted);margin-top:2px}
+.enc-card .suit-dot{position:absolute;top:8px;left:8px;width:10px;height:10px;border-radius:50%}
+.suit-major{background:var(--gold)}
+.suit-wands{background:#f97316}
+.suit-cups{background:#3b82f6}
+.suit-swords{background:#fbbf24}
+.suit-pentacles{background:#4ade80}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:40px 20px 40px;overflow-y:auto;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:linear-gradient(145deg,#12183a,#1a2744);border:1px solid rgba(255,215,0,0.3);border-radius:24px;padding:0;width:100%;max-width:580px;position:relative;overflow:hidden;margin:auto}
+.modal-hero{display:flex;gap:0;min-height:200px}
+.modal-img{width:160px;flex-shrink:0;overflow:hidden}
+.modal-img img{width:100%;height:100%;object-fit:cover;display:block}
+.modal-img .img-fb{width:100%;height:100%;background:linear-gradient(135deg,#1a2a5a,#0d1a40);display:flex;align-items:center;justify-content:center;font-size:40px;min-height:200px}
+.modal-header{flex:1;padding:28px 24px 20px}
+.modal-num{font-size:12px;color:var(--muted);letter-spacing:2px;margin-bottom:6px}
+.modal-name{font-size:28px;font-weight:900;color:var(--gold);margin-bottom:4px}
+.modal-en{font-size:14px;color:var(--muted);margin-bottom:14px}
+.modal-kws{display:flex;gap:6px;flex-wrap:wrap}
+.modal-kw{background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);border-radius:16px;padding:3px 10px;font-size:11px;color:var(--gold)}
+.modal-body{padding:0 28px 28px}
+.modal-section{margin-top:18px}
+.modal-section h4{font-size:13px;letter-spacing:2px;color:var(--muted);margin-bottom:8px}
+.modal-section p{font-size:14px;color:#c0b8b0;line-height:1.9;padding:12px 14px;background:rgba(255,255,255,0.02);border-radius:10px}
+.upright-sect h4{color:rgba(74,222,128,.6)}
+.upright-sect p{border-left:2px solid var(--green)}
+.reversed-sect h4{color:rgba(239,68,68,.6)}
+.reversed-sect p{border-left:2px solid #ef4444}
+.scene-sect p{border-left:2px solid rgba(255,215,0,.3)}
+.soul-sect p{text-align:center;font-style:italic;color:rgba(255,215,0,.8);font-size:15px;background:transparent;border-left:none;margin-top:4px}
+.close-btn{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.07);border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center}
+.close-btn:hover{color:var(--text);background:rgba(255,255,255,.12)}
+.site-footer{text-align:center;padding:32px 20px 20px;margin-top:20px}
+.site-footer p{font-size:12px;color:rgba(122,122,144,.55);line-height:1.9;max-width:620px;margin:0 auto}
+
+.hidden{display:none}
+@media(max-width:600px){.modal-hero{flex-direction:column}.modal-img{width:100%;height:200px}.modal-img img{height:200px;object-fit:cover}}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<div class="page">
+  <header>
+    <a href="index.html" class="logo">🃏 FORTUNE TAROT</a>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="location.href='index.html'">首页</button>
+      <button class="nav-btn" onclick="location.href='single.html'">单牌</button>
+      <button class="nav-btn" onclick="location.href='multi.html'">多牌</button>
+      <button class="nav-btn" onclick="location.href='learn.html'">学习</button>
+      <button class="nav-btn active">百科</button>
+    </div>
+  </header>
+
+  <div class="sec-title">
+    <h2>📚 牌义百科</h2>
+    <p>点击任意一张牌，查看完整的正逆位含义</p>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterCards('all',this)">全部</button>
+    <button class="filter-btn" onclick="filterCards('major',this)">大阿尔卡纳</button>
+    <button class="filter-btn" onclick="filterCards('wands',this)">🔥 权杖</button>
+    <button class="filter-btn" onclick="filterCards('cups',this)">💧 圣杯</button>
+    <button class="filter-btn" onclick="filterCards('swords',this)">🌬️ 宝剑</button>
+    <button class="filter-btn" onclick="filterCards('pentacles',this)">🌿 星币</button>
+  </div>
+
+  <div class="cards-grid" id="cardsGrid"></div>
+
+  <footer class="site-footer">
+    <p>⚠️ 塔罗牌是一种自我探索与心理映射的工具，牌面解读仅为象征性启发，不构成对命运、未来或具体事件的确定性判断。请以开放心态参考，理性看待，最终决定权始终在你手中。</p>
+  </footer>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" id="modalBox">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div class="modal-hero">
+      <div class="modal-img" id="mImg"></div>
+      <div class="modal-header">
+        <div class="modal-num" id="mNum"></div>
+        <div class="modal-name" id="mName"></div>
+        <div class="modal-en" id="mEn"></div>
+        <div class="modal-kws" id="mKws"></div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section upright-sect">
+        <h4>▲ 正位</h4>
+        <p id="mUpright"></p>
+      </div>
+      <div class="modal-section reversed-sect">
+        <h4>▼ 逆位</h4>
+        <p id="mReversed"></p>
+      </div>
+      <div class="modal-section scene-sect">
+        <h4>◈ 适用场景</h4>
+        <p id="mScene"></p>
+      </div>
+      <div class="modal-section soul-sect">
+        <h4>✦ 灵魂句</h4>
+        <p id="mSoul"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="tarot-data.js"></script>
+<script>
+(function(){const c=document.getElementById('stars');for(let i=0;i<60;i++){const s=document.createElement('div');s.className='star';const sz=Math.random()*2+.5;s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--dur:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s`;c.appendChild(s)}})();
+
+const NUM_LABELS=['0','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX','XXI'];
+
+function buildGrid(cards){
+  const grid=document.getElementById('cardsGrid');
+  grid.innerHTML='';
+  cards.forEach(c=>{
+    const div=document.createElement('div');
+    div.className='enc-card';
+    div.onclick=()=>openModal(c);
+    const suitDotClass='suit-'+(c.suit==='major'?'major':c.suit);
+    div.innerHTML=`<div class="suit-dot ${suitDotClass}"></div>
+    <img src="${c.img}" alt="${c.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="img-fallback" style="display:none">${c.suit==='major'?NUM_LABELS[c.id]||'✦':'✦'}<span style="font-size:11px;color:var(--muted)">${c.name}</span></div>
+    <div class="card-foot"><div class="c-name">${c.name}</div><div class="c-en">${c.en}</div></div>`;
+    grid.appendChild(div);
+  });
+}
+
+buildGrid(ALL_CARDS);
+
+function filterCards(suit,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered=suit==='all'?ALL_CARDS:ALL_CARDS.filter(c=>c.suit===suit);
+  buildGrid(filtered);
+}
+
+function openModal(c){
+  const overlay=document.getElementById('modal');
+  document.getElementById('mNum').textContent=c.suit==='major'?`大阿尔卡纳 · ${NUM_LABELS[c.id]}`:`小阿尔卡纳 · ${c.suit}`;
+  document.getElementById('mName').textContent=c.name;
+  document.getElementById('mEn').textContent=c.en;
+  document.getElementById('mKws').innerHTML=c.keywords.map(k=>`<span class="modal-kw">${k}</span>`).join('');
+  document.getElementById('mUpright').textContent=c.upright;
+  document.getElementById('mReversed').textContent=c.reversed;
+  document.getElementById('mScene').textContent=c.scene;
+  document.getElementById('mSoul').textContent=`「 ${c.soul} 」`;
+  const imgDiv=document.getElementById('mImg');
+  imgDiv.innerHTML=`<img src="${c.img}" alt="${c.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="img-fb" style="display:none;min-height:240px">🌙</div>`;
+  overlay.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(e){
+  if(e&&e.target!==document.getElementById('modal')&&!e.target.classList.contains('close-btn'))return;
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+</script>
+</body>
+</html>
