@@ -321,6 +321,7 @@ function drawCards(n, pool = ALL_CARDS) {
 
 // ── AI reading helper ─────────────────────────────────────────
 async function callAI(prompt, apiKey, baseUrl) {
+  if (!Settings.aiEnabled) throw new Error("AI 功能已关闭");
   const model = Settings.model;
   const url = baseUrl;
   const res = await fetch(url, {
@@ -409,7 +410,9 @@ const Settings = {
   set apiKey(v)  { localStorage.setItem("tarot_api_key", v); },
   set baseUrl(v) { localStorage.setItem("tarot_base_url", v); },
   set model(v)   { localStorage.setItem("tarot_model", v); },
-  hasKey()       { return !!this.apiKey; }
+  hasKey()       { return !!this.apiKey; },
+  get aiEnabled() { return localStorage.getItem("tarot_ai_enabled") !== "0"; },
+  set aiEnabled(v){ localStorage.setItem("tarot_ai_enabled", v ? "1" : "0"); }
 };
 
 // ── History helpers ───────────────────────────────────────────
@@ -438,10 +441,12 @@ const QUOTES = [
 function randomQuote() { return QUOTES[Math.floor(Math.random() * QUOTES.length)]; }
 
 // ============================================================
-//  SHARED SETTINGS UI — injected into all pages
+//  SHARED ADMIN UI — injected into all pages
 // ============================================================
-(function initSettingsUI() {
-  if (document.getElementById('settingsModal')) return; // already injected
+const _ADMIN_PWD = '123456';
+
+(function initAdminUI() {
+  if (document.getElementById('adminModal')) return;
 
   // ── CSS ──
   const style = document.createElement('style');
@@ -454,7 +459,7 @@ function randomQuote() { return QUOTES[Math.floor(Math.random() * QUOTES.length)
 .modal input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,215,0,0.25);border-radius:10px;padding:12px 14px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:.25s}
 .modal input:focus{border-color:var(--gold)}
 .modal .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.7}
-.modal .hint a{color:var(--gold);text-decoration:underline;cursor:pointer}
+.modal .hint b{color:var(--gold)}
 .modal .btn-row{display:flex;gap:10px;margin-top:24px}
 .btn{padding:12px 28px;border-radius:30px;font-size:14px;font-family:inherit;cursor:pointer;border:none;transition:.25s;font-weight:600}
 .btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1a2e}
@@ -468,8 +473,17 @@ function randomQuote() { return QUOTES[Math.floor(Math.random() * QUOTES.length)
 .key-toggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px 8px;line-height:1;transition:.2s}
 .key-toggle:hover{color:var(--gold)}
 .key-toggle.showing{color:var(--gold)}
-.nav-btn.settings-btn{padding:8px 12px}
-/* ── AI 解读渲染样式 ── */
+.toggle-wrap{display:flex;align-items:center;gap:12px;margin:8px 0 20px}
+.toggle-track{width:50px;height:28px;border-radius:14px;background:rgba(255,255,255,.08);border:2px solid rgba(255,215,0,.2);cursor:pointer;position:relative;transition:.3s}
+.toggle-track.on{background:rgba(74,222,128,.2);border-color:rgba(74,222,128,.5)}
+.toggle-thumb{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--muted);transition:.3s;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.toggle-track.on .toggle-thumb{left:24px;background:var(--green)}
+#aiStatusLabel{font-size:14px;font-weight:600;transition:.3s}
+.admin-lock-icon{font-size:48px;margin-bottom:12px}
+.admin-lock-title{color:var(--gold);font-size:22px;font-weight:700}
+.admin-lock-sub{font-size:13px;color:var(--muted);margin-top:8px}
+.admin-pwd-err{color:#ef4444;font-size:13px;margin-top:8px;display:none}
+/* AI reading styles */
 .ai-reading{font-size:15px;color:#c0c8b8;line-height:2.1}
 .ai-reading .ai-h3{color:var(--gold);font-size:17px;font-weight:700;margin:24px 0 12px;letter-spacing:0.5px}
 .ai-reading .ai-h3:first-child{margin-top:0}
@@ -481,69 +495,137 @@ function randomQuote() { return QUOTES[Math.floor(Math.random() * QUOTES.length)
 
   // ── HTML ──
   const html = `
-<div class="modal-overlay" id="settingsModal">
+<div class="modal-overlay" id="adminModal">
   <div class="modal">
-    <button class="close-btn" onclick="closeSettings()">✕</button>
-    <h2>⚙️ AI 解读配置</h2>
-    <label>API Key</label>
-    <div class="key-input-wrap">
-      <input type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off">
-      <button class="key-toggle" id="keyToggle" onclick="toggleKeyVisibility()" title="点击查看明文">👁️</button>
+    <button class="close-btn" onclick="closeAdmin()">✕</button>
+    <div id="adminLock" style="text-align:center;padding:20px 0">
+      <div class="admin-lock-icon">🔐</div>
+      <div class="admin-lock-title">管理员验证</div>
+      <div class="admin-lock-sub">请输入管理员密码以访问设置</div>
+      <input type="password" id="adminPwdInput" placeholder="输入密码…" autocomplete="off" onkeydown="if(event.key==='Enter')verifyAdmin()" style="margin-top:20px;text-align:center;font-size:16px;letter-spacing:4px">
+      <div class="admin-pwd-err" id="pwdErr">❌ 密码错误，请重试</div>
+      <button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="verifyAdmin()">进入管理</button>
     </div>
-    <p class="hint">你的 Key 仅存储在本地浏览器，不会上传至任何服务器。支持 <a href="https://platform.deepseek.com/api_keys" target="_blank">DeepSeek</a>、OpenAI、智谱等兼容接口。</p>
-    <label>模型名称</label>
-    <input type="text" id="modelInput" placeholder="deepseek-v4-pro">
-    <p class="hint">DeepSeek 填 <b>deepseek-v4-pro</b>；智谱填 <b>glm-4.7-flash</b>；OpenAI 填 <b>gpt-4o-mini</b></p>
-    <label>API 地址</label>
-    <input type="text" id="baseUrlInput" placeholder="https://api.deepseek.com/v1/chat/completions">
-    <p class="hint">智谱：https://open.bigmodel.cn/api/paas/v4/chat/completions<br>OpenAI：https://api.openai.com/v1/chat/completions</p>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="saveSettings()">💾 保存</button>
-      <button class="btn btn-ghost" onclick="clearSettings()">🗑 清除 Key</button>
+    <div id="adminSettings" style="display:none">
+      <h2>⚙️ 管理员设置</h2>
+      <label>AI 功能</label>
+      <div class="toggle-wrap">
+        <div class="toggle-track" id="aiToggle" onclick="toggleAI()"><div class="toggle-thumb"></div></div>
+        <span id="aiStatusLabel" style="color:var(--green)">已开启</span>
+      </div>
+      <label>API Key</label>
+      <div class="key-input-wrap">
+        <input type="password" id="apiKeyInput" placeholder="sk-…" autocomplete="off">
+        <button class="key-toggle" id="keyToggle" onclick="toggleKeyVisibility()" title="点击查看明文">👁️</button>
+      </div>
+      <p class="hint">Key 仅存储在本地浏览器，不会上传至任何服务器。支持 <b>DeepSeek</b>、OpenAI、智谱等兼容接口。</p>
+      <label>模型名称</label>
+      <input type="text" id="modelInput" placeholder="deepseek-v4-pro">
+      <p class="hint">DeepSeek：<b>deepseek-v4-pro</b>｜智谱：<b>glm-4.7-flash</b>｜OpenAI：<b>gpt-4o-mini</b></p>
+      <label>API 地址</label>
+      <input type="text" id="baseUrlInput" placeholder="https://api.deepseek.com/v1/chat/completions">
+      <p class="hint">DeepSeek：https://api.deepseek.com/v1/chat/completions<br>智谱：https://open.bigmodel.cn/api/paas/v4/chat/completions<br>OpenAI：https://api.openai.com/v1/chat/completions</p>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="saveAdminSettings()">💾 保存</button>
+        <button class="btn btn-ghost" onclick="clearAdminSettings()">🗑 清除</button>
+      </div>
     </div>
   </div>
 </div>`;
   document.body.insertAdjacentHTML('beforeend', html);
 
-  // ── Overlay click to close ──
-  document.getElementById('settingsModal').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeSettings();
+  // Click overlay to close
+  document.getElementById('adminModal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeAdmin();
   });
 })();
 
-// ── Global settings functions (called from any page) ──
-function openSettings() {
+// ── Global admin functions (called from any page) ──
+function openAdmin() {
+  const unlocked = sessionStorage.getItem('tarot_admin_ok') === '1';
+  if (unlocked) { _showAdminSettings(); } else { _showAdminLock(); }
+  document.getElementById('adminModal').classList.add('open');
+  if (!unlocked) setTimeout(() => document.getElementById('adminPwdInput')?.focus(), 100);
+}
+
+function _showAdminLock() {
+  document.getElementById('adminLock').style.display = '';
+  document.getElementById('adminSettings').style.display = 'none';
+  document.getElementById('adminPwdInput').value = '';
+  document.getElementById('pwdErr').style.display = 'none';
+}
+
+function _showAdminSettings() {
+  document.getElementById('adminLock').style.display = 'none';
+  document.getElementById('adminSettings').style.display = '';
   document.getElementById('apiKeyInput').value = Settings.apiKey;
-  const url = Settings.baseUrl;
-  // Show user-friendly URL in input
-  document.getElementById('baseUrlInput').value = url;
+  document.getElementById('baseUrlInput').value = Settings.baseUrl;
   document.getElementById('modelInput').value = Settings.model;
-  // Reset password field and toggle
+  const toggle = document.getElementById('aiToggle');
+  const label = document.getElementById('aiStatusLabel');
+  if (Settings.aiEnabled) {
+    toggle.classList.add('on');
+    label.textContent = '已开启';
+    label.style.color = 'var(--green)';
+  } else {
+    toggle.classList.remove('on');
+    label.textContent = '已关闭';
+    label.style.color = 'var(--muted)';
+  }
   document.getElementById('apiKeyInput').type = 'password';
   document.getElementById('keyToggle').textContent = '👁️';
   document.getElementById('keyToggle').classList.remove('showing');
-  document.getElementById('settingsModal').classList.add('open');
 }
 
-function closeSettings() {
-  document.getElementById('settingsModal').classList.remove('open');
+function verifyAdmin() {
+  const pwd = document.getElementById('adminPwdInput').value;
+  if (pwd === _ADMIN_PWD) {
+    sessionStorage.setItem('tarot_admin_ok', '1');
+    _showAdminSettings();
+  } else {
+    document.getElementById('pwdErr').style.display = 'block';
+    document.getElementById('adminPwdInput').style.borderColor = '#ef4444';
+    setTimeout(() => {
+      const inp = document.getElementById('adminPwdInput');
+      if (inp) { inp.style.borderColor = ''; inp.value = ''; }
+    }, 1500);
+  }
 }
 
-function saveSettings() {
+function closeAdmin() {
+  document.getElementById('adminModal').classList.remove('open');
+}
+
+function toggleAI() {
+  const toggle = document.getElementById('aiToggle');
+  const label = document.getElementById('aiStatusLabel');
+  const newState = !Settings.aiEnabled;
+  Settings.aiEnabled = newState;
+  if (newState) {
+    toggle.classList.add('on');
+    label.textContent = '已开启';
+    label.style.color = 'var(--green)';
+  } else {
+    toggle.classList.remove('on');
+    label.textContent = '已关闭';
+    label.style.color = 'var(--muted)';
+  }
+}
+
+function saveAdminSettings() {
   Settings.apiKey = document.getElementById('apiKeyInput').value.trim();
   Settings.baseUrl = document.getElementById('baseUrlInput').value.trim() || 'https://api.deepseek.com/v1/chat/completions';
   Settings.model = document.getElementById('modelInput').value.trim() || 'deepseek-v4-pro';
-  closeSettings();
+  closeAdmin();
   showToast('✅ 设置已保存');
 }
 
-function clearSettings() {
+function clearAdminSettings() {
   Settings.apiKey = '';
+  Settings.aiEnabled = false;
   Settings.model = 'deepseek-v4-pro';
   Settings.baseUrl = 'https://api.deepseek.com/v1/chat/completions';
-  document.getElementById('apiKeyInput').value = '';
-  document.getElementById('modelInput').value = 'deepseek-v4-pro';
-  document.getElementById('baseUrlInput').value = 'https://api.deepseek.com/v1/chat/completions';
+  _showAdminSettings();
   showToast('🗑 已清除全部设置');
 }
 

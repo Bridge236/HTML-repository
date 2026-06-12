@@ -29,7 +29,7 @@ header{width:100%;max-width:960px;display:flex;align-items:center;justify-conten
 .nav-links{display:flex;gap:6px}
 .nav-btn{padding:8px 16px;border-radius:30px;font-size:13px;border:1px solid rgba(255,215,0,0.25);color:#b0a880;cursor:pointer;background:transparent;transition:all .25s;font-family:inherit}
 .nav-btn:hover,.nav-btn.active{background:rgba(255,215,0,0.1);border-color:var(--gold);color:var(--gold)}
-.nav-btn.settings-btn{padding:8px 12px}
+
 
 /* Hero */
 .hero{text-align:center;padding:60px 20px 50px;max-width:700px}
@@ -91,14 +91,13 @@ header{width:100%;max-width:960px;display:flex;align-items:center;justify-conten
 
 <div class="page">
   <header>
-    <div class="logo">🃏 FORTUNE TAROT</div>
+    <div class="logo" onclick="openAdmin()" style="cursor:pointer">🃏 FORTUNE TAROT</div>
     <div class="nav-links">
       <button class="nav-btn active" onclick="location.href='index.html'">首页</button>
       <button class="nav-btn" onclick="location.href='single.html'">单牌</button>
       <button class="nav-btn" onclick="location.href='multi.html'">多牌</button>
       <button class="nav-btn" onclick="location.href='learn.html'">学习</button>
       <button class="nav-btn" onclick="location.href='encyclopedia.html'">百科</button>
-      <button class="nav-btn settings-btn" onclick="openSettings()" title="AI设置">⚙️</button>
     </div>
   </header>
 

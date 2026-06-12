@@ -142,14 +142,13 @@ header{display:flex;align-items:center;justify-content:space-between;padding:24p
 <div class="stars" id="stars"></div>
 <div class="page">
   <header>
-    <a href="index.html" class="logo">🃏 FORTUNE TAROT</a>
+    <div class="logo" onclick="openAdmin()" style="cursor:pointer">🃏 FORTUNE TAROT</div>
     <div class="nav-links">
       <button class="nav-btn" onclick="location.href='index.html'">首页</button>
       <button class="nav-btn" onclick="location.href='single.html'">单牌</button>
       <button class="nav-btn active">多牌</button>
       <button class="nav-btn" onclick="location.href='learn.html'">学习</button>
       <button class="nav-btn" onclick="location.href='encyclopedia.html'">百科</button>
-      <button class="nav-btn settings-btn" onclick="openSettings()" title="AI设置">⚙️</button>
     </div>
   </header>
 
@@ -451,8 +450,12 @@ async function requestAI(){
     `[${spread.positions[i]}] ${c.name}（${c.reversed?'逆位':'正位'}）— ${c.reversed?c.reversed:c.upright}`
   ).join('\n');
 
+  if(!Settings.aiEnabled){
+    aiDiv.innerHTML=`<div class="ai-hint">🔮 AI 解读功能暂未开启，当前仅展示预设牌义。</div>`;
+    return;
+  }
   if(!Settings.hasKey()){
-    aiDiv.innerHTML=`<div class="ai-hint">💡 尚未配置 AI Key，无法获得 AI 整合解读。<br>请在<a onclick="openSettings()">这里设置</a>你的 API Key。<br><br>以下是预设的逐牌解读，已展示在上方。</div>`;
+    aiDiv.innerHTML=`<div class="ai-hint">💡 AI 解读功能尚未完成配置，暂时无法使用。</div>`;
     return;
   }
 

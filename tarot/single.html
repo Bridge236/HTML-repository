@@ -128,14 +128,13 @@ header{display:flex;align-items:center;justify-content:space-between;padding:24p
 
 <div class="page">
   <header>
-    <a href="index.html" class="logo">🃏 FORTUNE TAROT</a>
+    <div class="logo" onclick="openAdmin()" style="cursor:pointer">🃏 FORTUNE TAROT</div>
     <div class="nav-links">
       <button class="nav-btn" onclick="location.href='index.html'">首页</button>
       <button class="nav-btn active">单牌</button>
       <button class="nav-btn" onclick="location.href='multi.html'">多牌</button>
       <button class="nav-btn" onclick="location.href='learn.html'">学习</button>
       <button class="nav-btn" onclick="location.href='encyclopedia.html'">百科</button>
-      <button class="nav-btn settings-btn" onclick="openSettings()" title="AI设置">⚙️</button>
     </div>
   </header>
 
@@ -335,8 +334,12 @@ async function requestAI(card){
   const q=document.getElementById('questionInput').value.trim();
   const aiDiv=document.getElementById('aiContent');
 
+  if(!Settings.aiEnabled){
+    aiDiv.innerHTML=`<div class="ai-hint">🔮 AI 解读功能暂未开启，当前仅展示预设牌义。<br><br><em style="color:#c0c8b0;line-height:2">${card.reversed?card.reversed:card.upright}</em></div>`;
+    return;
+  }
   if(!Settings.hasKey()){
-    aiDiv.innerHTML=`<div class="ai-hint">💡 尚未配置 AI Key。<a onclick="openSettings()">点此设置</a>，配置后可获得结合你问题的个性化深度解读。<br><br>当前展示预设解读：<br><br><em style="color:#c0c8b0;line-height:2">${card.reversed?card.reversed:card.upright}</em></div>`;
+    aiDiv.innerHTML=`<div class="ai-hint">💡 AI 解读功能尚未完成配置，暂时无法使用。<br><br>当前展示预设解读：<br><br><em style="color:#c0c8b0;line-height:2">${card.reversed?card.reversed:card.upright}</em></div>`;
     return;
   }
 
