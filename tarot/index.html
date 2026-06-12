@@ -63,23 +63,7 @@ header{width:100%;max-width:960px;display:flex;align-items:center;justify-conten
 .quote-wrap{max-width:600px;width:100%;margin:40px 0 0;text-align:center}
 .quote-text{font-size:17px;font-style:italic;color:rgba(255,215,0,0.7);letter-spacing:1px}
 
-/* Settings Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-.modal-overlay.open{display:flex}
-.modal{background:linear-gradient(145deg,#12183a,#1a2744);border:1px solid rgba(255,215,0,0.3);border-radius:24px;padding:36px;width:100%;max-width:460px;position:relative}
-.modal h2{color:var(--gold);font-size:22px;margin-bottom:24px;font-weight:700}
-.modal label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;margin-top:16px;letter-spacing:1px}
-.modal input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,215,0,0.25);border-radius:10px;padding:12px 14px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:.25s}
-.modal input:focus{border-color:var(--gold)}
-.modal .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.6}
-.modal .btn-row{display:flex;gap:10px;margin-top:24px}
-.btn{padding:12px 28px;border-radius:30px;font-size:14px;font-family:inherit;cursor:pointer;border:none;transition:.25s;font-weight:600}
-.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1a2e}
-.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
-.btn-ghost{background:transparent;border:1px solid rgba(255,215,0,0.3);color:var(--gold)}
-.btn-ghost:hover{background:rgba(255,215,0,0.08)}
-.modal .close-btn{position:absolute;top:18px;right:18px;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
-.modal .close-btn:hover{color:var(--text)}
+/* Settings — injected by tarot-data.js */
 
 /* History section */
 .history-section{max-width:760px;width:100%;margin-top:48px}
@@ -178,26 +162,7 @@ header{width:100%;max-width:960px;display:flex;align-items:center;justify-conten
   </footer>
 </div>
 
-<!-- Settings Modal -->
-<div class="modal-overlay" id="settingsModal">
-  <div class="modal">
-    <button class="close-btn" onclick="closeSettings()">✕</button>
-    <h2>⚙️ AI 解读配置</h2>
-    <label>API Key</label>
-    <input type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off">
-    <p class="hint">你的 Key 仅存储在本地浏览器，不会上传至任何服务器。支持 OpenAI 及任何兼容接口。</p>
-    <label>模型名称（默认智谱）</label>
-    <input type="text" id="modelInput" placeholder="glm-4.7-flash">
-    <p class="hint">智谱填 glm-4.7-flash；OpenAI 填 gpt-4o-mini</p>
-    <label>API 地址（默认智谱）</label>
-    <input type="text" id="baseUrlInput" placeholder="https://open.bigmodel.cn/api/paas/v4/chat/completions">
-    <p class="hint">换成 OpenAI：https://api.openai.com/v1/chat/completions</p>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="saveSettings()">保存</button>
-      <button class="btn btn-ghost" onclick="clearSettings()">清除 Key</button>
-    </div>
-  </div>
-</div>
+<!-- Settings Modal — auto-injected by tarot-data.js -->
 
 <script src="tarot-data.js"></script>
 <script>
@@ -240,32 +205,7 @@ if(h.length>0){
   });
 }
 
-// Settings
-function openSettings(){
-  document.getElementById('apiKeyInput').value=Settings.apiKey;
-  document.getElementById('baseUrlInput').value=Settings.baseUrl;
-  document.getElementById('modelInput').value=Settings.model;
-  document.getElementById('settingsModal').classList.add('open');
-}
-function closeSettings(){document.getElementById('settingsModal').classList.remove('open')}
-function saveSettings(){
-  Settings.apiKey=document.getElementById('apiKeyInput').value.trim();
-  Settings.baseUrl=document.getElementById('baseUrlInput').value.trim()||'https://open.bigmodel.cn/api/paas/v4/chat/completions';
-  Settings.model=document.getElementById('modelInput').value.trim()||'glm-4.7-flash';
-  closeSettings();
-  showToast('设置已保存 ✓');
-}
-function clearSettings(){Settings.apiKey='';document.getElementById('apiKeyInput').value='';showToast('已清除')}
-
-function showToast(msg){
-  const t=document.createElement('div');
-  t.textContent=msg;
-  t.style.cssText='position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(255,215,0,0.9);color:#1a1a2e;padding:10px 24px;border-radius:30px;font-size:14px;font-weight:600;z-index:999;transition:opacity .5s';
-  document.body.appendChild(t);
-  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),500)},1800);
-}
-
-document.getElementById('settingsModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSettings()});
+// History
 </script>
 </body>
 </html>

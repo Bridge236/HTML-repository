@@ -360,12 +360,12 @@ async function callAI(prompt, apiKey, baseUrl) {
 const Settings = {
   get apiKey()   { return localStorage.getItem("tarot_api_key")   || ""; },
   get baseUrl()  {
-    const v = localStorage.getItem("tarot_base_url") || "https://open.bigmodel.cn/api/paas/v4/chat/completions";
+    const v = localStorage.getItem("tarot_base_url") || "https://api.deepseek.com/v1/chat/completions";
     // backward compat: old format (e.g. "https://api.openai.com") → append OpenAI path
     if (!v.endsWith("/chat/completions")) return v.replace(/\/$/, "") + "/v1/chat/completions";
     return v;
   },
-  get model()    { return localStorage.getItem("tarot_model")     || "glm-4.7-flash"; },
+  get model()    { return localStorage.getItem("tarot_model")     || "deepseek-chat"; },
   set apiKey(v)  { localStorage.setItem("tarot_api_key", v); },
   set baseUrl(v) { localStorage.setItem("tarot_base_url", v); },
   set model(v)   { localStorage.setItem("tarot_model", v); },
@@ -396,3 +396,132 @@ const QUOTES = [
   "你在牌里看见什么，就是你心里藏着什么。"
 ];
 function randomQuote() { return QUOTES[Math.floor(Math.random() * QUOTES.length)]; }
+
+// ============================================================
+//  SHARED SETTINGS UI — injected into all pages
+// ============================================================
+(function initSettingsUI() {
+  if (document.getElementById('settingsModal')) return; // already injected
+
+  // ── CSS ──
+  const style = document.createElement('style');
+  style.textContent = `
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:linear-gradient(145deg,#12183a,#1a2744);border:1px solid rgba(255,215,0,0.3);border-radius:24px;padding:36px;width:100%;max-width:460px;position:relative}
+.modal h2{color:var(--gold);font-size:22px;margin-bottom:24px;font-weight:700}
+.modal label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;margin-top:16px;letter-spacing:1px}
+.modal input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,215,0,0.25);border-radius:10px;padding:12px 14px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:.25s}
+.modal input:focus{border-color:var(--gold)}
+.modal .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.7}
+.modal .hint a{color:var(--gold);text-decoration:underline;cursor:pointer}
+.modal .btn-row{display:flex;gap:10px;margin-top:24px}
+.btn{padding:12px 28px;border-radius:30px;font-size:14px;font-family:inherit;cursor:pointer;border:none;transition:.25s;font-weight:600}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1a2e}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,215,0,0.3);color:var(--gold)}
+.btn-ghost:hover{background:rgba(255,215,0,0.08)}
+.modal .close-btn{position:absolute;top:18px;right:18px;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
+.modal .close-btn:hover{color:var(--text)}
+.key-input-wrap{position:relative}
+.key-input-wrap input{padding-right:48px}
+.key-toggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px 8px;line-height:1;transition:.2s}
+.key-toggle:hover{color:var(--gold)}
+.key-toggle.showing{color:var(--gold)}
+.nav-btn.settings-btn{padding:8px 12px}`;
+  document.head.appendChild(style);
+
+  // ── HTML ──
+  const html = `
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <button class="close-btn" onclick="closeSettings()">✕</button>
+    <h2>⚙️ AI 解读配置</h2>
+    <label>API Key</label>
+    <div class="key-input-wrap">
+      <input type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off">
+      <button class="key-toggle" id="keyToggle" onclick="toggleKeyVisibility()" title="点击查看明文">👁️</button>
+    </div>
+    <p class="hint">你的 Key 仅存储在本地浏览器，不会上传至任何服务器。支持 <a href="https://platform.deepseek.com/api_keys" target="_blank">DeepSeek</a>、OpenAI、智谱等兼容接口。</p>
+    <label>模型名称</label>
+    <input type="text" id="modelInput" placeholder="deepseek-chat">
+    <p class="hint">DeepSeek 填 <b>deepseek-chat</b>；智谱填 <b>glm-4.7-flash</b>；OpenAI 填 <b>gpt-4o-mini</b></p>
+    <label>API 地址</label>
+    <input type="text" id="baseUrlInput" placeholder="https://api.deepseek.com/v1/chat/completions">
+    <p class="hint">智谱：https://open.bigmodel.cn/api/paas/v4/chat/completions<br>OpenAI：https://api.openai.com/v1/chat/completions</p>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveSettings()">💾 保存</button>
+      <button class="btn btn-ghost" onclick="clearSettings()">🗑 清除 Key</button>
+    </div>
+  </div>
+</div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+
+  // ── Overlay click to close ──
+  document.getElementById('settingsModal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeSettings();
+  });
+})();
+
+// ── Global settings functions (called from any page) ──
+function openSettings() {
+  document.getElementById('apiKeyInput').value = Settings.apiKey;
+  const url = Settings.baseUrl;
+  // Show user-friendly URL in input
+  document.getElementById('baseUrlInput').value = url;
+  document.getElementById('modelInput').value = Settings.model;
+  // Reset password field and toggle
+  document.getElementById('apiKeyInput').type = 'password';
+  document.getElementById('keyToggle').textContent = '👁️';
+  document.getElementById('keyToggle').classList.remove('showing');
+  document.getElementById('settingsModal').classList.add('open');
+}
+
+function closeSettings() {
+  document.getElementById('settingsModal').classList.remove('open');
+}
+
+function saveSettings() {
+  Settings.apiKey = document.getElementById('apiKeyInput').value.trim();
+  Settings.baseUrl = document.getElementById('baseUrlInput').value.trim() || 'https://api.deepseek.com/v1/chat/completions';
+  Settings.model = document.getElementById('modelInput').value.trim() || 'deepseek-chat';
+  closeSettings();
+  showToast('✅ 设置已保存');
+}
+
+function clearSettings() {
+  Settings.apiKey = '';
+  Settings.model = 'deepseek-chat';
+  Settings.baseUrl = 'https://api.deepseek.com/v1/chat/completions';
+  document.getElementById('apiKeyInput').value = '';
+  document.getElementById('modelInput').value = 'deepseek-chat';
+  document.getElementById('baseUrlInput').value = 'https://api.deepseek.com/v1/chat/completions';
+  showToast('🗑 已清除全部设置');
+}
+
+function toggleKeyVisibility() {
+  const input = document.getElementById('apiKeyInput');
+  const btn = document.getElementById('keyToggle');
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+    btn.classList.add('showing');
+    btn.title = '隐藏明文';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁️';
+    btn.classList.remove('showing');
+    btn.title = '点击查看明文';
+  }
+}
+
+function showToast(msg) {
+  const existing = document.querySelector('.global-toast');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.className = 'global-toast';
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(255,215,0,0.92);color:#1a1a2e;padding:10px 28px;border-radius:30px;font-size:14px;font-weight:600;z-index:9999;transition:opacity .5s;box-shadow:0 4px 24px rgba(0,0,0,0.3)';
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 500); }, 2000);
+}

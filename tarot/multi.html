@@ -149,6 +149,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:24p
       <button class="nav-btn active">多牌</button>
       <button class="nav-btn" onclick="location.href='learn.html'">学习</button>
       <button class="nav-btn" onclick="location.href='encyclopedia.html'">百科</button>
+      <button class="nav-btn settings-btn" onclick="openSettings()" title="AI设置">⚙️</button>
     </div>
   </header>
 
@@ -451,7 +452,7 @@ async function requestAI(){
   ).join('\n');
 
   if(!Settings.hasKey()){
-    aiDiv.innerHTML=`<div class="ai-hint">💡 尚未配置 AI Key，无法获得 AI 整合解读。<br>请在<a onclick="promptKey()">这里设置</a>你的 API Key。<br><br>以下是预设的逐牌解读，已展示在上方。</div>`;
+    aiDiv.innerHTML=`<div class="ai-hint">💡 尚未配置 AI Key，无法获得 AI 整合解读。<br>请在<a onclick="openSettings()">这里设置</a>你的 API Key。<br><br>以下是预设的逐牌解读，已展示在上方。</div>`;
     return;
   }
 
@@ -513,11 +514,6 @@ ${cardsDesc}
     btn.textContent='✓ 已复制';btn.classList.add('copied');
     setTimeout(()=>{btn.textContent='📋 复制提示词';btn.classList.remove('copied')},2000);
   }).catch(()=>{alert('复制失败，请手动复制')});
-}
-
-function promptKey(){
-  const key=prompt('请输入你的 API Key（仅存本地）：');
-  if(key){Settings.apiKey=key.trim();requestAI();}
 }
 
 function resetAll(){
