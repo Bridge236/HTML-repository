@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>秦基周 人生经历报告</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        :root {
+            --primary: #8B5E3C;
+            --primary-light: #C49A6C;
+            --primary-dark: #5C3D2E;
+            --accent: #D4A574;
+            --accent-light: #F0DFC8;
+            --bg: #FBF7F2;
+            --bg-card: #FFFFFF;
+            --text: #3D2B1F;
+            --text-light: #7A6558;
+            --text-muted: #A89585;
+            --border: #E8DDD2;
+            --shadow: rgba(139, 94, 60, 0.08);
+            --shadow-lg: rgba(139, 94, 60, 0.15);
+            --gradient-start: #8B5E3C;
+            --gradient-end: #C49A6C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            position: relative;
+            min-height: 520px;
+            background: linear-gradient(135deg, #3D2B1F 0%, #5C3D2E 30%, #8B5E3C 70%, #C49A6C 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .hero-photo {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.3);
+            margin: 0 auto 30px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #D4A574, #8B5E3C);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .hero-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-photo .placeholder-initial {
+            font-size: 64px;
+            color: rgba(255,255,255,0.6);
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 700;
+        }
+
+        .hero h1 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 48px;
+            color: #FFFFFF;
+            margin-bottom: 8px;
+            letter-spacing: 8px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .hero .subtitle {
+            font-size: 20px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+        }
+
+        .hero .motto {
+            font-size: 15px;
+            color: rgba(255,255,255,0.5);
+            font-style: italic;
+            margin-top: 16px;
+            letter-spacing: 4px;
+        }
+
+        .hero .motto::before,
+        .hero .motto::after {
+            content: ' — ';
+        }
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            background: var(--bg-card);
+            box-shadow: 0 4px 20px var(--shadow);
+            position: relative;
+            z-index: 3;
+            margin-top: -30px;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 800px;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .stat-item {
+            flex: 1;
+            text-align: center;
+            padding: 24px 16px;
+            border-right: 1px solid var(--border);
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-item .stat-value {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-item .stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ===== SECTION STYLES ===== */
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        section {
+            margin-top: 60px;
+        }
+
+        .section-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title .icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .section-desc {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 32px;
+            padding-left: 48px;
+        }
+
+        /* ===== PROFILE CARD ===== */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .profile-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 2px 12px var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .profile-card h3 {
+            font-size: 16px;
+            color: var(--primary);
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--accent-light);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border);
+            font-size: 14px;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-row .label {
+            color: var(--text-muted);
+        }
+
+        .info-row .value {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* ===== CAREER PATH ===== */
+        .career-path {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .career-step {
+            flex: 1;
+            text-align: center;
+            padding: 28px 16px;
+            position: relative;
+            background: var(--bg-card);
+        }
+
+        .career-step:not(:last-child)::after {
+            content: '→';
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            color: var(--accent);
+            z-index: 2;
+        }
+
+        .career-step:not(:last-child) {
+            border-right: 2px dashed var(--border);
+        }
+
+        .career-step .step-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: var(--accent-light);
+        }
+
+        .career-step .step-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 4px;
+        }
+
+        .career-step .step-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ===== TIMELINE ===== */
+        .timeline {
+            position: relative;
+            padding-left: 48px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent), var(--primary-light));
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 32px;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -36px;
+            top: 6px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid var(--bg);
+            box-shadow: 0 0 0 3px var(--accent);
+            z-index: 1;
+        }
+
+        .timeline-item.highlight .timeline-dot {
+            width: 20px;
+            height: 20px;
+            left: -38px;
+            top: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            box-shadow: 0 0 0 4px var(--accent), 0 0 20px rgba(139, 94, 60, 0.3);
+        }
+
+        .timeline-year {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .timeline-card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 2px 12px var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .timeline-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--shadow-lg);
+        }
+
+        .timeline-item.highlight .timeline-card {
+            border-left: 4px solid var(--primary);
+        }
+
+        .timeline-card .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .timeline-card .card-photo {
+            width: 80px;
+            height: 100px;
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timeline-card .card-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .timeline-card .card-photo .photo-placeholder {
+            font-size: 28px;
+            opacity: 0.5;
+        }
+
+        .card-info h4 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+
+        .card-info .role {
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .card-info .genre {
+            display: inline-block;
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            background: var(--accent-light);
+            color: var(--primary-dark);
+        }
+
+        .card-info .genre.movie {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .timeline-card .card-desc {
+            font-size: 14px;
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+
+        .timeline-card .card-desc strong {
+            color: var(--primary-dark);
+        }
+
+        .timeline-card .card-quote {
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: var(--accent-light);
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--primary-dark);
+            font-style: italic;
+            line-height: 1.7;
+        }
+
+        .timeline-card .card-quote::before {
+            content: '"';
+            font-size: 20px;
+            color: var(--primary-light);
+            font-weight: 700;
+        }
+
+        .timeline-card .award-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #5C3D2E;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .timeline-card .award-badge .trophy {
+            font-size: 16px;
+        }
+
+        /* ===== WORKS TABLE ===== */
+        .works-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 2px 12px var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .works-filter {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 18px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text-muted);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .works-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .works-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--border);
+            font-weight: 500;
+        }
+
+        .works-table td {
+            padding: 14px 16px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .works-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .works-table tr:hover td {
+            background: rgba(196, 154, 108, 0.05);
+        }
+
+        .works-table .year-cell {
+            font-weight: 700;
+            color: var(--primary);
+            white-space: nowrap;
+            font-size: 13px;
+        }
+
+        .works-table .title-cell {
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .works-table .role-cell {
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        .type-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .type-tag.drama {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+
+        .type-tag.movie {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .type-tag.variety {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .rating {
+            color: var(--primary-light);
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        /* ===== QUOTES SECTION ===== */
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .quote-card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 2px 12px var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 12px;
+            left: 20px;
+            font-size: 48px;
+            color: var(--accent);
+            font-family: 'Noto Serif SC', serif;
+            line-height: 1;
+        }
+
+        .quote-card .quote-text {
+            font-size: 15px;
+            color: var(--text);
+            line-height: 1.8;
+            padding-top: 20px;
+            font-style: italic;
+        }
+
+        .quote-card .quote-source {
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            margin-top: 80px;
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .footer .footer-note {
+            font-size: 12px;
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+                letter-spacing: 4px;
+            }
+
+            .hero .subtitle {
+                font-size: 16px;
+            }
+
+            .stats-bar {
+                flex-wrap: wrap;
+                margin-left: 16px;
+                margin-right: 16px;
+            }
+
+            .stat-item {
+                min-width: 50%;
+                border-right: none;
+            }
+
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .career-path {
+                flex-direction: column;
+            }
+
+            .career-step:not(:last-child)::after {
+                content: '↓';
+                right: auto;
+                bottom: -12px;
+                top: auto;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .career-step:not(:last-child) {
+                border-right: none;
+                border-bottom: 2px dashed var(--border);
+            }
+
+            .quotes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline {
+                padding-left: 36px;
+            }
+
+            .timeline-card .card-header {
+                flex-direction: column;
+            }
+
+            .works-table {
+                font-size: 12px;
+            }
+
+            .works-table th,
+            .works-table td {
+                padding: 10px 8px;
+            }
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timeline-item {
+            animation: fadeInUp 0.5s ease-out both;
+        }
+
+        .timeline-item:nth-child(1) { animation-delay: 0.1s; }
+        .timeline-item:nth-child(2) { animation-delay: 0.2s; }
+        .timeline-item:nth-child(3) { animation-delay: 0.3s; }
+        .timeline-item:nth-child(4) { animation-delay: 0.4s; }
+        .timeline-item:nth-child(5) { animation-delay: 0.5s; }
+        .timeline-item:nth-child(6) { animation-delay: 0.6s; }
+        .timeline-item:nth-child(7) { animation-delay: 0.7s; }
+        .timeline-item:nth-child(8) { animation-delay: 0.8s; }
+        .timeline-item:nth-child(9) { animation-delay: 0.9s; }
+        .timeline-item:nth-child(10) { animation-delay: 1.0s; }
+
+        /* ===== DECORATIVE ===== */
+        .divider {
+            text-align: center;
+            margin: 48px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .divider span {
+            position: relative;
+            background: var(--bg);
+            padding: 0 20px;
+            color: var(--accent);
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+    <div class="hero-content">
+        <div class="hero-photo">
+            <img src="https://image.yingzhiben.info/avatar/xwhR8nrFKxalOjmADxJPTouxE0g.jpg" alt="秦基周" onerror="this.style.display='none';this.parentElement.querySelector('.placeholder-initial').style.display='flex';">
+            <span class="placeholder-initial" style="display:none;">秦</span>
+        </div>
+        <div class="subtitle">진기주 · Jin Ki-joo</div>
+        <h1>秦基周</h1>
+        <p style="color: rgba(255,255,255,0.65); font-size: 15px; margin-top: 12px;">
+            三星工程师 → 电视台记者 → 超模季军 → 实力派演员
+        </p>
+        <div class="motto">相信自己</div>
+    </div>
+</div>
+
+<!-- ===== STATS BAR ===== -->
+<div class="container">
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-value">22+</div>
+            <div class="stat-label">影视作品</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">3</div>
+            <div class="stat-label">跨界职业</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">11</div>
+            <div class="stat-label">演艺年资</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">170cm</div>
+            <div class="stat-label">身高</div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== 基本资料 ===== -->
+<section class="container">
+    <div class="section-title">
+        <span class="icon">📋</span>
+        基本档案
+    </div>
+    <p class="section-desc">从工科女到实力派演员的人生底色</p>
+
+    <div class="profile-grid">
+        <div class="profile-card">
+            <h3>个人信息</h3>
+            <div class="info-row">
+                <span class="label">本名</span>
+                <span class="value">秦基周（진기주）</span>
+            </div>
+            <div class="info-row">
+                <span class="label">出生日期</span>
+                <span class="value">1989年1月26日</span>
+            </div>
+            <div class="info-row">
+                <span class="label">出生地</span>
+                <span class="value">韩国首尔特别市</span>
+            </div>
+            <div class="info-row">
+                <span class="label">身高</span>
+                <span class="value">170cm</span>
+            </div>
+            <div class="info-row">
+                <span class="label">经纪公司</span>
+                <span class="value">Base Camp Company</span>
+            </div>
+            <div class="info-row">
+                <span class="label">座右铭</span>
+                <span class="value">相信自己</span>
+            </div>
+        </div>
+        <div class="profile-card">
+            <h3>教育与爱好</h3>
+            <div class="info-row">
+                <span class="label">毕业院校</span>
+                <span class="value">中央大学</span>
+            </div>
+            <div class="info-row">
+                <span class="label">主修专业</span>
+                <span class="value">计算机工程系</span>
+            </div>
+            <div class="info-row">
+                <span class="label">辅修专业</span>
+                <span class="value">新闻广播学</span>
+            </div>
+            <div class="info-row">
+                <span class="label">学生外号</span>
+                <span class="value">珍岛犬、飞鼠</span>
+            </div>
+            <div class="info-row">
+                <span class="label">兴趣爱好</span>
+                <span class="value">追剧、拼图、滑雪</span>
+            </div>
+            <div class="info-row">
+                <span class="label">收藏喜好</span>
+                <span class="value">公仔和娃娃</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== 职业转变路径 ===== -->
+<section class="container">
+    <div class="section-title">
+        <span class="icon">🔄</span>
+        跨界之路
+    </div>
+    <p class="section-desc">从年薪百万到归零重来，三次勇敢的职业转身</p>
+
+    <div class="career-path">
+        <div class="career-step">
+            <div class="step-icon">💻</div>
+            <div class="step-title">三星IT工程师</div>
+            <div class="step-sub">约3年 · 年薪7000万韩元</div>
+        </div>
+        <div class="career-step">
+            <div class="step-icon">🎤</div>
+            <div class="step-title">SBS实习记者</div>
+            <div class="step-sub">3个月 · 高压血汗</div>
+        </div>
+        <div class="career-step">
+            <div class="step-icon">👗</div>
+            <div class="step-title">超模选拔季军</div>
+            <div class="step-sub">叩开演艺圈大门</div>
+        </div>
+        <div class="career-step">
+            <div class="step-icon">🎬</div>
+            <div class="step-title">实力派演员</div>
+            <div class="step-sub">2015年至今 · 屡创佳绩</div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== 人生时间线 ===== -->
+<section class="container">
+    <div class="section-title">
+        <span class="icon">⏳</span>
+        人生时间线
+    </div>
+    <p class="section-desc">每一步都不是白走的路</p>
+
+    <div class="timeline">
+
+        <!-- 1989 出生 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">1989</div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <div class="card-photo">
+                        <span class="photo-placeholder">👶</span>
+                    </div>
+                    <div class="card-info">
+                        <h4>出生于韩国首尔</h4>
+                        <span class="genre">出生</span>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    秦基周出生于韩国首尔特别市。从小性格内向腼腆，却天生具有领袖魅力，常常被推选担任班长、室长和学生会长。因忠诚敏锐的个性获外号「珍岛犬」，又因长相神似松鼠、活力满满而被称为「飞鼠」。
+                </div>
+            </div>
+        </div>
+
+        <!-- 大学时期 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2007 — 2011</div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <div class="card-photo">
+                        <span class="photo-placeholder">🎓</span>
+                    </div>
+                    <div class="card-info">
+                        <h4>就读中央大学计算机工程系</h4>
+                        <span class="genre">求学</span>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    考入韩国顶尖学府<strong>中央大学计算机工程系</strong>。在父亲的极力反对下，背着家人偷偷<strong>辅修新闻广播学</strong>——父亲是记者出身，当记者是她从小就深埋心底的种子。两段看似毫不相关的学习经历，后来却各自成为了她人生的关键转折点。
+                </div>
+            </div>
+        </div>
+
+        <!-- 三星工程师 -->
+        <div class="timeline-item highlight">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2011 — 2014</div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <div class="card-photo">
+                        <img src="https://image.yingzhiben.info/gallery/xwhR8nrFKxalOjmADxJPTouxE0g.jpg" alt="秦基周" onerror="this.style.display='none';this.parentElement.querySelector('.photo-placeholder').style.display='block';">
+                        <span class="photo-placeholder" style="display:none;">💼</span>
+                    </div>
+                    <div class="card-info">
+                        <h4>三星SDS IT工程师</h4>
+                        <span class="role">IT顾问 / 系统工程师</span>
+                        <span class="genre">职业第一站</span>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    毕业后顺利进入人人挤破头的韩国顶尖财阀<strong>三星集团旗下三星SDS</strong>，担任IT顾问与系统工程师，年薪高达<strong>7000万韩元</strong>。在外人看来，这是标准的"铁饭碗"，然而日复一日的重复工作让她感到<strong>「令人窒息的虚无」</strong>，开始深陷自我质疑。在母亲的鼓励下，她毅然递交辞呈。
+                </div>
+                <div class="card-quote">
+                    我为什么要做这份工作？生活仿佛失去了色彩。
+                </div>
+            </div>
+        </div>
+
+        <!-- SBS记者 -->
+        <div class="timeline-item highlight">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2014</div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <div class="card-photo">
+                        <img src="https://image.yingzhiben.info/gallery/m0jHrwQ15mwfCUiqIb0aGvjCbr4.jpg" alt="秦基周" onerror="this.style.display='none';this.parentElement.querySelector('.photo-placeholder').style.display='block';">
+                        <span class="photo-placeholder" style="display:none;">📺</span>
+                    </div>
+                    <div class="card-info">
+                        <h4>SBS地方电视台实习记者</h4>
+                        <span class="role">新闻采访记者</span>
+                        <span class="genre">职业第二站</span>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    辞去三星高薪工作后，继承父亲的衣钵，考入<strong>SBS地方电视台</strong>担任实习记者。然而韩国地方台记者生态极度高压血汗，每天忙到只能勉强挤出洗头时间。某次因长期高压、睡眠不足，<strong>她在洗头时突然呕吐</strong>，看着镜子里狼狈的自己，泪水止不住流下。仅仅3个月后，再次做出惊人决定——放弃记者梦。
+                </div>
+                <div class="card-quote">
+                    从小就看到记者很帅气的样子。从爸爸口中先听到消息，随后电视新闻就播出来了，那种抢先知道世界发生什么事的感觉，真的非常有魅力。当时爸爸在我眼中，就是非常帅气的大人。
+                </div>
+            </div>
+        </div>
+
+        <!-- 超模大赛 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2014</div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <div class="card-photo">
+                        <img src="https://image.yingzhiben.info/gallery/5BcEPPxmqf63auxrzxyOfjkmn6M.jpg" alt="秦基周模特" onerror="this.style.display='none';this.parentElement.querySelector('.photo-placeholder').style.display='block';">
+                        <span class="photo-placeholder" style="display:none;">👗</span>
+                    </div>
+                    <div class="card-info">
+                        <h4>韩国超级模特选拔大赛 季军</h4>
+                        <span class="genre">转型契机</span>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    凭借170cm的高挑身材与优雅气质，在<strong>韩国超级模特选拔大赛</strong>中一路披荆斩棘荣获<strong>第三名</strong>，以此作为进入演艺圈的敲门砖。从此，人生翻开了全新的一页。
+                </div>
+            </div>
+        </div>
+
+        <!-- 2015 出道 -->
+        <div class="timeline-item highlight">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2015</div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <div class="card-photo">
+                        <img src="https://image.yingzhiben.info/poster/w1lmYkqv7n1lrvjS91EIvyYjAlU.jpg" alt="第二次二十岁" onerror="this.style.display='none';this.parentElement.querySelector('.photo-placeholder').style.display='block';">
+                        <span class="photo-placeholder" style="display:none;">🎬</span>
+                    </div>
+                    <div class="card-info">
+                        <h4>演员出道 —《第二次二十岁》</h4>
+                        <span class="role">饰演 朴胜贤</span>
+                        <span class="genre">电视剧</span>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    26岁正式以演员身份出道。在韩国演艺圈，这个年纪被贴上<strong>「年纪太大」「起步太晚」</strong>的标签，早期每次试镜几乎都在第一轮就遭淘汰，甚至被当面嫌弃「这个年纪不适合再做新人演员」。直到遇到赏识她成熟内敛气质的<strong>伯乐导演</strong>，凭借《第二次二十岁》正式出道。同年还出演了《扑通扑通LOVE》，饰演昭宪王后。
+                </div>
+                <div class="card-quote">
+                    明明有才能为什么还要看别人眼色呢——因为那一句话，把几个月以来自信心跌到谷底的我扶了起来。
+                </div>
+            </div>
+        </div>
+
+        <!-- 步步惊心 -->
+        <div class="timeline-item highlight">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2016</div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <div class="card-photo">
+                        <img src="https://image.yingzhiben.info/poster/mfCi1IcXXdVRsgbP81qUkMzcJyF.jpg" alt="步步惊心：丽" onerror="this.style.display='none';this.parentElement.querySelector('.photo-placeholder').style.display='block';">
+                        <span class="photo-placeholder" style="display:none;">🌙</span>
+                    </div>
+                    <div class="card-info">
+                        <h4>打响知名度 —《月之恋人－步步惊心：丽》</h4>
+                        <span class="role">饰演 侍女彩铃</span>
+                        <span class="genre">电视剧</span>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    成功通过古装剧甄选，饰演女主角IU（李知恩）身旁的悲情侍女<strong>「彩铃」</strong>。看似天真无邪，实则命运多舛。剧集后半程以极具爆发力和感染力的<strong>悲剧演出赚足观众眼泪</strong>，成功在韩国演艺圈打响知名度。同年还出演了《再一次快乐结局》。
+                </div>
+            </div>
+        </div>
+
+        <!-- 2017-2018 上升期 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2017 — 2018</div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <div class="card-photo">
+                        <span class="photo-placeholder">⬆️</span>
+                    </div>
+                    <div class="card-info">
+                        <h4>稳步上升期</h4>
+                        <span class="genre">多元发展</span>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    <strong>2017年</strong>：主演SBS Plus网剧《星期三下午3点30分》，出演MBC《君主－假面的主人》饰演武士崔姜书。<br><br>
+                    <strong>2018年</strong>：迎来爆发之年——出演JTBC悬疑剧《迷雾》饰演韩智媛；参演电影<strong>《小森林》</strong>饰演恩淑，凭此片获<strong>第55届大钟奖最佳新人女演员提名</strong>及<strong>第54届百想艺术大赏电影部门女子新人演技奖提名</strong>；首次担纲女主，与张基龙主演MBC悬疑爱情剧<strong>《过来抱抱我》</strong>，饰演韩在伊/吉乐园。
+                </div>
+                <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+                    <div style="width:70px; height:90px; border-radius:8px; overflow:hidden; flex-shrink:0; background:var(--accent-light);">
+                        <img src="https://image.yingzhiben.info/poster/4eoABinIysraX5vDG1rxP3i2orB.jpg" alt="迷雾" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.display='none'">
+                    </div>
+                    <div style="width:70px; height:90px; border-radius:8px; overflow:hidden; flex-shrink:0; background:var(--accent-light);">
+                        <img src="https://image.yingzhiben.info/poster/fk50vSCDmAKC1r2o4V8F1AtR9pK.jpg" alt="小森林" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.display='none'">
+                    </div>
+                    <div style="width:70px; height:90px; border-radius:8px; overflow:hidden; flex-shrink:0; background:var(--accent-light);">
+                        <img src="https://image.yingzhiben.info/poster/ksjcTMjlnyVfs7uOu3Jti587ohj.jpg" alt="过来抱抱我" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.display='none'">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2019-2020 -->
+        <div class="timeline-item highlight">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2019 — 2020</div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <div class="card-photo">
+                        <img src="https://image.yingzhiben.info/poster/gxcj7b3Sd4rzsJM1r9wRTtjU3YA.jpg" alt="Oh！三光公寓！" onerror="this.style.display='none';this.parentElement.querySelector('.photo-placeholder').style.display='block';">
+                        <span class="photo-placeholder" style="display:none;">🏆</span>
+                    </div>
+                    <div class="card-info">
+                        <h4>演技获肯定 — 荣获KBS演技大赏</h4>
+                        <span class="genre">事业里程碑</span>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    <strong>2019年</strong>：主演SBS浪漫爱情剧《初次见面，我爱你》，饰演郑佳熙，持续活跃于主流荧屏。<br><br>
+                    <strong>2020年</strong>：主演KBS长篇家庭剧<strong>《Oh！三光公寓！》</strong>，饰演长女李光彩云/朴瑞妍。将长女的坚韧隐忍、以及从冤家到欢喜冤家的情感线演绎得淋漓尽致，一举斩获<strong>KBS演技大赏长篇电视剧部门女子优秀演技奖</strong>，同时获女子人气奖提名。这是她演艺生涯的重要里程碑。
+                </div>
+                <div class="award-badge">
+                    <span class="trophy">🏆</span>
+                    KBS演技大赏 · 长篇电视剧女子优秀演技奖
+                </div>
+            </div>
+        </div>
+
+        <!-- 2021-2023 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2021 — 2023</div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <div class="card-photo">
+                        <img src="https://image.yingzhiben.info/poster/mWsEfV8SHCOtkHxJoTj7NW86Uh1.jpg" alt="偶然遇见的你" onerror="this.style.display='none';this.parentElement.querySelector('.photo-placeholder').style.display='block';">
+                        <span class="photo-placeholder" style="display:none;">🎭</span>
+                    </div>
+                    <div class="card-info">
+                        <h4>多元拓展期</h4>
+                        <span class="genre">大银幕+小荧屏双线发展</span>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    <strong>2021年</strong>：主演惊悚电影《午夜》，饰演聋哑女孩京美，展现不同于电视剧的表演维度。<br><br>
+                    <strong>2022年</strong>：双剧齐发——主演tvN《流星》饰演金真敬，以及MBC《现在开始作秀时间》饰演高瑟海，展现浪漫喜剧的轻松驾驭能力。<br><br>
+                    <strong>2023年</strong>：主演KBS《偶然遇见的你》，饰演白允英，穿梭时空的悬疑叙事中展现沉稳演技。
+                </div>
+            </div>
+        </div>
+
+        <!-- 2024-2025 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2024 — 2025</div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <div class="card-photo">
+                        <img src="https://image.yingzhiben.info/poster/le2k5HFfGmMZSkIYIywaRDYYzal.jpg" alt="逆贫大叔" onerror="this.style.display='none';this.parentElement.querySelector('.photo-placeholder').style.display='block';">
+                        <span class="photo-placeholder" style="display:none;">🌟</span>
+                    </div>
+                    <div class="card-info">
+                        <h4>走向更广阔的舞台</h4>
+                        <span class="genre">持续突破</span>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    <strong>2024年</strong>：出演Disney+韩剧《逆贫大叔》（三植叔叔）饰演周汝珍，搭档宋康昊，进军国际流媒体平台；同年参演电影《幸福的国家》饰演赵顺贞。<br><br>
+                    <strong>2025年</strong>：主演MBC《卧底高中》饰演吴秀雅，签约新经纪公司Base Camp Company，持续活跃在荧幕前。
+                </div>
+                <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+                    <div style="width:70px; height:90px; border-radius:8px; overflow:hidden; flex-shrink:0; background:var(--accent-light);">
+                        <img src="https://image.yingzhiben.info/poster/le2k5HFfGmMZSkIYIywaRDYYzal.jpg" alt="逆贫大叔" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.display='none'">
+                    </div>
+                    <div style="width:70px; height:90px; border-radius:8px; overflow:hidden; flex-shrink:0; background:var(--accent-light);">
+                        <img src="https://image.yingzhiben.info/poster/5rzqPPtWLT6FMeVIEfv4RJUiI8t.jpg" alt="卧底高中" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.display='none'">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2026 铁拳教育 -->
+        <div class="timeline-item highlight">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2026</div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <div class="card-photo">
+                        <img src="https://image.yingzhiben.info/gallery/xRsidREJnMKqSQSxk5O6fe03evA.jpg" alt="秦基周" onerror="this.style.display='none';this.parentElement.querySelector('.photo-placeholder').style.display='block';">
+                        <span class="photo-placeholder" style="display:none;">👊</span>
+                    </div>
+                    <div class="card-info">
+                        <h4>全球爆红 —《铁拳教育》</h4>
+                        <span class="role">饰演 教权保护局实战队长 任含琳</span>
+                        <span class="genre">Netflix全球热播</span>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    Netflix全球热播韩剧《铁拳教育》中，秦基周突破以往温柔形象，饰演<strong>前特种部队出身、超强格斗能力的教权保护局实战队长「任含琳」</strong>。面对蛮横家长、校园霸凌者、不良教师直接「物理超度」，被封为<strong>「最强女督察」</strong>，成为全网观众的「精神偶像」。37岁的她以冻龄少女神颜和凌厉动作戏再度翻红，在全球圈粉无数。
+                </div>
+                <div class="card-quote">
+                    在自己体验过的众多职业中，演员其实是其中最不稳定、最没有自尊、最容易让人受伤的一个。但或许是因为经历了职场的千帆竞发，现在的她对演员这份职业甘之如饴，再也没有任何动摇的想法。
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ===== 分隔线 ===== -->
+<div class="divider"><span>✦</span></div>
+
+<!-- ===== 完整作品列表 ===== -->
+<section class="container">
+    <div class="section-title">
+        <span class="icon">🎬</span>
+        完整影视作品
+    </div>
+    <p class="section-desc">22部作品，11年沉淀</p>
+
+    <div class="works-section">
+        <div class="works-filter">
+            <button class="filter-btn active" onclick="filterWorks('all')">全部</button>
+            <button class="filter-btn" onclick="filterWorks('drama')">电视剧</button>
+            <button class="filter-btn" onclick="filterWorks('movie')">电影</button>
+            <button class="filter-btn" onclick="filterWorks('variety')">综艺</button>
+        </div>
+
+        <table class="works-table">
+            <thead>
+                <tr>
+                    <th>年份</th>
+                    <th>作品名称</th>
+                    <th>饰演角色</th>
+                    <th>类型</th>
+                    <th>评分</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-type="drama">
+                    <td class="year-cell">2026</td>
+                    <td class="title-cell">铁拳教育</td>
+                    <td class="role-cell">任含琳</td>
+                    <td><span class="type-tag drama">电视剧</span></td>
+                    <td class="rating">—</td>
+                </tr>
+                <tr data-type="movie">
+                    <td class="year-cell">2025</td>
+                    <td class="title-cell">扑通扑通LOVE：电影版</td>
+                    <td class="role-cell">昭宪王后</td>
+                    <td><span class="type-tag movie">电影</span></td>
+                    <td class="rating">—</td>
+                </tr>
+                <tr data-type="drama">
+                    <td class="year-cell">2025</td>
+                    <td class="title-cell">卧底高中</td>
+                    <td class="role-cell">吴秀雅</td>
+                    <td><span class="type-tag drama">电视剧</span></td>
+                    <td class="rating">★ 7.9</td>
+                </tr>
+                <tr data-type="movie">
+                    <td class="year-cell">2024</td>
+                    <td class="title-cell">幸福的国家</td>
+                    <td class="role-cell">赵顺贞</td>
+                    <td><span class="type-tag movie">电影</span></td>
+                    <td class="rating">★ 6.3</td>
+                </tr>
+                <tr data-type="drama">
+                    <td class="year-cell">2024</td>
+                    <td class="title-cell">逆贫大叔</td>
+                    <td class="role-cell">周汝珍</td>
+                    <td><span class="type-tag drama">电视剧</span></td>
+                    <td class="rating">★ 7.6</td>
+                </tr>
+                <tr data-type="drama">
+                    <td class="year-cell">2023</td>
+                    <td class="title-cell">偶然遇见的你</td>
+                    <td class="role-cell">白允英</td>
+                    <td><span class="type-tag drama">电视剧</span></td>
+                    <td class="rating">★ 8.1</td>
+                </tr>
+                <tr data-type="variety">
+                    <td class="year-cell">2022</td>
+                    <td class="title-cell">借口Go</td>
+                    <td class="role-cell">本人</td>
+                    <td><span class="type-tag variety">综艺</span></td>
+                    <td class="rating">★ 9.6</td>
+                </tr>
+                <tr data-type="drama">
+                    <td class="year-cell">2022</td>
+                    <td class="title-cell">现在开始作秀时间</td>
+                    <td class="role-cell">高瑟海</td>
+                    <td><span class="type-tag drama">电视剧</span></td>
+                    <td class="rating">★ 7.6</td>
+                </tr>
+                <tr data-type="drama">
+                    <td class="year-cell">2022</td>
+                    <td class="title-cell">流星</td>
+                    <td class="role-cell">金真敬</td>
+                    <td><span class="type-tag drama">电视剧</span></td>
+                    <td class="rating">★ 8.1</td>
+                </tr>
+                <tr data-type="movie">
+                    <td class="year-cell">2021</td>
+                    <td class="title-cell">午夜</td>
+                    <td class="role-cell">京美</td>
+                    <td><span class="type-tag movie">电影</span></td>
+                    <td class="rating">★ 7.2</td>
+                </tr>
+                <tr data-type="drama">
+                    <td class="year-cell">2020</td>
+                    <td class="title-cell">Oh！三光公寓！</td>
+                    <td class="role-cell">李光彩云/朴瑞妍</td>
+                    <td><span class="type-tag drama">电视剧</span></td>
+                    <td class="rating">★ 6.0</td>
+                </tr>
+                <tr data-type="drama">
+                    <td class="year-cell">2019</td>
+                    <td class="title-cell">初次见面，我爱你</td>
+                    <td class="role-cell">郑佳熙</td>
+                    <td><span class="type-tag drama">电视剧</span></td>
+                    <td class="rating">★ 7.5</td>
+                </tr>
+                <tr data-type="variety">
+                    <td class="year-cell">2018</td>
+                    <td class="title-cell">刘在街头</td>
+                    <td class="role-cell">本人</td>
+                    <td><span class="type-tag variety">综艺</span></td>
+                    <td class="rating">★ 8.3</td>
+                </tr>
+                <tr data-type="drama">
+                    <td class="year-cell">2018</td>
+                    <td class="title-cell">过来抱抱我</td>
+                    <td class="role-cell">韩在伊/吉乐园</td>
+                    <td><span class="type-tag drama">电视剧</span></td>
+                    <td class="rating">★ 8.0</td>
+                </tr>
+                <tr data-type="movie">
+                    <td class="year-cell">2018</td>
+                    <td class="title-cell">小森林</td>
+                    <td class="role-cell">恩淑</td>
+                    <td><span class="type-tag movie">电影</span></td>
+                    <td class="rating">★ 7.6</td>
+                </tr>
+                <tr data-type="drama">
+                    <td class="year-cell">2018</td>
+                    <td class="title-cell">迷雾</td>
+                    <td class="role-cell">韩智媛</td>
+                    <td><span class="type-tag drama">电视剧</span></td>
+                    <td class="rating">★ 7.2</td>
+                </tr>
+                <tr data-type="drama">
+                    <td class="year-cell">2017</td>
+                    <td class="title-cell">星期三下午3点30分</td>
+                    <td class="role-cell">孙恩宇</td>
+                    <td><span class="type-tag drama">电视剧</span></td>
+                    <td class="rating">★ 7.0</td>
+                </tr>
+                <tr data-type="drama">
+                    <td class="year-cell">2016</td>
+                    <td class="title-cell">月之恋人－步步惊心：丽</td>
+                    <td class="role-cell">彩铃</td>
+                    <td><span class="type-tag drama">电视剧</span></td>
+                    <td class="rating">★ 8.5</td>
+                </tr>
+                <tr data-type="drama">
+                    <td class="year-cell">2016</td>
+                    <td class="title-cell">再一次快乐结局</td>
+                    <td class="role-cell">安顺秀</td>
+                    <td><span class="type-tag drama">电视剧</span></td>
+                    <td class="rating">★ 5.6</td>
+                </tr>
+                <tr data-type="drama">
+                    <td class="year-cell">2015</td>
+                    <td class="title-cell">扑通扑通LOVE</td>
+                    <td class="role-cell">昭宪王后</td>
+                    <td><span class="type-tag drama">电视剧</span></td>
+                    <td class="rating">★ 7.9</td>
+                </tr>
+                <tr data-type="drama">
+                    <td class="year-cell">2015</td>
+                    <td class="title-cell">第二次二十岁</td>
+                    <td class="role-cell">朴胜贤</td>
+                    <td><span class="type-tag drama">电视剧</span></td>
+                    <td class="rating">★ 7.7</td>
+                </tr>
+                <tr data-type="variety">
+                    <td class="year-cell">2010</td>
+                    <td class="title-cell">Running Man</td>
+                    <td class="role-cell">—</td>
+                    <td><span class="type-tag variety">综艺</span></td>
+                    <td class="rating">★ 8.2</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ===== 获奖记录 ===== -->
+<section class="container">
+    <div class="section-title">
+        <span class="icon">🏅</span>
+        获奖与提名
+    </div>
+    <p class="section-desc">用实力回应所有质疑</p>
+
+    <div class="profile-grid">
+        <div class="profile-card" style="border-left: 4px solid #FFD700;">
+            <h3>🏆 获奖</h3>
+            <div class="info-row">
+                <span class="label">2020 KBS演技大赏</span>
+                <span class="value" style="color: #D4A017;">长篇电视剧女子优秀演技奖</span>
+            </div>
+            <div class="info-row">
+                <span class="label">获奖作品</span>
+                <span class="value">《Oh！三光公寓！》</span>
+            </div>
+            <div class="info-row">
+                <span class="label">同时提名</span>
+                <span class="value">女子人气奖</span>
+            </div>
+        </div>
+        <div class="profile-card" style="border-left: 4px solid #C0C0C0;">
+            <h3>📌 重要提名</h3>
+            <div class="info-row">
+                <span class="label">第55届大钟奖</span>
+                <span class="value">最佳新人女演员（提名）</span>
+            </div>
+            <div class="info-row">
+                <span class="label">提名作品</span>
+                <span class="value">《小森林》(2018)</span>
+            </div>
+            <div class="info-row">
+                <span class="label">第54届百想艺术大赏</span>
+                <span class="value">电影部门女子新人演技奖（提名）</span>
+            </div>
+            <div class="info-row">
+                <span class="label">提名作品</span>
+                <span class="value">《小森林》(2018)</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== 她说 ===== -->
+<section class="container">
+    <div class="section-title">
+        <span class="icon">💬</span>
+        她说
+    </div>
+    <p class="section-desc">那些打动人心的话语</p>
+
+    <div class="quotes-grid">
+        <div class="quote-card">
+            <div class="quote-text">明明有才能为什么还要看别人眼色呢。</div>
+            <div class="quote-source">—— 伯乐导演的鼓励，让自信心跌到谷底的她重新站起</div>
+        </div>
+        <div class="quote-card">
+            <div class="quote-text">难道我是为了过这种生活，才放弃那么辛苦考上的三星吗？</div>
+            <div class="quote-source">—— SBS实习记者期间，洗头时呕吐后的自问</div>
+        </div>
+        <div class="quote-card">
+            <div class="quote-text">在自己体验过的众多职业中，演员其实是其中最不稳定、最没有自尊、最容易让人受伤的一个。</div>
+            <div class="quote-source">—— 经历千帆后的感悟</div>
+        </div>
+        <div class="quote-card">
+            <div class="quote-text">但或许正是因为经历了职场的千帆竞发，现在的她对演员这份职业甘之如饴，再也没有任何动摇的想法。</div>
+            <div class="quote-source">—— 关于坚持</div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<div class="footer">
+    <p>秦基周 人生经历报告</p>
+    <p>资料来源：百度百科、豆瓣、搜狗百科、GirlStyle、The Idol Base 等</p>
+    <p class="footer-note">报告生成时间：2026年6月11日 · 仅供个人参考</p>
+</div>
+
+<script>
+    function filterWorks(type) {
+        // Update active button
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+
+        // Filter rows
+        const rows = document.querySelectorAll('.works-table tbody tr');
+        rows.forEach(row => {
+            if (type === 'all') {
+                row.style.display = '';
+            } else {
+                row.style.display = row.dataset.type === type ? '' : 'none';
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
