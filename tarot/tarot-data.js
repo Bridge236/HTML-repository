@@ -341,7 +341,9 @@ async function callAI(prompt, apiKey, baseUrl) {
 请在解读末尾附上声明：塔罗牌是一种自我探索与心理映射的工具，以上解读仅为象征性启发，不构成对命运或具体事件的确定性判断。` },
         { role: "user", content: prompt }
       ],
-      max_tokens: 600
+      max_tokens: 1200,
+      thinking: { type: "enabled" },
+      reasoning_effort: "high"
     })
   });
   if (!res.ok) throw new Error(`API Error ${res.status}: ${await res.text()}`);
@@ -360,12 +362,12 @@ async function callAI(prompt, apiKey, baseUrl) {
 const Settings = {
   get apiKey()   { return localStorage.getItem("tarot_api_key")   || ""; },
   get baseUrl()  {
-    const v = localStorage.getItem("tarot_base_url") || "https://api.deepseek.com/v1/chat/completions";
+    const v = localStorage.getItem("tarot_base_url") || "https://api.deepseek.com/chat/completions";
     // backward compat: old format (e.g. "https://api.openai.com") → append OpenAI path
     if (!v.endsWith("/chat/completions")) return v.replace(/\/$/, "") + "/v1/chat/completions";
     return v;
   },
-  get model()    { return localStorage.getItem("tarot_model")     || "deepseek-chat"; },
+  get model()    { return localStorage.getItem("tarot_model")     || "deepseek-v4-pro"; },
   set apiKey(v)  { localStorage.setItem("tarot_api_key", v); },
   set baseUrl(v) { localStorage.setItem("tarot_base_url", v); },
   set model(v)   { localStorage.setItem("tarot_model", v); },
@@ -444,10 +446,10 @@ function randomQuote() { return QUOTES[Math.floor(Math.random() * QUOTES.length)
     </div>
     <p class="hint">你的 Key 仅存储在本地浏览器，不会上传至任何服务器。支持 <a href="https://platform.deepseek.com/api_keys" target="_blank">DeepSeek</a>、OpenAI、智谱等兼容接口。</p>
     <label>模型名称</label>
-    <input type="text" id="modelInput" placeholder="deepseek-chat">
-    <p class="hint">DeepSeek 填 <b>deepseek-chat</b>；智谱填 <b>glm-4.7-flash</b>；OpenAI 填 <b>gpt-4o-mini</b></p>
+    <input type="text" id="modelInput" placeholder="deepseek-v4-pro">
+    <p class="hint">DeepSeek 填 <b>deepseek-v4-pro</b>；智谱填 <b>glm-4.7-flash</b>；OpenAI 填 <b>gpt-4o-mini</b></p>
     <label>API 地址</label>
-    <input type="text" id="baseUrlInput" placeholder="https://api.deepseek.com/v1/chat/completions">
+    <input type="text" id="baseUrlInput" placeholder="https://api.deepseek.com/chat/completions">
     <p class="hint">智谱：https://open.bigmodel.cn/api/paas/v4/chat/completions<br>OpenAI：https://api.openai.com/v1/chat/completions</p>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="saveSettings()">💾 保存</button>
@@ -483,19 +485,19 @@ function closeSettings() {
 
 function saveSettings() {
   Settings.apiKey = document.getElementById('apiKeyInput').value.trim();
-  Settings.baseUrl = document.getElementById('baseUrlInput').value.trim() || 'https://api.deepseek.com/v1/chat/completions';
-  Settings.model = document.getElementById('modelInput').value.trim() || 'deepseek-chat';
+  Settings.baseUrl = document.getElementById('baseUrlInput').value.trim() || 'https://api.deepseek.com/chat/completions';
+  Settings.model = document.getElementById('modelInput').value.trim() || 'deepseek-v4-pro';
   closeSettings();
   showToast('✅ 设置已保存');
 }
 
 function clearSettings() {
   Settings.apiKey = '';
-  Settings.model = 'deepseek-chat';
-  Settings.baseUrl = 'https://api.deepseek.com/v1/chat/completions';
+  Settings.model = 'deepseek-v4-pro';
+  Settings.baseUrl = 'https://api.deepseek.com/chat/completions';
   document.getElementById('apiKeyInput').value = '';
-  document.getElementById('modelInput').value = 'deepseek-chat';
-  document.getElementById('baseUrlInput').value = 'https://api.deepseek.com/v1/chat/completions';
+  document.getElementById('modelInput').value = 'deepseek-v4-pro';
+  document.getElementById('baseUrlInput').value = 'https://api.deepseek.com/chat/completions';
   showToast('🗑 已清除全部设置');
 }
 
