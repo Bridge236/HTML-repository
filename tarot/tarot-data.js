@@ -346,7 +346,7 @@ async function callAI(prompt, apiKey, baseUrl) {
       reasoning_effort: "high"
     })
   });
-  if (!res.ok) throw new Error(`API Error ${res.status}: ${await res.text()}`);
+  if (!res.ok) throw new Error(`API Error ${res.status}（${url}）`);
   const data = await res.json();
   const content = data.choices?.[0]?.message?.content || "";
   // fallback: some APIs may return reasoning_content instead when thinking mode is on
@@ -363,11 +363,11 @@ const Settings = {
   get apiKey()   { return localStorage.getItem("tarot_api_key")   || ""; },
   get baseUrl()  {
     const v = localStorage.getItem("tarot_base_url") || "https://api.deepseek.com/v1/chat/completions";
-    // backward compat: old format (e.g. "https://api.openai.com") → append OpenAI path
-    if (!v.endsWith("/chat/completions")) return v.replace(/\/$/, "") + "/v1/chat/completions";
-    // migration: fix old non-/v1/ DeepSeek URLs (was causing 404)
-    if (v.includes("api.deepseek.com") && !v.includes("/v1/chat/completions")) {
-      const fixed = v.replace("/chat/completions", "/v1/chat/completions");
+    // backward compat for non-DeepSeek URLs (e.g. OpenAI base → append path)
+    if (!v.includes("/chat/completions")) return v.replace(/\/$/, "") + "/v1/chat/completions";
+    // DeepSeek URL cleanup: strip any stray segments like /anthropic, ensure /v1/chat/completions
+    if (v.includes("api.deepseek.com") && !v.match(/\/v1\/chat\/completions$/)) {
+      const fixed = "https://api.deepseek.com/v1/chat/completions";
       localStorage.setItem("tarot_base_url", fixed);
       return fixed;
     }
