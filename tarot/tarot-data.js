@@ -365,8 +365,8 @@ const Settings = {
     const v = localStorage.getItem("tarot_base_url") || "https://api.deepseek.com/v1/chat/completions";
     // backward compat for non-DeepSeek URLs (e.g. OpenAI base → append path)
     if (!v.includes("/chat/completions")) return v.replace(/\/$/, "") + "/v1/chat/completions";
-    // DeepSeek URL cleanup: strip any stray segments like /anthropic, ensure /v1/chat/completions
-    if (v.includes("api.deepseek.com") && !v.match(/\/v1\/chat\/completions$/)) {
+    // DeepSeek: force standard URL — strip any stray segments like /anthropic/ etc.
+    if (v.includes("api.deepseek.com") && v !== "https://api.deepseek.com/v1/chat/completions") {
       const fixed = "https://api.deepseek.com/v1/chat/completions";
       localStorage.setItem("tarot_base_url", fixed);
       return fixed;
