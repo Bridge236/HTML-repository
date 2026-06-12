@@ -362,7 +362,7 @@ async function callAI(prompt, apiKey, baseUrl) {
 const Settings = {
   get apiKey()   { return localStorage.getItem("tarot_api_key")   || ""; },
   get baseUrl()  {
-    const v = localStorage.getItem("tarot_base_url") || "https://api.deepseek.com/chat/completions";
+    const v = localStorage.getItem("tarot_base_url") || "https://api.deepseek.com/v1/chat/completions";
     // backward compat: old format (e.g. "https://api.openai.com") → append OpenAI path
     if (!v.endsWith("/chat/completions")) return v.replace(/\/$/, "") + "/v1/chat/completions";
     return v;
@@ -449,7 +449,7 @@ function randomQuote() { return QUOTES[Math.floor(Math.random() * QUOTES.length)
     <input type="text" id="modelInput" placeholder="deepseek-v4-pro">
     <p class="hint">DeepSeek 填 <b>deepseek-v4-pro</b>；智谱填 <b>glm-4.7-flash</b>；OpenAI 填 <b>gpt-4o-mini</b></p>
     <label>API 地址</label>
-    <input type="text" id="baseUrlInput" placeholder="https://api.deepseek.com/chat/completions">
+    <input type="text" id="baseUrlInput" placeholder="https://api.deepseek.com/v1/chat/completions">
     <p class="hint">智谱：https://open.bigmodel.cn/api/paas/v4/chat/completions<br>OpenAI：https://api.openai.com/v1/chat/completions</p>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="saveSettings()">💾 保存</button>
@@ -485,7 +485,7 @@ function closeSettings() {
 
 function saveSettings() {
   Settings.apiKey = document.getElementById('apiKeyInput').value.trim();
-  Settings.baseUrl = document.getElementById('baseUrlInput').value.trim() || 'https://api.deepseek.com/chat/completions';
+  Settings.baseUrl = document.getElementById('baseUrlInput').value.trim() || 'https://api.deepseek.com/v1/chat/completions';
   Settings.model = document.getElementById('modelInput').value.trim() || 'deepseek-v4-pro';
   closeSettings();
   showToast('✅ 设置已保存');
@@ -494,10 +494,10 @@ function saveSettings() {
 function clearSettings() {
   Settings.apiKey = '';
   Settings.model = 'deepseek-v4-pro';
-  Settings.baseUrl = 'https://api.deepseek.com/chat/completions';
+  Settings.baseUrl = 'https://api.deepseek.com/v1/chat/completions';
   document.getElementById('apiKeyInput').value = '';
   document.getElementById('modelInput').value = 'deepseek-v4-pro';
-  document.getElementById('baseUrlInput').value = 'https://api.deepseek.com/chat/completions';
+  document.getElementById('baseUrlInput').value = 'https://api.deepseek.com/v1/chat/completions';
   showToast('🗑 已清除全部设置');
 }
 
