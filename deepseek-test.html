@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeepSeek API 测试</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0f0f1a;color:#e0e0e0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:16px;padding:32px;max-width:560px;width:100%}
+h1{font-size:22px;margin-bottom:8px;color:#fff}
+.sub{font-size:13px;color:#888;margin-bottom:24px}
+label{display:block;font-size:13px;color:#aaa;margin-bottom:6px;margin-top:16px}
+input,textarea{width:100%;background:#0f0f1a;border:1px solid #333;border-radius:8px;padding:10px 14px;color:#e0e0e0;font-size:14px;font-family:inherit;outline:none;transition:.2s}
+input:focus,textarea:focus{border-color:#7c5cfc}
+textarea{resize:vertical;min-height:200px;font-size:12px;font-family:"Cascadia Code","Fira Code",monospace}
+.row{display:flex;gap:8px;align-items:center}
+.row input{flex:1}
+select{background:#0f0f1a;border:1px solid #333;border-radius:8px;padding:10px 14px;color:#e0e0e0;font-size:14px;outline:none;cursor:pointer}
+.btn{display:block;width:100%;margin-top:20px;padding:12px;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s}
+.btn-test{background:linear-gradient(135deg,#7c5cfc,#5b3cfc);color:#fff}
+.btn-test:hover{opacity:.9;transform:translateY(-1px)}
+.btn-test:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.status{margin-top:12px;font-size:13px;text-align:center}
+.status.ok{color:#4ade80}
+.status.err{color:#f87171}
+.status.info{color:#fbbf24}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🔬 DeepSeek API 测试工具</h1>
+  <p class="sub">输入 Key 直接测试，显示完整请求/响应</p>
+
+  <label>API Key</label>
+  <div class="row">
+    <input type="password" id="keyInput" placeholder="sk-..." autocomplete="off">
+    <button class="btn" style="width:auto;margin-top:0;padding:10px 16px;background:#2a2a4a;color:#ccc;font-size:13px" onclick="toggleKey()">👁️</button>
+  </div>
+
+  <label>端点 URL</label>
+  <input type="text" id="urlInput" value="https://api.deepseek.com/v1/chat/completions">
+
+  <label>模型</label>
+  <select id="modelSelect">
+    <option value="deepseek-v4-pro">deepseek-v4-pro</option>
+    <option value="deepseek-v4-flash">deepseek-v4-flash</option>
+    <option value="deepseek-chat">deepseek-chat</option>
+  </select>
+
+  <button class="btn btn-test" id="testBtn" onclick="runTest()">🚀 发送测试请求</button>
+  <p class="status" id="status"></p>
+
+  <label style="margin-top:20px">响应详情</label>
+  <textarea id="output" readonly placeholder="结果将显示在这里..."></textarea>
+</div>
+
+<script>
+function toggleKey(){
+  const i=document.getElementById('keyInput');
+  i.type=i.type==='password'?'text':'password';
+}
+
+async function runTest(){
+  const key=document.getElementById('keyInput').value.trim();
+  if(!key){setStatus('请先输入 API Key','err');return}
+
+  const url=document.getElementById('urlInput').value.trim();
+  const model=document.getElementById('modelSelect').value;
+  const btn=document.getElementById('testBtn');
+  const out=document.getElementById('output');
+
+  btn.disabled=true;
+  btn.textContent='⏳ 请求中...';
+  setStatus('正在连接 '+url+' ...','info');
+  out.value='';
+
+  const body={
+    model:model,
+    messages:[
+      {role:"system",content:"You are a helpful assistant."},
+      {role:"user",content:"请用一句话介绍你自己"}
+    ],
+    max_tokens:200,
+    thinking:{type:"enabled"},
+    reasoning_effort:"high"
+  };
+
+  const start=Date.now();
+  try{
+    const res=await fetch(url,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":"Bearer "+key
+      },
+      body:JSON.stringify(body)
+    });
+
+    const elapsed=Date.now()-start;
+    const text=await res.text();
+    let json;
+    try{json=JSON.parse(text)}catch(e){json=null}
+
+    const report=[
+      '═══ 请求信息 ═══',
+      'URL: '+url,
+      'Model: '+model,
+      '请求体: '+JSON.stringify(body,null,2),
+      '',
+      '═══ 响应信息 ═══',
+      '状态码: '+res.status+' ('+res.statusText+')',
+      '耗时: '+elapsed+'ms',
+      'Content-Type: '+res.headers.get('content-type'),
+      '',
+      '═══ 响应体 ═══',
+      json?JSON.stringify(json,null,2):text
+    ].join('\n');
+
+    out.value=report;
+
+    if(res.ok){
+      setStatus('✅ 成功！状态码 '+res.status+'，耗时 '+elapsed+'ms','ok');
+    }else{
+      setStatus('❌ 失败！HTTP '+res.status+'，耗时 '+elapsed+'ms','err');
+    }
+  }catch(e){
+    out.value='═══ 异常 ═══\n'+e.message+'\n'+e.stack;
+    setStatus('❌ 网络异常：'+e.message,'err');
+  }
+
+  btn.disabled=false;
+  btn.textContent='🚀 发送测试请求';
+}
+
+function setStatus(msg,cls){
+  const s=document.getElementById('status');
+  s.textContent=msg;
+  s.className='status '+cls;
+}
+</script>
+</body>
+</html>
