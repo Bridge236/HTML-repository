@@ -467,7 +467,7 @@ ${cardsDesc}
 
   try{
     const text=await callAI(prompt,Settings.apiKey,Settings.baseUrl);
-    aiDiv.innerHTML=`<div class="ai-text">${text}</div>`;
+    aiDiv.innerHTML=`<div class="ai-reading">${renderMarkdown(text)}</div>`;
     History.push({cards:drawnCards.map(c=>c.name).join('·'),question:q});
   }catch(e){
     aiDiv.innerHTML=`<div class="ai-hint" style="color:#ef9999">AI 解读失败：${e.message}</div>`;

@@ -351,7 +351,7 @@ async function requestAI(card){
 
   try{
     const text=await callAI(prompt,Settings.apiKey,Settings.baseUrl);
-    aiDiv.innerHTML=`<div class="ai-text">${text}</div>`;
+    aiDiv.innerHTML=`<div class="ai-reading">${renderMarkdown(text)}</div>`;
     History.push({cards:card.name,question:q,ts:Date.now()});
   }catch(e){
     aiDiv.innerHTML=`<div class="ai-hint" style="color:#ef9999">AI 解读失败：${e.message}<br>请检查 API Key 和网络连接。<br><br>预设解读：<em style="color:#c0c8b0">${card.reversed?card.reversed:card.upright}</em></div>`;

@@ -336,9 +336,16 @@ async function callAI(prompt, apiKey, baseUrl) {
 2. 从象征性映射的角度出发，不做绝对预言
 3. 语言自然温暖，像一位真诚的朋友在交谈
 4. 以启发和反思收尾，不给出绝对化指令
-5. 控制篇幅，言简意赅
+5. 请按照以下 Markdown 格式输出，段落之间用空行分隔：
 
-请在解读末尾附上声明：塔罗牌是一种自我探索与心理映射的工具，以上解读仅为象征性启发，不构成对命运或具体事件的确定性判断。` },
+### 🔮 牌面启示
+（1-2句话点出牌面最核心的启示）
+### 📖 深度解读
+（主体内容，分段展开）
+### 💫 轻声提醒
+（以温暖鼓励收尾，1-2句话）
+---
+⚠️ 塔罗牌是一种自我探索与心理映射的工具，以上解读仅为象征性启发，不构成对命运或具体事件的确定性判断。` },
         { role: "user", content: prompt }
       ],
       max_tokens: 1200,
@@ -356,6 +363,31 @@ async function callAI(prompt, apiKey, baseUrl) {
   }
   if (!content) throw new Error("API 返回了空内容，请检查模型配置或尝试关闭深度思考模式");
   return content;
+}
+
+// ── Markdown renderer ─────────────────────────────────────────
+function renderMarkdown(md) {
+  let html = md;
+  // escape
+  html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  // bold
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  // ### headings
+  html = html.replace(/^### (.+)$/gm, '<h3 class="ai-h3">$1</h3>');
+  // --- horizontal rule
+  html = html.replace(/^---$/gm, '<hr class="ai-hr">');
+  // paragraphs (split by double newline, wrap each)
+  const blocks = html.split(/\n\n+/);
+  html = blocks.map(b => {
+    const trimmed = b.trim();
+    if (!trimmed) return '';
+    // skip if already wrapped in h3 or hr
+    if (/^<h3|<hr/.test(trimmed)) return trimmed;
+    // handle single newlines within paragraph → <br>
+    const withBreaks = trimmed.replace(/\n/g, '<br>');
+    return '<p>' + withBreaks + '</p>';
+  }).join('\n');
+  return html;
 }
 
 // ── Settings helpers ──────────────────────────────────────────
@@ -436,7 +468,15 @@ function randomQuote() { return QUOTES[Math.floor(Math.random() * QUOTES.length)
 .key-toggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px 8px;line-height:1;transition:.2s}
 .key-toggle:hover{color:var(--gold)}
 .key-toggle.showing{color:var(--gold)}
-.nav-btn.settings-btn{padding:8px 12px}`;
+.nav-btn.settings-btn{padding:8px 12px}
+/* ── AI 解读渲染样式 ── */
+.ai-reading{font-size:15px;color:#c0c8b8;line-height:2.1}
+.ai-reading .ai-h3{color:var(--gold);font-size:17px;font-weight:700;margin:24px 0 12px;letter-spacing:0.5px}
+.ai-reading .ai-h3:first-child{margin-top:0}
+.ai-reading p{margin:0 0 14px;text-indent:0}
+.ai-reading strong{color:#e8d5a3;font-weight:600}
+.ai-reading hr.ai-hr{border:none;border-top:1px dashed rgba(255,215,0,0.2);margin:20px 0 14px}
+.ai-reading em,.ai-reading .disclaimer{color:#8a8f7a;font-size:13px;line-height:1.8;display:block;margin-top:4px}`;
   document.head.appendChild(style);
 
   // ── HTML ──
