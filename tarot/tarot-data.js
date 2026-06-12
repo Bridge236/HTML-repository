@@ -365,6 +365,12 @@ const Settings = {
     const v = localStorage.getItem("tarot_base_url") || "https://api.deepseek.com/v1/chat/completions";
     // backward compat: old format (e.g. "https://api.openai.com") → append OpenAI path
     if (!v.endsWith("/chat/completions")) return v.replace(/\/$/, "") + "/v1/chat/completions";
+    // migration: fix old non-/v1/ DeepSeek URLs (was causing 404)
+    if (v.includes("api.deepseek.com") && !v.includes("/v1/chat/completions")) {
+      const fixed = v.replace("/chat/completions", "/v1/chat/completions");
+      localStorage.setItem("tarot_base_url", fixed);
+      return fixed;
+    }
     return v;
   },
   get model()    { return localStorage.getItem("tarot_model")     || "deepseek-v4-pro"; },
