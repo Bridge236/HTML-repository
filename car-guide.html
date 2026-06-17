@@ -32,6 +32,47 @@ a{color:var(--primary);text-decoration:none}
 .hero-stats{display:flex;gap:28px;justify-content:center;flex-wrap:wrap;margin-top:36px;position:relative}
 .hero-stat .num{font-size:32px;font-weight:800;color:#fbbf24}
 .hero-stat .label{font-size:12px;opacity:.8}
+/* AI Recommendation */
+.hero-ai{max-width:680px;margin:30px auto 0;position:relative;z-index:1}
+.ai-entry{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:14px 20px;cursor:pointer;transition:all .25s}
+.ai-entry:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.4);transform:translateY(-2px)}
+.ai-entry-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#10b981,#0891b2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.ai-entry-text{flex:1;text-align:left}
+.ai-entry-title{font-weight:700;font-size:15px}
+.ai-entry-desc{font-size:12px;opacity:.75;margin-top:2px}
+.ai-entry-arrow{font-size:18px;opacity:.6}
+/* AI Modal */
+.ai-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px}
+.ai-overlay.open{display:flex}
+.ai-panel{background:var(--surface);border-radius:16px;max-width:560px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.25)}
+.ai-panel-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ai-panel-title{font-weight:700;font-size:17px;display:flex;align-items:center;gap:8px}
+.ai-panel-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all .2s}
+.ai-panel-close:hover{background:var(--danger);border-color:var(--danger);color:#fff}
+.ai-panel-body{padding:20px 24px}
+.ai-panel-body label{display:block;font-weight:600;font-size:13px;margin-bottom:6px;color:var(--text)}
+.ai-panel-body select,.ai-panel-body textarea{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:var(--bg);color:var(--text);outline:none;transition:border-color .2s}
+.ai-panel-body select:focus,.ai-panel-body textarea:focus{border-color:var(--primary)}
+.ai-field{margin-bottom:16px}
+.ai-submit{display:block;width:100%;padding:13px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s}
+.ai-submit:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(16,185,129,.4)}
+.ai-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.ai-result{background:linear-gradient(135deg,var(--surface),var(--surface2));color:var(--text);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:18px;display:none;line-height:1.9;font-size:14px;animation:fadeInUp .4s ease}
+.ai-result.show{display:block}
+.ai-result h4{font-size:16px;font-weight:700;margin-bottom:10px;color:var(--primary)}
+.ai-loading{display:none;text-align:center;padding:30px 0}
+.ai-loading.show{display:block}
+.ai-spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ai-loading-text{font-size:13px;color:var(--text-muted)}
+/* API Key Settings */
+.ai-key-toggle{font-size:12px;color:var(--text-muted);cursor:pointer;text-align:center;margin-top:10px;text-decoration:underline;opacity:.7;transition:opacity .2s}
+.ai-key-toggle:hover{opacity:1}
+.ai-key-row{display:none;margin-top:8px}
+.ai-key-row.show{display:flex;gap:8px}
+.ai-key-row input{flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:monospace;background:var(--bg);color:var(--text)}
+.ai-key-status{font-size:11px;color:var(--secondary);margin-top:4px;display:none}
+.ai-key-status.show{display:block}
 .container{max-width:1100px;margin:0 auto;padding:0 20px}
 .section{padding:60px 0}
 .section-header{text-align:center;margin-bottom:44px}
@@ -99,8 +140,11 @@ tr:nth-child(even) td{background:var(--surface2)}
 .brand-country{font-size:17px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .brand-country::after{content:'';flex:1;height:1px;background:var(--border)}
 .brand-list{display:flex;flex-wrap:wrap;gap:10px}
-.brand-chip{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;min-width:130px;transition:all .2s}
+.brand-chip{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;min-width:130px;transition:all .2s;display:flex;align-items:center;gap:12px}
 .brand-chip:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow)}
+.brand-logo{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:10px;color:#fff;flex-shrink:0;position:relative;overflow:hidden;background:var(--border);padding:2px}
+.brand-logo img{width:100%;height:100%;object-fit:contain;border-radius:6px}
+.brand-info{flex:1;min-width:0}
 .brand-chip-name{font-weight:700;font-size:14px;margin-bottom:3px}
 .brand-chip-price{font-size:11px;color:var(--primary);font-weight:600}
 .brand-chip-rep{font-size:11px;color:var(--text-muted)}
@@ -234,7 +278,92 @@ tr:nth-child(even) td{background:var(--surface2)}
     <div class="hero-stat"><div class="num">20</div><div class="label">避坑技巧</div></div>
     <div class="hero-stat"><div class="num">30+</div><div class="label">推荐车型</div></div>
   </div>
+  <div class="hero-ai">
+    <div class="ai-entry" id="aiEntryBtn">
+      <div class="ai-entry-icon">🤖</div>
+      <div class="ai-entry-text">
+        <div class="ai-entry-title">AI 智能选车 · DeepSeek</div>
+        <div class="ai-entry-desc">回答几个简单问题，AI 帮你推荐最适合的车型</div>
+      </div>
+      <div class="ai-entry-arrow">→</div>
+    </div>
+  </div>
 </section>
+
+<!-- AI Panel Overlay -->
+<div class="ai-overlay" id="aiOverlay">
+  <div class="ai-panel">
+    <div class="ai-panel-header">
+      <div class="ai-panel-title">🤖 AI智能选车</div>
+      <button class="ai-panel-close" id="aiPanelClose">✕</button>
+    </div>
+    <div class="ai-panel-body">
+      <div class="ai-field">
+        <label>💰 你的购车预算</label>
+        <select id="aiBudget">
+          <option value="">请选择</option>
+          <option value="10万以内">10万以内</option>
+          <option value="10-20万">10-20万</option>
+          <option value="20-35万">20-35万</option>
+          <option value="35万以上">35万以上</option>
+        </select>
+      </div>
+      <div class="ai-field">
+        <label>👨‍👩‍👧 家庭状况</label>
+        <select id="aiFamily">
+          <option value="">请选择</option>
+          <option value="单身/两人世界">单身/两人世界</option>
+          <option value="三口之家">三口之家</option>
+          <option value="二孩或多人">二孩或多人</option>
+        </select>
+      </div>
+      <div class="ai-field">
+        <label>🔌 充电条件</label>
+        <select id="aiCharge">
+          <option value="">请选择</option>
+          <option value="有车位+充电桩">有车位+充电桩</option>
+          <option value="有车位但无充电桩">有车位但无充电桩</option>
+          <option value="无固定车位">无固定车位</option>
+        </select>
+      </div>
+      <div class="ai-field">
+        <label>📏 年行驶里程</label>
+        <select id="aiMileage">
+          <option value="">请选择</option>
+          <option value="1万公里以内">1万公里以内</option>
+          <option value="1-2万公里">1-2万公里</option>
+          <option value="2万公里以上">2万公里以上</option>
+        </select>
+      </div>
+      <div class="ai-field">
+        <label>💡 最看重什么</label>
+        <select id="aiPriority">
+          <option value="">请选择</option>
+          <option value="省钱实惠">省钱实惠</option>
+          <option value="可靠省心">可靠省心</option>
+          <option value="智能科技">智能科技</option>
+          <option value="品牌面子">品牌面子</option>
+        </select>
+      </div>
+      <div class="ai-field">
+        <label>📝 补充需求（选填）</label>
+        <textarea id="aiExtra" rows="2" placeholder="例如：经常跑高速、喜欢自驾游、需要7座…"></textarea>
+      </div>
+      <button class="ai-submit" id="aiSubmit">🔍 开始AI分析</button>
+      <div class="ai-loading" id="aiLoading">
+        <div class="ai-spinner"></div>
+        <div class="ai-loading-text">AI正在为你分析最佳车型...</div>
+      </div>
+      <div class="ai-result" id="aiResult"></div>
+      <div class="ai-key-toggle" id="aiKeyToggle">⚙️ 设置API Key</div>
+      <div class="ai-key-row" id="aiKeyRow">
+        <input type="password" id="aiApiKey" placeholder="输入你的 DeepSeek API Key">
+        <button id="aiKeySave" style="padding:8px 14px;border:1px solid var(--primary);background:var(--primary);color:#fff;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;white-space:nowrap">保存</button>
+      </div>
+      <div class="ai-key-status" id="aiKeyStatus">✅ Key已保存（仅存储在你的浏览器中）</div>
+    </div>
+  </div>
+</div>
 
 <!-- ===== 第一章 ===== -->
 <section class="section" id="s1">
@@ -358,53 +487,53 @@ tr:nth-child(even) td{background:var(--surface2)}
     <div class="brand-section">
       <div class="brand-country">🇨🇳 中国品牌（国产）</div>
       <div class="brand-list">
-        <div class="brand-chip"><div class="brand-chip-name">比亚迪</div><div class="brand-chip-price">10—100万</div><div class="brand-chip-rep">新能源王者·技术自研·刀片电池</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">华为问界</div><div class="brand-chip-price">25—50万</div><div class="brand-chip-rep">鸿蒙座舱·智能驾驶顶尖</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">长安汽车</div><div class="brand-chip-price">8—25万</div><div class="brand-chip-rep">深蓝/阿维塔·性价比高</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">吉利汽车</div><div class="brand-chip-price">8—40万</div><div class="brand-chip-rep">领克/银河·收购沃尔沃</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">奇瑞汽车</div><div class="brand-chip-price">5—30万</div><div class="brand-chip-rep">星途/捷途·发动机技术强</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">长城汽车</div><div class="brand-chip-price">10—50万</div><div class="brand-chip-rep">哈弗/坦克·越野标杆</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">理想汽车</div><div class="brand-chip-price">25—50万</div><div class="brand-chip-rep">增程奶爸车·里程焦虑终结</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">小鹏汽车</div><div class="brand-chip-price">15—35万</div><div class="brand-chip-rep">城市NOA智驾天花板</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">蔚来汽车</div><div class="brand-chip-price">30—60万</div><div class="brand-chip-rep">换电模式·服务顶级</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">小米汽车</div><div class="brand-chip-price">22—40万</div><div class="brand-chip-rep">SU7/YU7·科技感爆棚</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">零跑/哪吒</div><div class="brand-chip-price">6—20万</div><div class="brand-chip-rep">极致性价比·代步首选</div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#E30613">BYD</div><div class="brand-info"><div class="brand-chip-name">比亚迪</div><div class="brand-chip-price">10—100万</div><div class="brand-chip-rep">新能源王者·技术自研·刀片电池</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#FF6900"><span style="font-weight:800;font-size:12px;color:#fff">AITO</span></div><div class="brand-info"><div class="brand-chip-name">华为问界</div><div class="brand-chip-price">25—50万</div><div class="brand-chip-rep">鸿蒙座舱·智能驾驶顶尖</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#005BAC"><svg viewBox="0 0 48 48"><path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm0 6c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6zm0 28c-5 0-9.42-2.56-12-6.44.06-3.98 8-6.16 12-6.16s11.94 2.18 12 6.16C33.42 35.44 29 38 24 38z" fill="#fff"/></svg></div><div class="brand-info"><div class="brand-chip-name">长安汽车</div><div class="brand-chip-price">8—25万</div><div class="brand-chip-rep">深蓝/阿维塔·性价比高</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#003D8F"><svg viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="32" rx="6" fill="#fff"/><rect x="12" y="12" width="24" height="24" rx="4" fill="#003d8f"/><path d="M18 24h12M24 18v12" stroke="#fff" stroke-width="2.5"/></svg></div><div class="brand-info"><div class="brand-chip-name">吉利汽车</div><div class="brand-chip-price">8—40万</div><div class="brand-chip-rep">领克/银河·收购沃尔沃</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#CC0000"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M24 14l6 18H18l6-18zm-4 12h8" stroke="#fff" stroke-width="2"/></svg></div><div class="brand-info"><div class="brand-chip-name">奇瑞汽车</div><div class="brand-chip-price">5—30万</div><div class="brand-chip-rep">星途/捷途·发动机技术强</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#C60014"><span style="font-weight:800;font-size:11px;color:#fff">HAVAL</span></div><div class="brand-info"><div class="brand-chip-name">长城汽车</div><div class="brand-chip-price">10—50万</div><div class="brand-chip-rep">哈弗/坦克·越野标杆</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#14B869"><span style="font-weight:800;font-size:19px;color:#fff">LI</span></div><div class="brand-info"><div class="brand-chip-name">理想汽车</div><div class="brand-chip-price">25—50万</div><div class="brand-chip-rep">增程奶爸车·里程焦虑终结</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#FF6900"><span style="font-weight:800;font-size:10px;color:#fff">XPENG</span></div><div class="brand-info"><div class="brand-chip-name">小鹏汽车</div><div class="brand-chip-price">15—35万</div><div class="brand-chip-rep">城市NOA智驾天花板</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#00AEE6">NIO</div><div class="brand-info"><div class="brand-chip-name">蔚来汽车</div><div class="brand-chip-price">30—60万</div><div class="brand-chip-rep">换电模式·服务顶级</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#FF6900">MI</div><div class="brand-info"><div class="brand-chip-name">小米汽车</div><div class="brand-chip-price">22—40万</div><div class="brand-chip-rep">SU7/YU7·科技感爆棚</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#00ADB5"><span style="font-weight:800;font-size:8px;color:#fff">LEAPMOTOR</span></div><div class="brand-info"><div class="brand-chip-name">零跑/哪吒</div><div class="brand-chip-price">6—20万</div><div class="brand-chip-rep">极致性价比·代步首选</div></div></div>
       </div>
     </div>
     <div class="brand-section">
       <div class="brand-country">🇩🇪 德国品牌</div>
       <div class="brand-list">
-        <div class="brand-chip"><div class="brand-chip-name">大众</div><div class="brand-chip-price">10—35万</div><div class="brand-chip-rep">途观/帕萨特·经典可靠</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">宝马 BMW</div><div class="brand-chip-price">28—200万+</div><div class="brand-chip-rep">运动操控标杆·3系/5系</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">奔驰 Mercedes</div><div class="brand-chip-price">30—500万+</div><div class="brand-chip-rep">豪华舒适标杆·C级/E级/S级</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">奥迪 Audi</div><div class="brand-chip-price">25—150万</div><div class="brand-chip-rep">科技内饰·A4/A6/Q5</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">保时捷</div><div class="brand-chip-price">80—300万+</div><div class="brand-chip-rep">性能运动顶尖·911/Cayenne</div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#003D7C"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="none" stroke="#fff" stroke-width="2"/><text x="24" y="30" text-anchor="middle" fill="#fff" font-size="18" font-weight="800">VW</text></svg></div><div class="brand-info"><div class="brand-chip-name">大众</div><div class="brand-chip-price">10—35万</div><div class="brand-chip-rep">途观/帕萨特·经典可靠</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#fff"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="none" stroke="#0066B1" stroke-width="2"/><path d="M4 24A20 20 0 0 1 24 4v20z" fill="#0066B1"/><path d="M44 24A20 20 0 0 0 24 44V24z" fill="#0066B1"/></svg></div><div class="brand-info"><div class="brand-chip-name">宝马 BMW</div><div class="brand-chip-price">28—200万+</div><div class="brand-chip-rep">运动操控标杆·3系/5系</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#1A1A1A"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="none" stroke="#c0c0c0" stroke-width="1.5"/><path d="M24 6l10 26H14z" fill="none" stroke="#c0c0c0" stroke-width="2.5"/></svg></div><div class="brand-info"><div class="brand-chip-name">奔驰 Mercedes</div><div class="brand-chip-price">30—500万+</div><div class="brand-chip-rep">豪华舒适标杆·C级/E级/S级</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#000"><svg viewBox="0 0 48 48"><circle cx="16" cy="16" r="7" fill="none" stroke="#fff" stroke-width="2"/><circle cx="32" cy="16" r="7" fill="none" stroke="#fff" stroke-width="2"/><circle cx="16" cy="32" r="7" fill="none" stroke="#fff" stroke-width="2"/><circle cx="32" cy="32" r="7" fill="none" stroke="#fff" stroke-width="2"/></svg></div><div class="brand-info"><div class="brand-chip-name">奥迪 Audi</div><div class="brand-chip-price">25—150万</div><div class="brand-chip-rep">科技内饰·A4/A6/Q5</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#B1120E"><svg viewBox="0 0 48 48"><rect x="10" y="10" width="28" height="28" rx="14" fill="#cc3333"/><path d="M18 30V18l6 6-6 6z" fill="#fbbf24"/><path d="M30 18v12l-6-6 6-6z" fill="#1a1a1a"/></svg></div><div class="brand-info"><div class="brand-chip-name">保时捷</div><div class="brand-chip-price">80—300万+</div><div class="brand-chip-rep">性能运动顶尖·911/Cayenne</div></div></div>
       </div>
     </div>
     <div class="brand-section">
       <div class="brand-country">🇯🇵 日本品牌（省油耐用）</div>
       <div class="brand-list">
-        <div class="brand-chip"><div class="brand-chip-name">丰田 Toyota</div><div class="brand-chip-price">12—50万</div><div class="brand-chip-rep">最可靠·凯美瑞/汉兰达/RAV4</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">本田 Honda</div><div class="brand-chip-price">10—40万</div><div class="brand-chip-rep">发动机好·思域/雅阁/CR-V</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">日产 Nissan</div><div class="brand-chip-price">8—30万</div><div class="brand-chip-rep">后排舒适·天籁/轩逸</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">马自达</div><div class="brand-chip-price">12—30万</div><div class="brand-chip-rep">操控好颜值高·CX-5</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">雷克萨斯</div><div class="brand-chip-price">30—120万</div><div class="brand-chip-rep">丰田旗下豪华·服务口碑好</div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#E3000F"><svg viewBox="0 0 48 48"><ellipse cx="24" cy="24" rx="16" ry="12" fill="none" stroke="#fff" stroke-width="2.5" transform="rotate(-15 24 24)"/><ellipse cx="24" cy="24" rx="14" ry="10" fill="none" stroke="#fff" stroke-width="1.8" transform="rotate(0 24 24)"/><ellipse cx="24" cy="24" rx="12" ry="8" fill="none" stroke="#fff" stroke-width="1.2" transform="rotate(15 24 24)"/></svg></div><div class="brand-info"><div class="brand-chip-name">丰田 Toyota</div><div class="brand-chip-price">12—50万</div><div class="brand-chip-rep">最可靠·凯美瑞/汉兰达/RAV4</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#CC0000"><svg viewBox="0 0 48 48"><rect x="10" y="16" width="28" height="16" rx="4" fill="none" stroke="#fff" stroke-width="2.5"/><text x="24" y="29" text-anchor="middle" fill="#fff" font-size="14" font-weight="800">H</text></svg></div><div class="brand-info"><div class="brand-chip-name">本田 Honda</div><div class="brand-chip-price">10—40万</div><div class="brand-chip-rep">发动机好·思域/雅阁/CR-V</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#C3000E"><span style="font-weight:800;font-size:9px;color:#fff">NISSAN</span></div><div class="brand-info"><div class="brand-chip-name">日产 Nissan</div><div class="brand-chip-price">8—30万</div><div class="brand-chip-rep">后排舒适·天籁/轩逸</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#94123E"><svg viewBox="0 0 48 48"><ellipse cx="24" cy="26" rx="18" ry="12" fill="none" stroke="#fff" stroke-width="2"/><path d="M14 20Q24 8 34 20" fill="none" stroke="#fff" stroke-width="1.5"/></svg></div><div class="brand-info"><div class="brand-chip-name">马自达</div><div class="brand-chip-price">12—30万</div><div class="brand-chip-rep">操控好颜值高·CX-5</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#1A1A1A"><svg viewBox="0 0 48 48"><ellipse cx="24" cy="24" rx="20" ry="14" fill="none" stroke="#fff" stroke-width="2"/><text x="24" y="30" text-anchor="middle" fill="#fff" font-size="16" font-weight="800">L</text></svg></div><div class="brand-info"><div class="brand-chip-name">雷克萨斯</div><div class="brand-chip-price">30—120万</div><div class="brand-chip-rep">丰田旗下豪华·服务口碑好</div></div></div>
       </div>
     </div>
     <div class="brand-section">
       <div class="brand-country">🇺🇸 美国品牌</div>
       <div class="brand-list">
-        <div class="brand-chip"><div class="brand-chip-name">特斯拉 Tesla</div><div class="brand-chip-price">22—80万</div><div class="brand-chip-rep">纯电先驱·Model3/Y/S</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">别克 Buick</div><div class="brand-chip-price">12—35万</div><div class="brand-chip-rep">商务舒适·昂科威/君越</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">凯迪拉克</div><div class="brand-chip-price">25—100万</div><div class="brand-chip-rep">美式豪华·XT5/CT5</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">雪佛兰</div><div class="brand-chip-price">10—30万</div><div class="brand-chip-rep">动力强·科鲁泽/探界者</div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#E82127"><span style="font-weight:800;font-size:10px;color:#fff">TESLA</span></div><div class="brand-info"><div class="brand-chip-name">特斯拉 Tesla</div><div class="brand-chip-price">22—80万</div><div class="brand-chip-rep">纯电先驱·Model3/Y/S</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#E60000"><svg viewBox="0 0 48 48"><circle cx="24" cy="20" r="12" fill="none" stroke="#fff" stroke-width="2"/><circle cx="24" cy="28" r="12" fill="none" stroke="#fff" stroke-width="2"/><circle cx="24" cy="36" r="12" fill="none" stroke="#fff" stroke-width="2"/></svg></div><div class="brand-info"><div class="brand-chip-name">别克 Buick</div><div class="brand-chip-price">12—35万</div><div class="brand-chip-rep">商务舒适·昂科威/君越</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#1A1A1A"><svg viewBox="0 0 48 48"><rect x="8" y="10" width="32" height="28" rx="4" fill="#cc9900"/><rect x="12" y="14" width="24" height="20" rx="2" fill="#1a1a1a"/></svg></div><div class="brand-info"><div class="brand-chip-name">凯迪拉克</div><div class="brand-chip-price">25—100万</div><div class="brand-chip-rep">美式豪华·XT5/CT5</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#E5A716"><svg viewBox="0 0 48 48"><path d="M24 8l6 18H18l6-18zM18 22h12" stroke="#fff" stroke-width="2.5" fill="none"/></svg></div><div class="brand-info"><div class="brand-chip-name">雪佛兰</div><div class="brand-chip-price">10—30万</div><div class="brand-chip-rep">动力强·科鲁泽/探界者</div></div></div>
       </div>
     </div>
     <div class="brand-section">
       <div class="brand-country">🇰🇷 韩国品牌</div>
       <div class="brand-list">
-        <div class="brand-chip"><div class="brand-chip-name">现代 Hyundai</div><div class="brand-chip-price">10—30万</div><div class="brand-chip-rep">配置丰富·胜达/途胜</div></div>
-        <div class="brand-chip"><div class="brand-chip-name">起亚 Kia</div><div class="brand-chip-price">10—25万</div><div class="brand-chip-rep">颜值高·K5/智跑/索兰托</div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#003469"><svg viewBox="0 0 48 48"><ellipse cx="24" cy="24" rx="20" ry="14" fill="none" stroke="#fff" stroke-width="2"/><text x="24" y="30" text-anchor="middle" fill="#fff" font-size="16" font-weight="800">H</text></svg></div><div class="brand-info"><div class="brand-chip-name">现代 Hyundai</div><div class="brand-chip-price">10—30万</div><div class="brand-chip-rep">配置丰富·胜达/途胜</div></div></div>
+        <div class="brand-chip"><div class="brand-logo" style="background:#E6000C"><span style="font-weight:800;font-size:16px;color:#fff">KIA</span></div><div class="brand-info"><div class="brand-chip-name">起亚 Kia</div><div class="brand-chip-price">10—25万</div><div class="brand-chip-rep">颜值高·K5/智跑/索兰托</div></div></div>
       </div>
     </div>
     <div class="warn-box">⚠️ <strong>选品牌建议：</strong>预算20万内优先国产新能源（同价位配置远超合资）；20-35万考虑高端国产或BBA入门；35万以上才是传统豪华品牌的舒适区。</div>
@@ -1187,6 +1316,156 @@ function highlightNav(){
   ids.forEach(id=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<=80)cur=id;});
   document.querySelectorAll('.nav-links a').forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+cur);});
 }
+// ===== AI Smart Car Recommendation =====
+const aiOverlay=document.getElementById('aiOverlay');
+const aiEntryBtn=document.getElementById('aiEntryBtn');
+const aiPanelClose=document.getElementById('aiPanelClose');
+const aiSubmit=document.getElementById('aiSubmit');
+const aiResult=document.getElementById('aiResult');
+const aiLoading=document.getElementById('aiLoading');
+const aiKeyToggle=document.getElementById('aiKeyToggle');
+const aiKeyRow=document.getElementById('aiKeyRow');
+const aiApiKey=document.getElementById('aiApiKey');
+const aiKeySave=document.getElementById('aiKeySave');
+const aiKeyStatus=document.getElementById('aiKeyStatus');
+
+// Load saved API key from localStorage
+const savedKey=localStorage.getItem('car-guide-ds-key');
+if(savedKey){
+  aiApiKey.value=savedKey;
+  aiKeyStatus.classList.add('show');
+}
+
+// Open/close AI panel
+aiEntryBtn.addEventListener('click',()=>{
+  // Scroll to decision tree section
+  const s4=document.getElementById('s4');
+  if(s4){
+    s4.scrollIntoView({behavior:'smooth',block:'start'});
+    // Highlight the decision tree
+    setTimeout(()=>{
+      document.getElementById('dtree-question-box').scrollIntoView({behavior:'smooth',block:'center'});
+    },400);
+  }
+});
+aiPanelClose.addEventListener('click',()=>{aiOverlay.classList.remove('open');});
+aiOverlay.addEventListener('click',function(e){if(e.target===aiOverlay)aiOverlay.classList.remove('open');});
+
+// API key settings toggle
+aiKeyToggle.addEventListener('click',()=>{aiKeyRow.classList.toggle('show');});
+
+// Save API key
+aiKeySave.addEventListener('click',()=>{
+  const key=aiApiKey.value.trim();
+  if(key){
+    localStorage.setItem('car-guide-ds-key',key);
+    aiKeyStatus.classList.add('show');
+    aiKeyStatus.textContent='✅ Key已保存（仅存储在你的浏览器中）';
+    aiKeyRow.classList.remove('show');
+  }else{
+    aiKeyStatus.classList.add('show');
+    aiKeyStatus.textContent='⚠️ 请输入有效的API Key';
+    aiKeyStatus.style.color='var(--danger)';
+  }
+});
+
+// AI Submit
+aiSubmit.addEventListener('click',async function(){
+  const budget=document.getElementById('aiBudget').value;
+  const family=document.getElementById('aiFamily').value;
+  const charge=document.getElementById('aiCharge').value;
+  const mileage=document.getElementById('aiMileage').value;
+  const priority=document.getElementById('aiPriority').value;
+  const extra=document.getElementById('aiExtra').value.trim();
+
+  if(!budget||!family||!charge||!mileage||!priority){
+    alert('请完成所有必选项后再开始分析');
+    return;
+  }
+
+  const apiKey=savedKey||aiApiKey.value.trim();
+  if(!apiKey){
+    alert('请先设置你的 DeepSeek API Key\n\n点击下方的 ⚙️设置API Key 输入你的密钥\nKey 仅存储在浏览器本地，不会上传到任何服务器');
+    return;
+  }
+
+  // Save key if newly entered
+  if(!savedKey&&apiKey){localStorage.setItem('car-guide-ds-key',apiKey);aiKeyStatus.classList.add('show');}
+
+  aiSubmit.disabled=true;
+  aiResult.classList.remove('show');
+  aiLoading.classList.add('show');
+
+  const prompt=`你是一个专业的汽车选购顾问。请根据以下用户信息，推荐3款最适合的车型，并给出推荐理由。
+
+用户情况：
+- 购车预算：${budget}
+- 家庭状况：${family}
+- 充电条件：${charge}
+- 年行驶里程：${mileage}
+- 最看重：${priority}
+${extra?'- 补充需求：'+extra:''}
+
+请按以下格式回复（简洁实用，不要废话）：
+
+🚗 推荐车型一：[品牌+车型]
+✅ 推荐理由：[2-3句话说明为什么适合]
+💰 参考落地价：[价格区间]
+
+🚗 推荐车型二：[品牌+车型]
+✅ 推荐理由：[2-3句话说明为什么适合]
+💰 参考落地价：[价格区间]
+
+🚗 推荐车型三：[品牌+车型]
+✅ 推荐理由：[2-3句话说明为什么适合]
+💰 参考落地价：[价格区间]
+
+💡 选购建议：[1-2句话总结重点注意事项]`;
+
+  try{
+    const resp=await fetch('https://api.deepseek.com/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+      body:JSON.stringify({
+        model:'deepseek-chat',
+        messages:[
+          {role:'system',content:'你是专业的汽车选购顾问，对2025-2026年中国市场所有主流车型了如指掌。推荐要具体到品牌+车型，落地价要有参考性。'},
+          {role:'user',content:prompt}
+        ],
+        temperature:0.7,
+        max_tokens:1500
+      })
+    });
+
+    const data=await resp.json();
+    aiLoading.classList.remove('show');
+    aiSubmit.disabled=false;
+
+    if(data.error){
+      let errMsg=data.error.message||'未知错误';
+      if(errMsg.includes('auth')||errMsg.includes('key')||errMsg.includes('token')){
+        errMsg='API Key 无效或已过期，请重新设置';
+        localStorage.removeItem('car-guide-ds-key');
+        aiKeyStatus.classList.remove('show');
+      }
+      aiResult.innerHTML='<h4>❌ 出错了</h4><p>'+errMsg.replace(/</g,'&lt;')+'</p>';
+    }else if(data.choices&&data.choices[0]){
+      const text=data.choices[0].message.content;
+      aiResult.innerHTML='<h4>🤖 AI分析结果</h4>'+text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+    }else{
+      aiResult.innerHTML='<h4>❌ 出错了</h4><p>未获取到有效回复，请稍后重试</p>';
+    }
+    aiResult.classList.add('show');
+    aiResult.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }catch(e){
+    aiLoading.classList.remove('show');
+    aiSubmit.disabled=false;
+    aiResult.innerHTML='<h4>❌ 网络错误</h4><p>无法连接 DeepSeek API，请检查网络或 API Key</p>';
+    aiResult.classList.add('show');
+  }
+});
+
+// ===== FAQ Toggle =====
 document.querySelectorAll('.faq-q').forEach(q=>{
   q.addEventListener('click',()=>{
     const item=q.parentElement;
@@ -1210,6 +1489,7 @@ document.getElementById('toggleFullTree').addEventListener('click',function(){
 const dtreeQuestions=[
   {
     q:'Q1. 你的落地预算是多少？',
+    type:'radio',
     options:[
       {text:'💰 10万以内',result:'预算有限，优先国产代步车'},
       {text:'💰 10-20万',result:'主流家用黄金区间'},
@@ -1219,6 +1499,7 @@ const dtreeQuestions=[
   },
   {
     q:'Q2. 家里几口人，有小孩吗？',
+    type:'radio',
     options:[
       {text:'👤 单身/两人世界',result:'轿车或小型SUV即可'},
       {text:'👨‍👩‍👧 三口之家',result:'紧凑型/中型SUV最适合'},
@@ -1227,6 +1508,7 @@ const dtreeQuestions=[
   },
   {
     q:'Q3. 家里有固定充电条件吗？',
+    type:'radio',
     options:[
       {text:'🔌 有车位+充电桩',result:'纯电最省钱，每公里不到1毛'},
       {text:'🔌 有车位但无充电桩',result:'插混最均衡，市区用电长途用油'},
@@ -1235,20 +1517,28 @@ const dtreeQuestions=[
   },
   {
     q:'Q4. 每年大概跑多少公里？',
+    type:'radio',
     options:[
       {text:'📏 1万公里以内',result:'能源类型不重要，按喜好选'},
       {text:'📏 1-2万公里',result:'插混综合成本最低'},
-      {text:'📏 2万公里以上',result:'纯电回本最快，每年能省近万元'}
+      {text:'📏 2万公里以上',result:'纯电回本最快，每年能省近万元'},
+      {text:'❓ 不确定',result:'建议根据充电条件来选择'}
     ]
   },
   {
-    q:'Q5. 买车最看重什么？',
+    q:'Q5. 买车最看重什么？（可多选，选填）',
+    type:'checkbox',
     options:[
       {text:'💵 省钱实惠',result:'国产插混/纯电性价比最高'},
       {text:'🔧 可靠省心',result:'日系丰田/本田品质稳定'},
       {text:'🤖 智能科技',result:'华为问界/小鹏/理想智能领先'},
       {text:'👑 品牌面子',result:'BBA传统豪华品牌'}
     ]
+  },
+  {
+    q:'Q6. 还有什么补充需求？（选填）',
+    type:'text',
+    placeholder:'例如：经常跑高速、喜欢自驾游、需要7座…'
   }
 ];
 
@@ -1257,18 +1547,96 @@ let dtreeAnswers=[];
 
 function renderDtreeQuestion(){
   const q=dtreeQuestions[dtreeStep];
+  const totalQ=dtreeQuestions.length;
   document.getElementById('dtree-question-text').textContent=q.q;
-  document.getElementById('dtree-step-label').textContent='第 '+(dtreeStep+1)+'/5 步';
-  document.getElementById('dtree-progress-fill').style.width=((dtreeStep+1)*20)+'%';
+  document.getElementById('dtree-step-label').textContent='第 '+(dtreeStep+1)+'/'+totalQ+' 步';
+  document.getElementById('dtree-progress-fill').style.width=((dtreeStep+1)/totalQ*100)+'%';
   const optArea=document.getElementById('dtree-options-area');
   optArea.innerHTML='';
-  q.options.forEach((opt,i)=>{
-    const btn=document.createElement('button');
-    btn.className='dtree-answer';
-    btn.textContent=opt.text;
-    btn.addEventListener('click',()=>selectDtreeOption(i));
-    optArea.appendChild(btn);
-  });
+
+  if(q.type==='radio'){
+    q.options.forEach((opt,i)=>{
+      const btn=document.createElement('button');
+      btn.className='dtree-answer';
+      btn.textContent=opt.text;
+      btn.addEventListener('click',()=>selectDtreeOption(i));
+      optArea.appendChild(btn);
+    });
+  }else if(q.type==='checkbox'){
+    const checkGroup=document.createElement('div');
+    checkGroup.style.cssText='display:flex;flex-direction:column;gap:10px';
+    q.options.forEach((opt,i)=>{
+      const label=document.createElement('label');
+      label.style.cssText='display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;transition:all .2s';
+      label.addEventListener('mouseenter',function(){this.style.borderColor='var(--primary)';this.style.background='rgba(37,99,235,.06)';});
+      label.addEventListener('mouseleave',function(){this.style.borderColor='transparent';this.style.background='var(--surface2)';});
+      const cb=document.createElement('input');
+      cb.type='checkbox';
+      cb.value=i;
+      cb.style.cssText='width:18px;height:18px;accent-color:var(--primary);cursor:pointer';
+      if(dtreeAnswers[dtreeStep]&&dtreeAnswers[dtreeStep].selected&&dtreeAnswers[dtreeStep].selected.includes(i))cb.checked=true;
+      label.appendChild(cb);
+      label.appendChild(document.createTextNode(opt.text));
+      checkGroup.appendChild(label);
+    });
+    optArea.appendChild(checkGroup);
+    const nextBtn=document.createElement('button');
+    nextBtn.className='dtree-answer';
+    nextBtn.textContent='下一步 →';
+    nextBtn.style.cssText='margin-top:12px;text-align:center;justify-content:center;background:var(--primary);border-color:var(--primary);color:#fff';
+    nextBtn.addEventListener('click',()=>{
+      const checked=Array.from(checkGroup.querySelectorAll('input:checked')).map(cb=>parseInt(cb.value));
+      dtreeAnswers[dtreeStep]={type:'checkbox',selected:checked};
+      dtreeStep++;
+      if(dtreeStep>=dtreeQuestions.length){
+        showDtreeResult();
+      }else{
+        renderDtreeQuestion();
+        document.getElementById('dtree-question-box').scrollIntoView({behavior:'smooth',block:'nearest'});
+      }
+    });
+    optArea.appendChild(nextBtn);
+  }else if(q.type==='text'){
+    const ta=document.createElement('textarea');
+    ta.placeholder=q.placeholder;
+    ta.style.cssText='width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:var(--bg);color:var(--text);resize:vertical;min-height:80px;outline:none;transition:border-color .2s';
+    ta.addEventListener('focus',function(){this.style.borderColor='var(--primary)';});
+    ta.addEventListener('blur',function(){this.style.borderColor='var(--border)';});
+    if(dtreeAnswers[dtreeStep]&&dtreeAnswers[dtreeStep].value)ta.value=dtreeAnswers[dtreeStep].value;
+    optArea.appendChild(ta);
+    const btnRow=document.createElement('div');
+    btnRow.style.cssText='display:flex;gap:10px;margin-top:12px';
+    const skipBtn=document.createElement('button');
+    skipBtn.className='dtree-back-btn';
+    skipBtn.textContent='跳过 →';
+    skipBtn.style.cssText='flex:1;padding:12px';
+    skipBtn.addEventListener('click',()=>{
+      dtreeAnswers[dtreeStep]={type:'text',value:''};
+      dtreeStep++;
+      if(dtreeStep>=dtreeQuestions.length){
+        showDtreeResult();
+      }else{
+        renderDtreeQuestion();
+      }
+    });
+    const doneBtn=document.createElement('button');
+    doneBtn.className='dtree-answer';
+    doneBtn.textContent='✓ 完成';
+    doneBtn.style.cssText='flex:1;padding:12px;text-align:center;justify-content:center;background:var(--primary);border-color:var(--primary);color:#fff';
+    doneBtn.addEventListener('click',()=>{
+      dtreeAnswers[dtreeStep]={type:'text',value:ta.value.trim()};
+      dtreeStep++;
+      if(dtreeStep>=dtreeQuestions.length){
+        showDtreeResult();
+      }else{
+        renderDtreeQuestion();
+      }
+    });
+    btnRow.appendChild(skipBtn);
+    btnRow.appendChild(doneBtn);
+    optArea.appendChild(btnRow);
+  }
+
   document.getElementById('dtree-back').style.display=dtreeStep>0?'inline-block':'none';
   document.getElementById('dtree-restart').style.display='none';
   document.getElementById('dtree-result').style.display='none';
@@ -1286,75 +1654,265 @@ function selectDtreeOption(idx){
 }
 
 function showDtreeResult(){
-  document.getElementById('dtree-question-text').textContent='🎯 你的选车分析结果';
+  document.getElementById('dtree-question-text').textContent='🎯 选车分析完成';
   document.getElementById('dtree-step-label').textContent='分析完成';
   document.getElementById('dtree-progress-fill').style.width='100%';
   document.getElementById('dtree-options-area').innerHTML='';
   document.getElementById('dtree-back').style.display='none';
   document.getElementById('dtree-restart').style.display='inline-block';
 
-  // Generate result summary
-  const budget=dtreeAnswers[0];
-  const family=dtreeAnswers[1];
-  const charge=dtreeAnswers[2];
-  const km=dtreeAnswers[3];
-  const priority=dtreeAnswers[4];
+  // Build summary
+  const a0=dtreeAnswers[0]; // radio: Q1 budget
+  const a1=dtreeAnswers[1]; // radio: Q2 family
+  const a2=dtreeAnswers[2]; // radio: Q3 charge
+  const a3=dtreeAnswers[3]; // radio: Q4 mileage
+  const a4=dtreeAnswers[4]; // checkbox: Q5 priority
+  const a5=dtreeAnswers[5]; // text: Q6 extra
 
-  let recommend='';
-  let reason='';
-  let type='';
+  let summaryHTML='<div style="background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:left;line-height:2;font-size:14px">';
+  summaryHTML+='<p><strong>💰 预算：</strong>'+a0.text+' — '+a0.result+'</p>';
+  summaryHTML+='<p><strong>👨‍👩‍👧 家庭：</strong>'+a1.text+' — '+a1.result+'</p>';
+  summaryHTML+='<p><strong>🔌 充电：</strong>'+a2.text+' — '+a2.result+'</p>';
+  summaryHTML+='<p><strong>📏 里程：</strong>'+a3.text+' — '+a3.result+'</p>';
+  if(a4&&a4.type==='checkbox'&&a4.selected&&a4.selected.length>0){
+    const selectedTexts=a4.selected.map(i=>dtreeQuestions[4].options[i].text).join('、');
+    summaryHTML+='<p><strong>💡 看重：</strong>'+selectedTexts+'</p>';
+  }else{
+    summaryHTML+='<p><strong>💡 看重：</strong><span style="color:var(--text-muted)">（未选择）</span></p>';
+  }
+  if(a5&&a5.type==='text'&&a5.value){
+    summaryHTML+='<p><strong>📝 补充：</strong>'+a5.value+'</p>';
+  }
+  summaryHTML+='</div>';
 
-  // Determine vehicle type
-  if(family.result.includes('三人')||family.result.includes('二孩')||family.result.includes('多人')){
-    type='SUV';if(family.result.includes('MPV'))type='SUV/MPV';
-  }else{type='轿车/小型SUV';}
-
-  // Determine energy
-  let energy='';
-  if(charge.result.includes('纯电')&&km.result.includes('纯电'))energy='纯电BEV';
-  else if(charge.result.includes('插混')||km.result.includes('插混'))energy='插混PHEV';
-  else if(charge.result.includes('增程'))energy='增程式';
-  else energy='燃油';
-
-  // Determine brand
-  let brand='';
-  if(priority.result.includes('国产'))brand='国产新能源';
-  else if(priority.result.includes('日系'))brand='日系合资';
-  else if(priority.result.includes('华为')||priority.result.includes('智能'))brand='国产智能新势力';
-  else brand='传统豪华品牌';
-
-  recommend=brand+' '+energy+' '+type;
-
-  // Build result HTML
-  const tags=[
-    budget.text.split(' ')[1]||budget.text,
-    family.text.split(' ')[1]||family.text,
-    charge.text.split(' ')[1]||charge.text,
-    km.text.split(' ')[1]||km.text,
-    priority.text.split(' ')[1]||priority.text
-  ];
+  // AI analysis button
+  summaryHTML+='<button class="ai-submit" id="dtreeAiSubmit" style="margin-top:16px">🤖 AI 深度分析推荐</button>';
+  summaryHTML+='<div class="ai-loading" id="dtreeAiLoading"><div class="ai-spinner"></div><div class="ai-loading-text">AI正在为你分析最佳车型...</div></div>';
+  summaryHTML+='<div class="ai-result" id="dtreeAiResult"></div>';
+  summaryHTML+='<button id="dtreeDownloadBtn" onclick="downloadDtreeImage()" style="display:none;margin:12px auto 0;padding:10px 20px;border:1.5px solid var(--primary);border-radius:8px;background:var(--surface);color:var(--primary);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s">📥 下载分析结果图片</button>';
 
   const resultDiv=document.getElementById('dtree-result');
-  resultDiv.innerHTML='<h4>🎯 你的最佳方向</h4>'+
-    '<p style="font-size:20px;font-weight:800;margin-bottom:12px">'+recommend+'</p>'+
-    '<div class="result-detail">'+
-      '<p style="margin-bottom:6px"><strong>预算:</strong> '+budget.result+'</p>'+
-      '<p style="margin-bottom:6px"><strong>家庭:</strong> '+family.result+'</p>'+
-      '<p style="margin-bottom:6px"><strong>能源:</strong> '+charge.result+'</p>'+
-      '<p style="margin-bottom:6px"><strong>里程:</strong> '+km.result+'</p>'+
-      '<p style="margin-bottom:6px"><strong>偏好:</strong> '+priority.result+'</p>'+
-    '</div>'+
-    '<div class="result-tags">'+
-      tags.map(t=>'<span class="result-tag">'+t+'</span>').join('')+
-    '</div>'+
-    '<p style="margin-top:14px;font-size:13px;opacity:.8">💡 这只是大致方向，具体车型请参考下方的"推荐车型"章节，建议试驾2-3款后再做决定</p>';
+  resultDiv.innerHTML=summaryHTML;
   resultDiv.style.display='block';
+
+  // AI分析 button click handler
+  document.getElementById('dtreeAiSubmit').addEventListener('click',function(){callDtreeAI(a0,a1,a2,a3,a4,a5);});
+
   resultDiv.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+async function callDtreeAI(a0,a1,a2,a3,a4,a5){
+  const apiKey=localStorage.getItem('car-guide-ds-key')||'';
+  if(!apiKey){
+    const keyInput=prompt('请先输入 DeepSeek API Key（仅保存在浏览器本地）：');
+    if(!keyInput)return;
+    localStorage.setItem('car-guide-ds-key',keyInput.trim());
+  }
+
+  const submitBtn=document.getElementById('dtreeAiSubmit');
+  const loadingEl=document.getElementById('dtreeAiLoading');
+  const resultEl=document.getElementById('dtreeAiResult');
+  const downloadBtn=document.getElementById('dtreeDownloadBtn');
+
+  submitBtn.disabled=true;
+  submitBtn.style.display='none';
+  loadingEl.classList.add('show');
+  resultEl.classList.remove('show');
+  downloadBtn.style.display='none';
+
+  // Build prompt
+  let priorityStr='未指定';
+  if(a4&&a4.type==='checkbox'&&a4.selected&&a4.selected.length>0){
+    priorityStr=a4.selected.map(i=>dtreeQuestions[4].options[i].text).join('、');
+  }
+  let extraStr=a5&&a5.type==='text'&&a5.value?a5.value:'无';
+
+  const prompt=`你是一个专业的汽车选购顾问。请根据以下用户信息，推荐3款最适合的车型，并给出推荐理由。
+
+用户情况：
+- 购车预算：${a0.text}（${a0.result}）
+- 家庭状况：${a1.text}（${a1.result}）
+- 充电条件：${a2.text}（${a2.result}）
+- 年行驶里程：${a3.text}（${a3.result}）
+- 最看重：${priorityStr}
+- 补充需求：${extraStr}
+
+请按以下格式回复（简洁实用）：
+🚗 推荐车型一：[品牌+车型]
+✅ 推荐理由：[2-3句话]
+💰 参考落地价：[价格区间]
+
+🚗 推荐车型二：[品牌+车型]
+✅ 推荐理由：[2-3句话]
+💰 参考落地价：[价格区间]
+
+🚗 推荐车型三：[品牌+车型]
+✅ 推荐理由：[2-3句话]
+💰 参考落地价：[价格区间]
+
+💡 选购建议：[1-2句话总结]`;
+
+  // Store answers for download
+  resultEl._answers={a0,a1,a2,a3,a4,a5};
+
+  try{
+    const resp=await fetch('https://api.deepseek.com/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+localStorage.getItem('car-guide-ds-key')},
+      body:JSON.stringify({
+        model:'deepseek-chat',
+        messages:[
+          {role:'system',content:'你是专业的汽车选购顾问，对2025-2026年中国市场所有主流车型了如指掌。推荐要具体到品牌+车型，落地价要有参考性。'},
+          {role:'user',content:prompt}
+        ],
+        temperature:0.7,
+        max_tokens:1500
+      })
+    });
+
+    const data=await resp.json();
+    loadingEl.classList.remove('show');
+    submitBtn.style.display='block';
+    submitBtn.disabled=false;
+
+    if(data.error){
+      let errMsg=data.error.message||'未知错误';
+      if(errMsg.includes('auth')||errMsg.includes('key')||errMsg.includes('token')){
+        errMsg='API Key 无效或已过期，请重新设置';
+        localStorage.removeItem('car-guide-ds-key');
+      }
+      resultEl.innerHTML='<h4>❌ 出错了</h4><p>'+errMsg.replace(/</g,'&lt;')+'</p>';
+    }else if(data.choices&&data.choices[0]){
+      const text=data.choices[0].message.content;
+      resultEl.innerHTML='<h4>🤖 AI深度分析</h4>'+text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+      downloadBtn.style.display='block';
+      // Store result for download
+      resultEl._aiText=text;
+    }else{
+      resultEl.innerHTML='<h4>❌ 出错了</h4><p>未获取到有效回复，请稍后重试</p>';
+    }
+    resultEl.classList.add('show');
+    resultEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }catch(e){
+    loadingEl.classList.remove('show');
+    submitBtn.style.display='block';
+    submitBtn.disabled=false;
+    resultEl.innerHTML='<h4>❌ 网络错误</h4><p>无法连接 DeepSeek API，请检查网络或 API Key</p>';
+    resultEl.classList.add('show');
+  }
+}
+
+function downloadDtreeImage(){
+  const resultEl=document.getElementById('dtreeAiResult');
+  if(!resultEl||!resultEl._aiText)return;
+
+  const answers=resultEl._answers;
+  if(!answers)return;
+
+  const a0=answers.a0,a1=answers.a1,a2=answers.a2,a3=answers.a3,a4=answers.a4,a5=answers.a5;
+
+  let priorityStr='未指定';
+  if(a4&&a4.type==='checkbox'&&a4.selected&&a4.selected.length>0){
+    priorityStr=a4.selected.map(i=>dtreeQuestions[4].options[i].text).join('、');
+  }
+  let extraStr=a5&&a5.type==='text'&&a5.value?a5.value:'无';
+
+  const aiText=resultEl._aiText;
+
+  // Build canvas
+  const canvas=document.createElement('canvas');
+  const ctx=canvas.getContext('2d');
+  const width=720;
+  const padding=30;
+  const lineH=26;
+  let y=padding;
+
+  // Calculate height first
+  ctx.font='15px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif';
+  const infoLines=[
+    '🚗 AI智能选车分析结果',
+    '',
+    '━━━ 你的选择 ━━━',
+    '💰 预算：'+a0.text+' — '+a0.result,
+    '👨‍👩‍👧 家庭：'+a1.text+' — '+a1.result,
+    '🔌 充电：'+a2.text+' — '+a2.result,
+    '📏 里程：'+a3.text+' — '+a3.result,
+    '💡 看重：'+priorityStr,
+    '📝 补充：'+extraStr,
+    '',
+    '━━━ AI深度分析 ━━━',
+    ...aiText.split('\n')
+  ];
+
+  // Compute height
+  let totalH=padding;
+  infoLines.forEach(line=>{
+    const w=ctx.measureText(line).width;
+    const wraps=Math.ceil(w/(width-padding*2))||1;
+    totalH+=wraps*lineH;
+  });
+  totalH+=padding;
+
+  canvas.width=width;
+  canvas.height=Math.max(totalH,400);
+
+  // Background
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,width,canvas.height);
+
+  // Draw text
+  ctx.fillStyle='#1e293b';
+  ctx.font='15px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif';
+  y=padding;
+
+  infoLines.forEach(line=>{
+    if(line.startsWith('━━━')){
+      ctx.fillStyle='#2563eb';
+      ctx.font='bold 16px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif';
+      const w=ctx.measureText(line).width;
+      ctx.fillText(line,padding,y);
+      ctx.fillStyle='#1e293b';
+      ctx.font='15px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif';
+      y+=lineH;
+    }else if(!line){
+      y+=lineH/2;
+    }else{
+      // Word wrap
+      const words=line;
+      const maxW=width-padding*2;
+      let curLine='';
+      for(let i=0;i<words.length;i++){
+        const testLine=curLine+words[i];
+        if(ctx.measureText(testLine).width>maxW&&curLine){
+          ctx.fillText(curLine,padding,y);
+          y+=lineH;
+          curLine=words[i];
+        }else{
+          curLine=testLine;
+        }
+      }
+      if(curLine){
+        ctx.fillText(curLine,padding,y);
+        y+=lineH;
+      }
+    }
+  });
+
+  // Download
+  const link=document.createElement('a');
+  link.download='AI选车分析结果.png';
+  link.href=canvas.toDataURL('image/png');
+  link.click();
 }
 
 function restartDtree(){
   dtreeStep=0;
   dtreeAnswers=[];
+  // Clear any stored AI text
+  const resultEl=document.getElementById('dtree-result');
+  if(resultEl&&resultEl.querySelector('#dtreeAiResult')){
+    resultEl.querySelector('#dtreeAiResult')._aiText='';
+  }
   renderDtreeQuestion();
   document.getElementById('dtree-question-box').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
