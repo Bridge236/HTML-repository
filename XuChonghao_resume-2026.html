@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个人简历</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #f5f7fa;
+    color: #2c3e50;
+    line-height: 1.8;
+    padding: 40px 20px;
+  }
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+    color: #fff;
+    padding: 36px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .header-left { flex: 1; }
+  .header h1 {
+    font-size: 36px;
+    font-weight: 600;
+    letter-spacing: 8px;
+    margin-bottom: 8px;
+  }
+  .header .subtitle {
+    font-size: 14px;
+    opacity: 0.9;
+    font-weight: 300;
+  }
+  .header .contact-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 18px;
+    font-size: 13px;
+  }
+  .photo {
+    width: 90px;
+    height: 120px;
+    background: #fff;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1a365d;
+    font-size: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+  .photo img { width: 100%; height: 100%; object-fit: cover; }
+  
+  /* Body */
+  .body { padding: 36px 48px 40px; }
+  
+  /* Section */
+  .section { margin-bottom: 32px; }
+  .section:last-child { margin-bottom: 0; }
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a365d;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::before {
+    content: '';
+    width: 4px;
+    height: 18px;
+    background: #2c5282;
+    border-radius: 2px;
+  }
+  
+  /* Self eval */
+  .self-eval {
+    font-size: 14px;
+    color: #4a5568;
+    line-height: 2;
+    padding: 16px 20px;
+    background: #f8fafc;
+    border-radius: 6px;
+    border-left: 3px solid #2c5282;
+  }
+  
+  /* Work Experience */
+  .exp-list { padding-left: 0; position: relative; }
+  .exp-item {
+    display: flex;
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid #f0f3f7;
+    position: relative;
+  }
+  .exp-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .exp-item:first-child { padding-top: 0; }
+  .exp-item:first-child::before { top: 10px; }
+  .exp-item:last-child::before { height: 10px; }
+  .exp-item::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 10px;
+    width: 2px;
+    height: 100%;
+    background: #e2e8f0;
+  }
+  .exp-dot {
+    flex-shrink: 0;
+    width: 10px;
+    height: 10px;
+    margin-top: 7px;
+    background: #2c5282;
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+  }
+  .exp-body { flex: 1; min-width: 0; }
+  .exp-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+  .exp-company { font-weight: 600; font-size: 14px; color: #1a365d; }
+  .exp-date { font-size: 13px; color: #718096; white-space: nowrap; }
+  .exp-dept { font-size: 13px; color: #4a5568; margin-bottom: 2px; }
+  .exp-role { font-size: 13px; color: #4a5568; margin-bottom: 6px; }
+  .exp-desc {
+    font-size: 13px;
+    color: #4a5568;
+    line-height: 1.9;
+    padding-left: 0;
+  }
+  .exp-desc li {
+    list-style: none;
+    position: relative;
+    padding-left: 14px;
+    margin-bottom: 3px;
+  }
+  .exp-desc li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: #a0aec0;
+  }
+  
+  /* Single row modules */
+  .module-row {
+    padding: 16px 20px;
+    background: #f8fafc;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    border: 1px solid #e2e8f0;
+  }
+  .module-row:last-child { margin-bottom: 0; }
+  .module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .module-title { font-weight: 600; font-size: 14px; color: #1a365d; }
+  .module-date { font-size: 12px; color: #718096; }
+  .module-sub { font-size: 13px; color: #4a5568; }
+  .module-content { font-size: 13px; color: #4a5568; margin-top: 6px; line-height: 1.8; }
+  .module-content ul { padding-left: 0; }
+  .module-content li { list-style: none; position: relative; padding-left: 14px; margin-bottom: 3px; }
+  .module-content li::before { content: '—'; position: absolute; left: 0; color: #a0aec0; }
+  
+  /* Skills */
+  .skills-section { padding: 16px 20px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0; }
+  .skills-subsection { margin-bottom: 14px; }
+  .skills-subsection:last-child { margin-bottom: 0; }
+  .skills-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #1a365d;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .skills-label::before {
+    content: '';
+    width: 3px;
+    height: 12px;
+    background: #2c5282;
+    border-radius: 2px;
+  }
+  .skills-grid { display: flex; flex-wrap: wrap; gap: 8px; padding-left: 0; }
+  .skill-tag {
+    background: #e8f0fe;
+    color: #1a365d;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .lang-row { display: flex; gap: 30px; flex-wrap: wrap; padding-left: 0; }
+  .lang-item { font-size: 13px; color: #4a5568; }
+  .lang-item strong { color: #1a365d; }
+  
+  /* Honors */
+  .honor-list { padding-left: 0; }
+  .honor-list li { list-style: none; position: relative; padding-left: 14px; margin-bottom: 6px; font-size: 13px; color: #4a5568; }
+  .honor-list li::before { content: '●'; position: absolute; left: 0; color: #2c5282; font-size: 6px; top: 4px; }
+  
+  /* Interests */
+  .interest-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .interest-tag {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #4a5568;
+  }
+  
+  /* Intent section */
+  .intent-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .intent-tag {
+    background: #edf2f7;
+    color: #1a365d;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
+  /* Password Gate */
+  .pw-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #f5f7fa; z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pw-overlay.hidden { display: none; }
+  .pw-card {
+    background: #fff; padding: 40px 36px; border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    text-align: center; max-width: 360px; width: 90%;
+  }
+  .pw-card h2 { font-size: 20px; color: #1a365d; margin-bottom: 6px; }
+  .pw-card p { font-size: 13px; color: #718096; margin-bottom: 20px; }
+  .pw-card input {
+    width: 100%; padding: 10px 14px; font-size: 15px;
+    border: 2px solid #e2e8f0; border-radius: 6px;
+    text-align: center; outline: none; letter-spacing: 4px;
+    transition: border-color 0.2s;
+  }
+  .pw-card input:focus { border-color: #2c5282; }
+  .pw-card .pw-err { color: #e53e3e; font-size: 12px; margin-top: 10px; display: none; }
+  .pw-card .pw-err.show { display: block; }
+  .pw-card button {
+    margin-top: 16px; width: 100%; padding: 10px;
+    background: #1a365d; color: #fff; border: none;
+    border-radius: 6px; font-size: 14px; cursor: pointer;
+    letter-spacing: 2px; transition: background 0.2s;
+  }
+  .pw-card button:hover { background: #2c5282; }
+  
+  /* Print */
+  @media print {
+    body { background: #fff; padding: 0; }
+    .container { box-shadow: none; border-radius: 0; }
+    .section { margin-bottom: 20px; }
+  }
+  
+  @media (max-width: 600px) {
+    .header { padding: 24px; flex-direction: column; gap: 16px; text-align: center; }
+    .header h1 { font-size: 28px; }
+    .photo { width: 80px; height: 100px; }
+    .body { padding: 24px; }
+    .exp-dot { margin-top: 5px; }
+    .exp-row { flex-direction: column; gap: 2px; }
+    .module-header { flex-direction: column; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 密码验证 -->
+<div class="pw-overlay" id="pwOverlay">
+  <div class="pw-card">
+    <h2>🔒 访问验证</h2>
+    <p>请输入密码查看简历</p>
+    <input type="password" id="pwInput" placeholder="请输入密码" maxlength="20" autofocus>
+    <div class="pw-err" id="pwErr">密码错误，请重试</div>
+    <button onclick="checkPw()">确 认</button>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Header with Photo -->
+  <div class="header">
+    <div class="header-left">
+      <h1>徐崇皓</h1>
+      <div class="subtitle">技术支持 · 客户服务 · 电子商务 · 游戏设计</div>
+      <div class="contact-row">
+        <span>📞 15040426336</span>
+        <span>📧 735452576@qq.com</span>
+        <span>📍 辽宁大连 · 中山区</span>
+        <span>🎂 1994.08 · 29岁 · 本科 · 6年经验</span>
+      </div>
+    </div>
+    <div class="photo">
+      <img src="photo.png" alt="照片">
+    </div>
+  </div>
+  
+  <div class="body">
+    <!-- 求职意向 -->
+    <div class="section">
+      <div class="section-title">求职意向</div>
+      <div class="intent-row">
+        <span class="intent-tag">全职</span>
+        <span class="intent-tag">互联网/电子商务</span>
+        <span class="intent-tag">网游软件及测试</span>
+        <span class="intent-tag">技术支持</span>
+        <span class="intent-tag">客户服务</span>
+      </div>
+    </div>
+
+    <!-- 自我评价 -->
+    <div class="section">
+      <div class="section-title">自我评价</div>
+      <p class="self-eval">个人性格外向，正直善良，心理健康，积极向上，喜爱团结互助。能吃苦耐劳，抗压能力强，善于沟通协作。具备6年跨行业工作经验，涵盖技术支持、客户服务、电子商务及游戏设计领域，能够快速适应不同工作环境与业务需求。在工作中注重细节，具备良好的学习能力与服务意识。</p>
+    </div>
+
+    <!-- 工作经历 - 公司层级列表 -->
+    <div class="section">
+      <div class="section-title">工作经历</div>
+      <div class="exp-list">
+        <!-- 1. 大连简柏特公司 -->
+        <div class="exp-item">
+          <div class="exp-dot"></div>
+          <div class="exp-body">
+            <div class="exp-row">
+              <span class="exp-company">大连简柏特公司</span>
+              <span class="exp-date">2021.04 – 至今</span>
+            </div>
+            <div class="exp-role">亚马逊卖家技术支持 · 互联网/电子商务</div>
+            <ul class="exp-desc">
+              <li>负责亚马逊卖家平台的技术支持，处理卖家账户管理、订单问题、物流配送等英文技术咨询</li>
+              <li>通过邮件及在线工具为全球卖家提供高效专业的技术服务，确保客户问题闭环解决</li>
+              <li>熟练运用内部工单系统跟进问题直至解决，持续提升客户满意度</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 2. 中国惠普大连分公司 -->
+        <div class="exp-item">
+          <div class="exp-dot"></div>
+          <div class="exp-body">
+            <div class="exp-row">
+              <span class="exp-company">中国惠普大连分公司</span>
+              <span class="exp-date">2020.11 – 2021.03</span>
+            </div>
+            <div class="exp-dept">BPS 部门</div>
+            <div class="exp-role">职员 · 客户咨询热线 / 呼叫中心</div>
+            <ul class="exp-desc">
+              <li>在BPS（Business Process Services）部门处理客户咨询与业务流程服务</li>
+              <li>接听客户热线，解答产品使用问题，提供专业的技术支持</li>
+              <li>协助订单处理、物流查询、售后服务等全流程业务，积累国际化企业工作经验</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 3. NAVERChina大连分公司 -->
+        <div class="exp-item">
+          <div class="exp-dot"></div>
+          <div class="exp-body">
+            <div class="exp-row">
+              <span class="exp-company">NAVERChina 大连分公司</span>
+              <span class="exp-date">2018.04 – 2020.10</span>
+            </div>
+            <div class="exp-dept">CS 部门</div>
+            <div class="exp-role">职员 · 互联网/电子商务</div>
+            <ul class="exp-desc">
+              <li>负责在线客户咨询与问题处理，为平台用户提供即时响应与专业解答</li>
+              <li>参与客服流程优化，提出改进建议并协助提升服务质量</li>
+              <li>具备基础日语沟通能力，能使用日语进行日常工作交流</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 4. 聚盟发展有限公司 -->
+        <div class="exp-item">
+          <div class="exp-dot"></div>
+          <div class="exp-body">
+            <div class="exp-row">
+              <span class="exp-company">聚盟发展有限公司</span>
+              <span class="exp-date">2017.03 – 2018.03</span>
+            </div>
+            <div class="exp-role">客户咨询热线 / 呼叫中心人员</div>
+            <ul class="exp-desc">
+              <li>接听客户咨询热线，解答产品与服务问题，处理客户投诉与建议</li>
+              <li>协调内部资源解决客户问题，维护客户关系，提升满意度</li>
+              <li>整理客户反馈信息，为业务部门优化服务流程提供数据支持</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 5. 大连维格科技 -->
+        <div class="exp-item">
+          <div class="exp-dot"></div>
+          <div class="exp-body">
+            <div class="exp-row">
+              <span class="exp-company">大连维格科技</span>
+              <span class="exp-date">2016.06 – 2016.12</span>
+            </div>
+            <div class="exp-dept">高尔夫游戏部门</div>
+            <div class="exp-role">员工 · 网络游戏</div>
+            <ul class="exp-desc">
+              <li>全程参与体感高尔夫游戏的开发制作，运用3DMAX完成游戏模型与场景构建</li>
+              <li>配合美术团队完成游戏资源制作与优化，积累游戏开发流程经验</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 6. 中国平安大连区 -->
+        <div class="exp-item">
+          <div class="exp-dot"></div>
+          <div class="exp-body">
+            <div class="exp-row">
+              <span class="exp-company">中国平安大连区</span>
+              <span class="exp-date">2015.11 – 2016.05</span>
+            </div>
+            <div class="exp-role">内勤 / 行政助理</div>
+            <ul class="exp-desc">
+              <li>负责部门日常行政事务，包括文件整理、会议安排与记录</li>
+              <li>协助销售人员完成客户资料整理与归档，保障内部沟通顺畅</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 教育经历 - Single Row Module -->
+    <div class="section">
+      <div class="section-title">教育经历</div>
+      <div class="module-row">
+        <div class="module-header">
+          <span class="module-title">数字艺术系（游戏设计方向）· 本科</span>
+          <span class="module-date">2012.09 – 2016.07</span>
+        </div>
+        <div class="module-sub">大连东软信息学院</div>
+        <div class="module-content">
+          <ul>
+            <li>系统学习游戏设计、3D建模、美术基础等专业课程</li>
+            <li>在校期间完成多个游戏项目实践，具备扎实的专业技能</li>
+          </ul>
+        </div>
+      </div>
+      <div class="module-row">
+        <div class="module-header">
+          <span class="module-title">SAP 基础与日语培训</span>
+          <span class="module-date">2019.04 – 2019.11</span>
+        </div>
+        <div class="module-sub">东软与企业合作培训项目</div>
+        <div class="module-content">
+          <ul>
+            <li>完成SAP系统基础操作培训，掌握ERP系统应用</li>
+            <li>学习日语基础会话与商务用语，达到基础应用水平</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 在校实践 - Single Row Module -->
+    <div class="section">
+      <div class="section-title">在校实践</div>
+      <div class="module-row">
+        <div class="module-header">
+          <span class="module-title">书籍插画绘制</span>
+          <span class="module-date">2014.06 – 2015.09</span>
+        </div>
+        <div class="module-content">
+          <ul>
+            <li>使用Photoshop绘制书籍插画，独立完成多幅设计作品</li>
+            <li>积累了数字绘画与视觉设计的实践经验</li>
+          </ul>
+        </div>
+      </div>
+      <div class="module-row">
+        <div class="module-header">
+          <span class="module-title">游戏项目测试</span>
+          <span class="module-date">2013.06 – 2013.09</span>
+        </div>
+        <div class="module-content">
+          <ul>
+            <li>参与测试游戏项目，记录并反馈Bug，协助开发团队优化产品质量</li>
+            <li>积累了游戏开发与测试流程的实际经验</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 技能与语言 - Single Row Module -->
+    <div class="section">
+      <div class="section-title">技能与语言</div>
+      <div class="skills-section">
+        <div class="skills-subsection">
+          <div class="skills-label">专业技能</div>
+          <div class="skills-grid">
+            <span class="skill-tag">3DMAX</span>
+            <span class="skill-tag">Photoshop</span>
+            <span class="skill-tag">SAP</span>
+            <span class="skill-tag">纸膜设计</span>
+            <span class="skill-tag">书籍插画</span>
+            <span class="skill-tag">客户服务</span>
+            <span class="skill-tag">技术支持</span>
+          </div>
+        </div>
+        <div class="skills-subsection">
+          <div class="skills-label">语言能力</div>
+          <div class="lang-row">
+            <div class="lang-item"><strong>英语：</strong>读写良好 · 听说熟练</div>
+            <div class="lang-item"><strong>日语：</strong>基础水平 · 可用于简单沟通</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 获得荣誉 - Single Row Module -->
+    <div class="section">
+      <div class="section-title">获得荣誉</div>
+      <div class="module-row">
+        <ul class="honor-list">
+          <li>金色之秋文化艺术节 软件应用类三等奖</li>
+          <li>NACG 国家动漫游戏产业认证</li>
+          <li>全国信息化工程师证书</li>
+          <li>校英语单词竞赛三等奖</li>
+          <li>全国英语应用能力三级证书</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 兴趣爱好 - Single Row Module -->
+    <div class="section">
+      <div class="section-title">兴趣爱好</div>
+      <div class="module-row">
+        <div class="interest-row">
+          <span class="interest-tag">🏊 游泳</span>
+          <span class="interest-tag">✍️ 写作</span>
+          <span class="interest-tag">🎨 纸膜设计</span>
+          <span class="interest-tag">🖼️ 书籍插画</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var PW = '2026';
+function checkPw() {
+  var input = document.getElementById('pwInput');
+  var err = document.getElementById('pwErr');
+  if (input.value === PW) {
+    document.getElementById('pwOverlay').classList.add('hidden');
+  } else {
+    err.classList.add('show');
+    input.value = '';
+    input.focus();
+  }
+}
+document.getElementById('pwInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') checkPw();
+});
+</script>
+</body>
+</html>
