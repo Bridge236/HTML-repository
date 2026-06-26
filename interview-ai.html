@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InterviewAI - 智能面试题生成</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50:'#f0fdf6',100:'#dcfce8',200:'#bbf7d1',300:'#86efad',400:'#4ade80',500:'#22c55e',600:'#16a34a',700:'#15803d' },
+                        accent: { 50:'#eff6ff',100:'#dbeafe',200:'#bfdbfe',300:'#93c5fd',400:'#60a5fa',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --c-bg: #f8fafc;
+            --c-surface: #ffffff;
+            --c-border: #e2e8f0;
+            --c-text: #1e293b;
+            --c-muted: #64748b;
+            --c-brand: #10b981;
+            --c-accent: #3b82f6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 50%, #faf5ff 100%);
+            min-height: 100vh;
+            color: var(--c-text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* === 卡片 === */
+        .card {
+            background: var(--c-surface);
+            border: 1px solid var(--c-border);
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .card:hover { box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04); }
+
+        /* === 按钮 === */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            padding: 10px 20px; border-radius: 10px; font-weight: 600; font-size: 14px;
+            transition: all 0.15s ease; cursor: pointer; border: none; outline: none;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary { background: var(--c-brand); color: #fff; }
+        .btn-primary:hover { background: #059669; box-shadow: 0 4px 12px rgba(16,185,129,0.25); }
+        .btn-secondary { background: #f1f5f9; color: var(--c-muted); }
+        .btn-secondary:hover { background: #e2e8f0; color: var(--c-text); }
+        .btn-accent { background: var(--c-accent); color: #fff; }
+        .btn-accent:hover { background: #2563eb; }
+        .btn-sm { padding: 6px 14px; font-size: 13px; border-radius: 8px; }
+        .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+        /* === 输入框 === */
+        .input {
+            width: 100%; padding: 12px 16px; border: 1.5px solid var(--c-border);
+            border-radius: 10px; font-size: 15px; color: var(--c-text);
+            background: #fafbfc; transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .input:focus { outline: none; border-color: var(--c-brand); box-shadow: 0 0 0 3px rgba(16,185,129,0.12); background: #fff; }
+        textarea.input { resize: vertical; line-height: 1.6; }
+
+        /* === 标签 === */
+        .tag {
+            display: inline-flex; align-items: center; padding: 3px 10px;
+            border-radius: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.01em;
+        }
+        .tag-tech { background: #dbeafe; color: #1d4ed8; }
+        .tag-exp { background: #fef3c7; color: #b45309; }
+        .tag-solve { background: #ede9fe; color: #6d28d9; }
+        .tag-team { background: #dcfce8; color: #15803d; }
+
+        /* === 上传区 === */
+        .dropzone {
+            border: 2px dashed #cbd5e1; border-radius: 12px; padding: 28px 16px;
+            text-align: center; cursor: pointer; transition: all 0.15s ease;
+            background: rgba(255,255,255,0.5);
+        }
+        .dropzone:hover { border-color: var(--c-brand); background: rgba(16,185,129,0.03); }
+
+        /* === 加载动画 === */
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner {
+            width: 20px; height: 20px; border: 2.5px solid #e2e8f0;
+            border-top-color: var(--c-brand); border-radius: 50%; animation: spin 0.7s linear infinite;
+        }
+        @keyframes pulse-dot {
+            0%,100% { opacity: 1; } 50% { opacity: 0.3; }
+        }
+        .dot-typing { display: inline-flex; gap: 3px; }
+        .dot-typing span {
+            width: 6px; height: 6px; border-radius: 50%; background: var(--c-brand);
+            animation: pulse-dot 1.2s infinite;
+        }
+        .dot-typing span:nth-child(2) { animation-delay: 0.2s; }
+        .dot-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+        /* === 题目卡 === */
+        .q-card {
+            border: 1px solid var(--c-border); border-radius: 12px; padding: 20px;
+            background: #fff; transition: all 0.15s ease;
+        }
+        .q-card:hover { border-color: #cbd5e1; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+
+        /* === 答案区 === */
+        .answer-panel {
+            background: #f8fafc; border: 1px solid #e8ecf1; border-radius: 10px;
+            padding: 16px; margin-top: 14px;
+        }
+
+        /* === 遮罩 === */
+        .overlay {
+            position: fixed; inset: 0; background: rgba(15,23,42,0.35);
+            backdrop-filter: blur(2px); z-index: 50;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .modal {
+            background: #fff; border-radius: 16px; padding: 28px; width: 400px; max-width: 90vw;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+        }
+
+        /* === Toast === */
+        .toast {
+            position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
+            padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 600;
+            z-index: 100; box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .toast-success { background: #dcfce8; color: #15803d; }
+        .toast-error { background: #fee2e2; color: #b91c1c; }
+        .toast-warning { background: #fef3c7; color: #92400e; }
+
+        /* === Lightbox 大图预览（增强版：缩放+拖拽） === */
+        .lightbox-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(4px);
+            z-index: 50;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .lightbox-container {
+            position: relative;
+            width: 90vw; height: 85vh;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; border-radius: 12px;
+            user-select: none;
+        }
+        .lightbox-image-wrapper {
+            position: relative;
+            cursor: grab;
+            transition: transform 0.15s ease-out;
+            touch-action: none;
+        }
+        .lightbox-image-wrapper.dragging { cursor: grabbing; transition: none; }
+        .lightbox-image-wrapper.zoomed { cursor: grab; }
+        .lightbox-image {
+            display: block; border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            pointer-events: none;
+            max-width: none; max-height: none;
+        }
+
+        /* 缩放工具栏 */
+        .lightbox-toolbar {
+            position: absolute; bottom: 20px; left: 50%;
+            transform: translateX(-50%);
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(30,41,59,0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 6px;
+            z-index: 10;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .lb-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px; border-radius: 8px;
+            border: none; background: transparent; color: #e2e8f0;
+            font-size: 16px; cursor: pointer; transition: all 0.15s ease;
+        }
+        .lb-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+        .lb-btn:active { transform: scale(0.92); }
+        .lb-zoom-text {
+            color: #94a3b8; font-size: 13px; font-weight: 600;
+            min-width: 48px; text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* 关闭按钮 */
+        .lb-close {
+            position: absolute; top: 16px; right: 20px;
+            width: 40px; height: 40px; border-radius: 50%; border: none;
+            background: rgba(0,0,0,0.45); color: #fff; font-size: 22px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.15s ease; z-index: 10;
+            line-height: 1;
+        }
+        .lb-close:hover { background: rgba(239,68,68,0.7); transform: rotate(90deg); }
+
+        /* 提示文字 */
+        .lb-hint {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            color: rgba(255,255,255,0.55); font-size: 13px; pointer-events: none;
+            z-index: 10; white-space: nowrap;
+            animation: lb-hint-fade 3s ease forwards;
+        }
+        @keyframes lb-hint-fade {
+            0% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; }
+        }
+
+        /* === 答案内容排版 v2 === */
+        .answer-sample {
+            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+            border-left: 4px solid #22c55e;
+            padding: 16px 18px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 14px;
+            font-size: 14.5px;
+            line-height: 1.8;
+            color: #166534;
+        }
+        .answer-sample .as-label {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 12px; font-weight: 700; color: #15803d;
+            margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.03em;
+        }
+        .answer-tips {
+            background: #fefce8;
+            border: 1px solid #fde68a;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #854d0e;
+        }
+        .answer-tips .at-label {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 11px; font-weight: 700; color: #a16207;
+            margin-bottom: 6px;
+        }
+        .answer-keywords {
+            display: flex; flex-wrap: wrap; gap: 6px;
+            padding: 0 2px;
+        }
+        .ak-tag {
+            display: inline-flex; align-items: center; padding: 4px 11px;
+            border-radius: 20px; font-size: 12px; font-weight: 600;
+            background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0;
+        }
+        .ak-tag.green { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+        .ak-tag.blue { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+        .ak-tag.purple { background: #ede9fe; color: #5b21b6; border-color: #ddd6fe; }
+        .ak-tag.orange { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
+
+        /* === 图片缩略图 === */
+        .thumb-wrap {
+            position: relative;
+            display: inline-block;
+        }
+        .thumb-img {
+            width: 160px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .thumb-img:hover {
+            border-color: var(--c-brand);
+            box-shadow: 0 0 0 3px rgba(16,185,129,0.12);
+        }
+        .thumb-zoom-hint {
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            background: rgba(0,0,0,0.55);
+            color: #fff;
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 4px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+        .thumb-wrap:hover .thumb-zoom-hint { opacity: 1; }
+
+        /* === 步骤标识 === */
+        .step-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 28px; height: 28px; border-radius: 50%;
+            font-size: 13px; font-weight: 700;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff; flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(16,185,129,0.25);
+        }
+        .step-badge.blue {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            box-shadow: 0 2px 8px rgba(59,130,246,0.25);
+        }
+        .step-badge.violet {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            box-shadow: 0 2px 8px rgba(139,92,246,0.25);
+        }
+
+        /* === 卡片分区 === */
+        .section-title {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 18px;
+        }
+        .section-title h2 {
+            font-size: 17px; font-weight: 700; color: #1e293b; flex: 1;
+        }
+        .section-subtitle {
+            font-size: 12px; color: #94a3b8; font-weight: 400;
+        }
+
+        /* === 分隔线 === */
+        .divider {
+            height: 1px; background: #e2e8f0; margin: 20px 0;
+        }
+        .divider-dashed {
+            height: 0; border-top: 1.5px dashed #e2e8f0; margin: 18px 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen" x-data="app()">
+
+    <!-- ========== Toast ========== -->
+    <div x-show="toast.show" x-transition.duration.200
+         :class="'toast toast-' + toast.type"
+         x-text="toast.msg" x-effect="if(toast.show) setTimeout(()=>toast.show=false,2500)"></div>
+
+    <!-- ========== AI优化对比弹窗 ========== -->
+    <div x-show="showOptimize" class="overlay" x-transition.opacity @click.self="showOptimize=false">
+        <div class="modal w-full max-w-4xl" @click.stop>
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-slate-700">AI 文字优化</h3>
+                <button @click="showOptimize=false" class="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+            </div>
+            <p class="text-xs text-slate-400 mb-3">对比优化前后的文字，确认后点击"采用优化结果"填入 JD 输入框</p>
+            <div class="grid grid-cols-2 gap-4 mb-5">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">优化前</p>
+                    <div class="bg-slate-50 border rounded-lg p-3 h-72 overflow-y-auto text-xs text-slate-600 leading-relaxed whitespace-pre-wrap" x-text="jdTextOriginal"></div>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wide mb-2">优化后 ✓</p>
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3 h-72 overflow-y-auto text-xs text-slate-700 leading-relaxed whitespace-pre-wrap" x-text="optimizedText"></div>
+                </div>
+            </div>
+            <div x-show="optimizing" class="flex items-center justify-center gap-2 mb-4 text-sm text-slate-500">
+                <span class="spinner" style="width:16px;height:16px;border-width:2px;"></span> AI 正在优化文字...
+            </div>
+            <div class="flex gap-3 justify-end">
+                <button @click="showOptimize=false" class="btn btn-secondary btn-sm">取消</button>
+                <button @click="applyOptimized()" :disabled="!optimizedText || optimizing" class="btn btn-primary btn-sm">采用优化结果</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 图片大图预览 Lightbox（增强版：缩放+拖拽） ========== -->
+    <div x-show="lightboxSrc" class="lightbox-overlay" x-transition.opacity
+         @wheel.prevent="onLightboxWheel($event)"
+         @mousedown="onLightboxDragStart($event)"
+         @mousemove="onLightboxDragMove($event)"
+         @mouseup="onLightboxDragEnd($event)"
+         @mouseleave="onLightboxDragEnd($event)"
+         @click.self="closeLightbox()"
+         style="touch-action: none;">
+
+        <span class="lb-hint">滚轮缩放 · 拖拽移动 · 双击重置</span>
+
+        <button @click="closeLightbox()" class="lb-close">&times;</button>
+
+        <div class="lightbox-container">
+            <div class="lightbox-image-wrapper"
+                 :style="'transform: translate(' + lbPan.x + 'px, ' + lbPan.y + 'px) scale(' + lbZoom + ');'"
+                 :class="{ dragging: lbDragging }">
+                <img :src="lightboxSrc" class="lightbox-image"
+                     :style="{ width: lbBaseW + 'px', height: 'auto' }"
+                     @load="onLightboxImgLoad($event)"
+                     @dblclick="resetLightboxView()">
+            </div>
+        </div>
+
+        <!-- 缩放工具栏 -->
+        <div class="lightbox-toolbar">
+            <button @click="lbZoomOut()" class="lb-btn" title="缩小">−</button>
+            <span class="lb-zoom-text" x-text="Math.round(lbZoom * 100) + '%'"></span>
+            <button @click="lbZoomIn()" class="lb-btn" title="放大">+</button>
+            <div style="width:1px;height:20px;background:rgba(255,255,255,0.15);"></div>
+            <button @click="resetLightboxView()" class="lb-btn" title="适应窗口">⊙</button>
+        </div>
+    </div>
+
+    <!-- ========== 配置弹窗 ========== -->
+    <div x-show="showConfig" class="overlay" x-transition.opacity @click.self="showConfig=false">
+        <div class="modal" @click.stop>
+            <h3 class="text-lg font-bold mb-5">API 配置</h3>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-slate-700 mb-2">DeepSeek API Key</label>
+                <input type="password" x-model="apiKey" class="input"
+                       placeholder="sk-xxxxxxxxxxxxxxxx">
+                <p class="text-xs text-slate-400 mt-1.5">密钥仅保存在你的浏览器本地</p>
+            </div>
+            <div class="mb-5">
+                <label class="block text-sm font-medium text-slate-700 mb-2">API 地址</label>
+                <input x-model="apiEndpoint" class="input"
+                       placeholder="https://api.deepseek.com/v1/chat/completions">
+            </div>
+            <div class="flex gap-3 justify-end">
+                <button @click="showConfig=false" class="btn btn-secondary">取消</button>
+                <button @click="saveConfig()" class="btn btn-primary">保存配置</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 主页面 ========== -->
+    <div class="max-w-3xl mx-auto px-4 py-6 sm:py-10">
+
+        <!-- 头部 -->
+        <header class="flex items-center justify-between mb-6 sm:mb-8">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 tracking-tight">
+                    Interview<span class="text-emerald-500">AI</span>
+                </h1>
+                <p class="text-sm text-slate-400 mt-1">智能面试题生成 · 答案默认隐藏</p>
+            </div>
+            <button @click="showConfig=true"
+                    class="btn btn-secondary btn-sm" title="API 配置">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                配置
+            </button>
+        </header>
+
+        <!-- API Key 提示条 -->
+        <div x-show="!apiKey" x-transition
+             class="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-5 text-sm text-amber-800">
+            <span>⚠️</span>
+            <span class="flex-1">请先配置 DeepSeek API Key 才能使用</span>
+            <button @click="showConfig=true" class="btn btn-primary btn-sm text-xs">去配置</button>
+        </div>
+
+        <!-- ===== 步骤1：岗位 JD ===== -->
+        <div class="card p-5 sm:p-7 mb-4">
+            <div class="section-title">
+                <span class="step-badge">1</span>
+                <h2>岗位 JD</h2>
+                <button x-show="jdText.trim().length > 10"
+                        @click="optimizeJd()"
+                        :disabled="optimizing || !apiKey"
+                        class="btn btn-accent btn-sm">
+                    <span x-show="!optimizing">✨ AI 优化</span>
+                    <span x-show="optimizing" class="flex items-center gap-1">
+                        <span class="spinner" style="width:14px;height:14px;border-width:2px;border-top-color:#fff;"></span> 优化中
+                    </span>
+                </button>
+            </div>
+
+            <!-- JD文本输入 -->
+            <textarea x-model="jdText" class="input" rows="6"
+                      placeholder="粘贴岗位描述（Job Description），支持中英文即可识别文字...&#10;&#10;例如：&#10;岗位：高级前端工程师&#10;要求：精通 React / TypeScript，有大型项目经验..."></textarea>
+
+            <!-- 截图上传 -->
+            <div class="mt-3">
+                <div @click="$refs.imgInput.click()"
+                     @dragover.prevent @drop.prevent="handleDrop($event)"
+                     class="dropzone" x-show="!uploadedPreview">
+                    <svg class="mx-auto mb-1.5" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                    <p class="text-slate-400 text-sm">上传 JD 截图自动识别</p>
+                    <p class="text-slate-300 text-xs mt-0.5">PNG / JPG</p>
+                </div>
+                <div x-show="uploadedPreview" class="thumb-wrap">
+                    <img :src="uploadedPreview" class="thumb-img"
+                         @click="lightboxSrc = uploadedPreview">
+                    <span class="thumb-zoom-hint">点击放大</span>
+                    <button @click="removeImage()"
+                            class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600 shadow"
+                            style="line-height: 1;">×</button>
+                </div>
+                <input type="file" x-ref="imgInput" @change="handleUpload($event)" accept="image/*" hidden>
+                <div x-show="ocrRunning" class="flex items-center gap-2 mt-2 text-sm text-slate-500">
+                    <span class="spinner" style="width:16px;height:16px;border-width:2px;"></span>
+                    <span x-text="ocrMsg"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 步骤2：候选人简历 ===== -->
+        <div class="card p-5 sm:p-7 mb-4">
+            <div class="section-title">
+                <span class="step-badge blue">2</span>
+                <h2>候选人简历 <span class="section-subtitle">（可选，填入后出题更有针对性）</span></h2>
+            </div>
+
+            <textarea x-model="resumeText" class="input" rows="4"
+                      placeholder="粘贴候选人简历，或上传简历图片自动识别...&#10;&#10;例如：&#10;姓名：张三&#10;学历：本科 · 计算机科学&#10;工作经历：&#10;· 2020-2022 XX公司 前端开发&#10;· 2022至今 YY公司 高级前端&#10;技能栈：React、TypeScript、Node.js"></textarea>
+
+            <div class="mt-3">
+                <div @click="$refs.resumeInput.click()"
+                     @dragover.prevent @drop.prevent="handleResumeDrop($event)"
+                     class="dropzone" x-show="!resumePreview" style="padding:14px 16px;">
+                    <p class="text-slate-400 text-sm">📄 上传简历图片，自动识别文字</p>
+                </div>
+                <div x-show="resumePreview" class="thumb-wrap">
+                    <img :src="resumePreview" class="thumb-img"
+                         @click="lightboxSrc = resumePreview">
+                    <span class="thumb-zoom-hint">点击放大</span>
+                    <button @click="removeResume()"
+                            class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600 shadow"
+                            style="line-height: 1;">×</button>
+                </div>
+                <input type="file" x-ref="resumeInput" @change="handleResumeUpload($event)" accept="image/*" hidden>
+                <div x-show="resumeOcrRunning" class="flex items-center gap-2 mt-2 text-sm text-slate-500">
+                    <span class="spinner" style="width:16px;height:16px;border-width:2px;"></span>
+                    <span x-text="resumeOcrMsg"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 步骤3：出题设置 ===== -->
+        <div class="card p-5 sm:p-7 mb-5">
+            <div class="section-title">
+                <span class="step-badge violet">3</span>
+                <h2>出题设置</h2>
+            </div>
+
+            <!-- 题目数量 + 其他要求 在桌面端并排，移动端堆叠 -->
+            <div class="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-5">
+                <!-- 左：题目数量 -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-2">题目数量</label>
+                    <div class="flex items-center border rounded-lg overflow-hidden" style="width: fit-content;">
+                        <button @click="if(questionCount>1) questionCount--"
+                                class="px-3 py-2 hover:bg-slate-50 text-slate-500 transition">−</button>
+                        <input x-model.number="questionCount" type="number" min="1" max="50"
+                               class="w-16 text-center py-2 border-x text-sm font-medium outline-none"
+                               @input="questionCount=Math.max(1,Math.min(50,questionCount||10))">
+                        <button @click="if(questionCount<50) questionCount++"
+                                class="px-3 py-2 hover:bg-slate-50 text-slate-500 transition">+</button>
+                    </div>
+                </div>
+
+                <!-- 右：其他出题要求 -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-2 flex items-center gap-1.5">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        其他出题要求
+                        <span class="font-normal text-slate-400">（可选）</span>
+                    </label>
+                    <textarea x-model="extraRequirements" class="input" rows="5"
+                              placeholder="例如：&#10;• 侧重考察项目实战经验，减少纯理论题&#10;• 加入1道行为面试题（STAR法则）&#10;• 难度偏中高级，适合3年以上经验候选人&#10;• 关注系统设计能力，需包含架构题&#10;• 重点考察沟通协作和问题排查能力"></textarea>
+                </div>
+            </div>
+
+            <!-- 分隔 + 生成按钮 -->
+            <div class="divider-dashed"></div>
+            <button @click="generate()" :disabled="!apiKey || generating"
+                    :class="(!apiKey || generating) ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'btn-primary hover:shadow-xl'"
+                    class="btn w-full py-3.5 text-base font-bold tracking-wide transition-shadow">
+                <span x-show="!generating">⚡ 生成面试题</span>
+                <span x-show="generating" class="flex items-center gap-2">
+                    <span class="spinner"></span> AI 正在出题
+                    <span class="dot-typing"><span></span><span></span><span></span></span>
+                </span>
+            </button>
+        </div>
+        <div x-show="errorMsg" x-transition
+             class="bg-red-50 border border-red-200 rounded-xl px-5 py-3 mb-5 text-sm text-red-700 flex items-start gap-2">
+            <span>❌</span><span x-text="errorMsg"></span>
+        </div>
+
+        <!-- ===== 题目列表 ===== -->
+        <div x-show="questions.length > 0" x-transition
+             class="card p-5 sm:p-7 mb-8">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                <h2 class="text-lg font-semibold text-slate-700">
+                    面试题目 <span class="text-emerald-500" x-text="questions.length"></span> 题
+                </h2>
+                <div class="flex gap-2">
+                    <!-- 显示/隐藏所有答案 -->
+                    <button @click="toggleAllAnswers()"
+                            class="btn btn-secondary btn-sm"
+                            x-text="allAnswersShown ? '隐藏所有答案' : '显示所有答案'"></button>
+                    <button @click="copyAll()" class="btn btn-secondary btn-sm">复制全部</button>
+                    <button @click="exportTxt()" class="btn btn-secondary btn-sm">导出 TXT</button>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <template x-for="(q, idx) in questions" :key="idx">
+                    <div class="q-card">
+                        <!-- 题目头 -->
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex flex-wrap items-center gap-2 min-w-0">
+                                <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded"
+                                      x-text="'Q'+(idx+1)"></span>
+                                <span :class="tagClass(q.type)" class="tag" x-text="q.type"></span>
+                            </div>
+                            <button @click="q._show = !q._show"
+                                    :class="q._show ? 'text-emerald-600 hover:text-emerald-700' : 'text-slate-400 hover:text-slate-600'"
+                                    class="text-sm font-medium flex-shrink-0 transition-colors">
+                                <span x-text="q._show ? '收起 ▲' : '查看答案 ▼'"></span>
+                            </button>
+                        </div>
+
+                        <!-- 题目文字 -->
+                        <p class="mt-2 text-slate-700 leading-relaxed" x-text="q.question"></p>
+
+                        <!-- 答案（v2 优化结构） -->
+                        <div x-show="q._show" x-collapse.duration.300ms>
+                            <div class="answer-panel">
+                                <p class="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wide">参考答案</p>
+
+                                <!-- 答题思路提示 -->
+                                <div x-show="q._tips" class="answer-tips">
+                                    <span class="at-label">💡 答题思路</span>
+                                    <div x-text="q._tips"></div>
+                                </div>
+
+                                <!-- 面试回答示例（核心） -->
+                                <div x-show="q._sample" class="answer-sample">
+                                    <span class="as-label">🎙️ 这样回答</span>
+                                    <p x-text="q._sample"></p>
+                                </div>
+
+                                <!-- 关键词标签 -->
+                                <div x-show="q._keywords" class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-semibold text-slate-400">关键词</span>
+                                    <div class="answer-keywords" x-html="q._keywords"></div>
+                                </div>
+
+                                <!-- 兜底：纯文本答案 -->
+                                <div x-show="!q._sample && !q._tips && !q._keywords" class="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap" x-text="q.answer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="text-center text-xs text-slate-300 py-6">
+            InterviewAI · Powered by DeepSeek
+        </footer>
+    </div>
+
+    <script>
+        function app() {
+            return {
+                // ---- 状态 ----
+                apiKey: localStorage.getItem('ds_api_key') || '',
+                apiEndpoint: localStorage.getItem('ds_api_endpoint') || 'https://api.deepseek.com/v1/chat/completions',
+                jdText: '',
+                questionCount: 10,
+                questions: [],
+                generating: false,
+                errorMsg: '',
+                showConfig: false,
+                uploadedPreview: null,
+                uploadedFile: null,
+                ocrRunning: false,
+                ocrMsg: '',
+                toast: { show: false, msg: '', type: 'success' },
+
+                // ---- 简历模块 ----
+                resumeText: '',
+                resumePreview: null,
+                resumeFile: null,
+                resumeOcrRunning: false,
+                resumeOcrMsg: '',
+
+                // ---- 其他出题要求 ----
+                extraRequirements: '',
+
+                // ---- AI优化弹窗状态 ----
+                showOptimize: false,
+                optimizing: false,
+                optimizedText: '',
+                jdTextOriginal: '',
+
+                // ---- Lightbox 增强版 ----
+                lightboxSrc: null,
+                lbZoom: 1,
+                lbPan: { x: 0, y: 0 },
+                lbDragging: false,
+                lbDragStart: { x: 0, y: 0, px: 0, py: 0 },
+                lbBaseW: 800,          // 图片基准宽度，加载后计算
+                lbNaturalW: 0,
+                lbNaturalH: 0,
+
+                closeLightbox() {
+                    this.lightboxSrc = null;
+                    this.resetLightboxView();
+                },
+
+                onLightboxImgLoad(e) {
+                    const img = e.target;
+                    this.lbNaturalW = img.naturalWidth;
+                    this.lbNaturalH = img.naturalHeight;
+                    this.fitLightboxToContainer();
+                },
+
+                fitLightboxToContainer() {
+                    // 计算适应容器（90vw x 85vh）的缩放比例
+                    const maxW = window.innerWidth * 0.9 - 40;   // 留边距
+                    const maxH = window.innerHeight * 0.85 - 80;
+                    if (!this.lbNaturalW) return;
+                    const scaleW = maxW / this.lbNaturalW;
+                    const scaleH = maxH / this.lbNaturalH;
+                    const fitScale = Math.min(scaleW, scaleH, 1);  // 不超过原始大小
+                    this.lbBaseW = this.lbNaturalW * fitScale;
+                    this.lbZoom = 1;
+                    this.lbPan = { x: 0, y: 0 };
+                },
+
+                resetLightboxView() {
+                    this.fitLightboxToContainer();
+                },
+
+                lbZoomIn() { this.setLbZoom(this.lbZoom + 0.3); },
+                lbZoomOut() { this.setLbZoom(this.lbZoom - 0.3); },
+
+                setLbZoom(newZoom) {
+                    const clamped = Math.max(0.25, Math.min(8, newZoom));
+                    // 以图片中心为原点调整位置
+                    if (this.lbZoom > 0) {
+                        const ratio = clamped / this.lbZoom;
+                        this.lbPan.x *= ratio;
+                        this.lbPan.y *= ratio;
+                    }
+                    this.lbZoom = clamped;
+                },
+
+                onLightboxWheel(e) {
+                    const delta = e.deltaY > 0 ? -0.2 : 0.2;
+                    // 以鼠标位置为中心缩放
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const mx = e.clientX - rect.left - rect.width / 2;
+                    const my = e.clientY - rect.top - rect.height / 2;
+
+                    const oldZoom = this.lbZoom;
+                    const newZoom = Math.max(0.25, Math.min(8, oldZoom + delta));
+
+                    if (newZoom !== oldZoom) {
+                        const ratio = newZoom / oldZoom;
+                        this.lbPan.x = mx - (mx - this.lbPan.x) * ratio;
+                        this.lbPan.y = my - (my - this.lbPan.y) * ratio;
+                        this.lbZoom = newZoom;
+                    }
+                },
+
+                onLightboxDragStart(e) {
+                    if (e.target.tagName === 'BUTTON' || e.target.closest('.lb-btn') || e.target.closest('.lb-close')) return;
+                    if (this.lbZoom <= 1.01) return;  // 未放大时不拖拽
+                    this.lbDragging = true;
+                    this.lbDragStart = {
+                        x: e.clientX || (e.touches && e.touches[0].clientX),
+                        y: e.clientY || (e.touches && e.touches[0].clientY),
+                        px: this.lbPan.x,
+                        py: this.lbPan.y
+                    };
+                    e.preventDefault();
+                },
+
+                onLightboxDragMove(e) {
+                    if (!this.lbDragging) return;
+                    const cx = e.clientX || (e.touches && e.touches[0].clientX);
+                    const cy = e.clientY || (e.touches && e.touches[0].clientY);
+                    this.lbPan.x = this.lbDragStart.px + (cx - this.lbDragStart.x);
+                    this.lbPan.y = this.lbDragStart.py + (cy - this.lbDragStart.y);
+                },
+
+                onLightboxDragEnd() { this.lbDragging = false; },
+
+                // ---- 答案展开控制 ----
+                allAnswersShown: false,
+
+                // ---- Toast ----
+                flash(msg, type='success') {
+                    this.toast = { show: true, msg, type };
+                },
+
+                // ---- 配置 ----
+                saveConfig() {
+                    const key = this.apiKey.trim();
+                    if (!key) return this.flash('请输入 API Key', 'error');
+                    localStorage.setItem('ds_api_key', key);
+                    localStorage.setItem('ds_api_endpoint', this.apiEndpoint.trim());
+                    this.showConfig = false;
+                    this.errorMsg = '';
+                    this.flash('配置已保存 ✓');
+                },
+
+                // ---- 图片 ----
+                handleUpload(e) {
+                    const f = e.target.files[0];
+                    if (f) this.processImg(f);
+                },
+                handleDrop(e) {
+                    const f = e.dataTransfer.files[0];
+                    if (f && f.type.startsWith('image/')) this.processImg(f);
+                },
+                removeImage() {
+                    this.uploadedPreview = null;
+                    this.uploadedFile = null;
+                    this.$refs.imgInput.value = '';
+                    this.ocrRunning = false;
+                },
+
+                async processImg(file) {
+                    this.uploadedFile = file;
+                    const r = new FileReader();
+                    r.onload = e => this.uploadedPreview = e.target.result;
+                    r.readAsDataURL(file);
+
+                    this.ocrRunning = true;
+                    this.ocrMsg = '正在识别图片...';
+
+                    if (this.apiKey) {
+                        try {
+                            const base64 = await this.fileToBase64(file);
+                            const resp = await fetch(this.apiEndpoint, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': 'Bearer ' + this.apiKey
+                                },
+                                body: JSON.stringify({
+                                    model: 'deepseek-chat',
+                                    messages: [{
+                                        role: 'user',
+                                        content: [
+                                            {
+                                                type: 'image_url',
+                                                image_url: { url: base64, detail: 'high' }
+                                            },
+                                            {
+                                                type: 'text',
+                                                text: `请完整、准确地提取这张图片中的所有文字内容。
+要求：
+1. 保持原始段落结构和换行
+2. 不要遗漏任何信息
+3. 不要添加任何解释或说明
+4. 直接返回提取出的纯文本内容`
+                                            }
+                                        ]
+                                    }],
+                                    max_tokens: 4096
+                                })
+                            });
+
+                            if (!resp.ok) {
+                                const errBody = await resp.json().catch(()=>({}));
+                                throw new Error('API错误: ' + (errBody.error?.message || resp.status));
+                            }
+
+                            const d = await resp.json();
+                            const txt = (d.choices?.[0]?.message?.content || '').trim();
+
+                            if (txt.length > 15 && !txt.startsWith('无法') && !txt.startsWith('抱歉') && !txt.startsWith('I cannot')) {
+                                this.jdText = txt;
+                                this.ocrMsg = '✓ 文字识别完成';
+                                setTimeout(() => this.ocrRunning = false, 1200);
+                                return;
+                            }
+                            throw new Error('识别结果不理想');
+
+                        } catch (e) {
+                            console.warn('DeepSeek OCR 失败:', e.message);
+                            this.ocrMsg = '切换本地引擎识别...';
+                        }
+                    }
+
+                    // Tesseract.js 本地兜底
+                    this.ocrMsg = '正在使用本地引擎识别...';
+                    try {
+                        const img = new Image();
+                        await new Promise((resolve, reject) => {
+                            img.onload = resolve;
+                            img.onerror = reject;
+                            img.src = URL.createObjectURL(file);
+                        });
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.naturalWidth || img.width;
+                        canvas.height = img.naturalHeight || img.height;
+                        canvas.getContext('2d').drawImage(img, 0, 0);
+                        URL.revokeObjectURL(img.src);
+
+                        const result = await Tesseract.recognize(canvas.toDataURL(), 'chi_sim+eng', {
+                            logger: m => {
+                                if (m.status === 'recognizing text') {
+                                    this.ocrMsg = '本地识别中 ' + Math.round(m.progress*100) + '%';
+                                }
+                            }
+                        });
+
+                        const txt = result.data.text.trim().replace(/\n{3,}/g, '\n\n');
+                        if (txt.length > 5) {
+                            this.jdText = txt;
+                            this.ocrMsg = '✓ 识别完成（本地模式）';
+                        } else {
+                            this.ocrMsg = '⚠ 未能有效识别，建议手动粘贴';
+                        }
+                    } catch (e) {
+                        console.error('Tesseract error:', e);
+                        this.ocrMsg = '✗ 识别失败，请手动输入';
+                    }
+
+                    setTimeout(() => this.ocrRunning = false, 1500);
+                },
+
+                fileToBase64(file) {
+                    return new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(file);
+                    });
+                },
+
+                // ---- 简历文件处理 ----
+                handleResumeUpload(e) {
+                    const f = e.target.files[0];
+                    if (f) this.processResumeImg(f);
+                },
+                handleResumeDrop(e) {
+                    const f = e.dataTransfer.files[0];
+                    if (f && f.type.startsWith('image/')) this.processResumeImg(f);
+                },
+                removeResume() {
+                    this.resumePreview = null;
+                    this.resumeFile = null;
+                    this.$refs.resumeInput.value = '';
+                    this.resumeOcrRunning = false;
+                },
+                async processResumeImg(file) {
+                    this.resumeFile = file;
+                    const r = new FileReader();
+                    r.onload = e => this.resumePreview = e.target.result;
+                    r.readAsDataURL(file);
+
+                    this.resumeOcrRunning = true;
+                    this.resumeOcrMsg = '正在识别简历图片...';
+
+                    if (this.apiKey) {
+                        try {
+                            const base64 = await this.fileToBase64(file);
+                            const resp = await fetch(this.apiEndpoint, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': 'Bearer ' + this.apiKey
+                                },
+                                body: JSON.stringify({
+                                    model: 'deepseek-chat',
+                                    messages: [{
+                                        role: 'user',
+                                        content: [
+                                            { type: 'image_url', image_url: { url: base64, detail: 'high' } },
+                                            { type: 'text', text: `请完整提取这张简历图片中的所有文字内容。
+要求：
+1. 保持原始段落结构和换行
+2. 不要遗漏任何信息（姓名、学历、工作经历、技能等）
+3. 不要添加任何解释
+4. 直接返回纯文本` }
+                                        ]
+                                    }],
+                                    max_tokens: 4096
+                                })
+                            });
+                            if (!resp.ok) throw new Error('API错误');
+                            const d = await resp.json();
+                            const txt = (d.choices?.[0]?.message?.content || '').trim();
+                            if (txt.length > 20 && !txt.startsWith('无法')) {
+                                this.resumeText = txt;
+                                this.resumeOcrMsg = '✓ 简历识别完成';
+                                setTimeout(() => this.resumeOcrRunning = false, 1200);
+                                return;
+                            }
+                        } catch (e) {
+                            console.warn('Resume OCR API failed:', e.message);
+                            this.resumeOcrMsg = '切换本地引擎...';
+                        }
+                    }
+
+                    // Tesseract 兜底
+                    try {
+                        const img = new Image();
+                        await new Promise((resolve, reject) => {
+                            img.onload = resolve; img.onerror = reject;
+                            img.src = URL.createObjectURL(file);
+                        });
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.naturalWidth || img.width;
+                        canvas.height = img.naturalHeight || img.height;
+                        canvas.getContext('2d').drawImage(img, 0, 0);
+                        URL.revokeObjectURL(img.src);
+
+                        const result = await Tesseract.recognize(canvas.toDataURL(), 'chi_sim+eng', {
+                            logger: m => {
+                                if (m.status === 'recognizing text') {
+                                    this.resumeOcrMsg = '识别中 ' + Math.round(m.progress*100) + '%';
+                                }
+                            }
+                        });
+                        const txt = result.data.text.trim().replace(/\n{3,}/g, '\n\n');
+                        if (txt.length > 10) {
+                            this.resumeText = txt;
+                            this.resumeOcrMsg = '✓ 识别完成（本地模式）';
+                        } else {
+                            this.resumeOcrMsg = '⚠ 识别效果不佳，建议手动输入';
+                        }
+                    } catch (e) {
+                        this.resumeOcrMsg = '✗ 识别失败，请手动输入';
+                    }
+                    setTimeout(() => this.resumeOcrRunning = false, 1500);
+                },
+
+                // ---- AI 优化 JD 文字 ----
+                async optimizeJd() {
+                    if (!this.apiKey) return this.flash('请先配置 API Key', 'error');
+                    if (!this.jdText.trim()) return;
+
+                    this.optimizing = true;
+                    this.optimizedText = '';
+                    this.jdTextOriginal = this.jdText;
+                    this.showOptimize = true;
+
+                    try {
+                        const resp = await fetch(this.apiEndpoint, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.apiKey
+                            },
+                            body: JSON.stringify({
+                                model: 'deepseek-chat',
+                                messages: [{
+                                    role: 'user',
+                                    content: `请优化以下岗位JD文字，修正错别字、乱序和语法问题，使文字通顺、专业、结构清晰。
+要求：
+1. 修正所有错别字和语序问题
+2. 保持原有信息不丢失
+3. 优化段落结构，使其更易读
+4. 使用专业规范的表述
+5. 直接返回优化后的完整文字，不要添加任何解释或说明
+
+原始JD：
+${this.jdTextOriginal}`
+                                }],
+                                temperature: 0.3,
+                                max_tokens: 4096
+                            })
+                        });
+
+                        if (!resp.ok) {
+                            const ed = await resp.json().catch(()=>({}));
+                            throw new Error(ed.error?.message || '优化失败');
+                        }
+
+                        const data = await resp.json();
+                        const txt = (data.choices?.[0]?.message?.content || '').trim();
+                        if (txt) {
+                            this.optimizedText = txt;
+                        } else {
+                            throw new Error('返回内容为空');
+                        }
+
+                    } catch (e) {
+                        console.error(e);
+                        this.optimizedText = '（优化失败：' + e.message + '）';
+                    } finally {
+                        this.optimizing = false;
+                    }
+                },
+
+                applyOptimized() {
+                    if (this.optimizedText && !this.optimizedText.startsWith('（')) {
+                        this.jdText = this.optimizedText;
+                        this.showOptimize = false;
+                        this.flash('已采用优化后的文字 ✓');
+                    }
+                },
+
+                // ---- 显示/隐藏所有答案 ----
+                toggleAllAnswers() {
+                    this.allAnswersShown = !this.allAnswersShown;
+                    this.questions.forEach(q => {
+                        q._show = this.allAnswersShown;
+                    });
+                    // 触发 Alpine 响应
+                    this.questions = [...this.questions];
+                },
+
+                // ---- 生成面试题 v2（JD+简历结合） ----
+                async generate() {
+                    if (!this.apiKey) return this.flash('请先配置 API Key', 'error');
+                    if (!this.jdText.trim()) return this.flash('请先输入岗位 JD', 'error');
+
+                    this.generating = true;
+                    this.errorMsg = '';
+                    this.questions = [];
+                    this.allAnswersShown = false;
+
+                    // 构建 prompt
+                    let contextInfo = `【岗位 JD】\n${this.jdText}\n`;
+
+                    if (this.resumeText.trim()) {
+                        contextInfo += `\n【候选人简历】\n${this.resumeText}\n`;
+                    } else {
+                        contextInfo += `\n【候选人简历】未提供\n`;
+                    }
+
+                    if (this.extraRequirements.trim()) {
+                        contextInfo += `\n【额外出题要求】\n${this.extraRequirements}\n`;
+                    }
+
+                    try {
+                        const resp = await fetch(this.apiEndpoint, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.apiKey
+                            },
+                            body: JSON.stringify({
+                                model: 'deepseek-chat',
+                                messages: [{
+                                    role: 'user',
+                                    content: `你是资深技术面试官。根据以下信息生成恰好 ${this.questionCount} 道面试题。
+
+${contextInfo}
+
+要求：
+1. 题目数量：严格生成 ${this.questionCount} 题，多一题少一题都不行
+2. 题目类型均匀分布在【技术能力、项目经验、问题解决、团队协作/软技能】4类
+3. 如果提供了候选人简历，请根据其背景出针对性题目（考察匹配度、深挖经历）
+4. 每道题的答案包含以下部分：
+   - sample: 一段完整的面试回答示例（像真实候选人的口语化回答，自然流畅，120-180字）
+   - tips: 简短的答题思路提示（1-2句话告诉用户从哪个角度切入回答，50字以内）
+   - keywords: 3-5个关键词标签（用逗号分隔，如"STAR法则,数据驱动,团队协作"）
+5. 只返回 JSON 数组，不要任何其他文字：
+[
+  {
+    "question": "题目内容",
+    "answer": "完整参考答案（保留用于兜底显示）",
+    "sample": "面试回答示例，口语化自然",
+    "tips": "答题思路提示",
+    "keywords": "关键词1,关键词2,关键词3",
+    "type": "技术能力"
+  }
+]`
+                                }],
+                                temperature: 0.7,
+                                max_tokens: 6000
+                            })
+                        });
+
+                        if (!resp.ok) {
+                            const ed = await resp.json().catch(()=>({}));
+                            throw new Error(ed.error?.message || `API 调用失败 (${resp.status})`);
+                        }
+
+                        const data = await resp.json();
+                        let content = data.choices?.[0]?.message?.content || '';
+
+                        // 解析 JSON
+                        let arr;
+                        try {
+                            arr = JSON.parse(content);
+                        } catch {
+                            const m = content.match(/\[[\s\S]*\]/);
+                            if (!m) throw new Error('AI 返回格式异常，请重试');
+                            arr = JSON.parse(m[0]);
+                        }
+
+                        if (!Array.isArray(arr) || arr.length === 0) throw new Error('未生成有效题目');
+
+                        // 【任务2修复】强制调整到用户指定的题目数量
+                        const targetCount = this.questionCount;
+                        if (arr.length > targetCount) {
+                            arr = arr.slice(0, targetCount);
+                        } else if (arr.length < targetCount && arr.length > 0) {
+                            // 补齐：复制最后几道题
+                            while (arr.length < targetCount) {
+                                const src = arr[arr.length % arr.length];
+                                arr.push({ ...src, question: src.question + '（变体' + (arr.length+1) + '）' });
+                            }
+                        }
+
+                        // 颜色循环
+                        const kwColors = ['green','blue','purple','orange'];
+
+                        this.questions = arr.map((q, qi) => ({
+                            question: q.question || '',
+                            answer: q.answer || '',
+                            sample: q.sample || '',
+                            tips: q.tips || '',
+                            keywords: q.keywords || '',
+                            type: q.type || '综合',
+                            _show: false,
+                            get _sample() { return (q.sample||'').trim(); },
+                            get _tips() { return (q.tips||'').trim(); },
+                            get _keywords() {
+                                const raw = (q.keywords||'').trim();
+                                if (!raw) return '';
+                                const items = raw.split(/[,，、]+/).filter(s => s.trim());
+                                if (items.length > 0) {
+                                    return items.map((s, i) =>
+                                        '<span class="ak-tag ' + (kwColors[i % kwColors.length]) + '">' + s.trim() + '</span>'
+                                    ).join('');
+                                }
+                                return '<span class="ak-tag">' + raw + '</span>';
+                            }
+                        }));
+
+                        this.flash(`成功生成 ${this.questions.length} 道题目 ✓`);
+
+                    } catch (e) {
+                        console.error(e);
+                        this.errorMsg = e.message || '生成失败，请重试';
+                    } finally {
+                        this.generating = false;
+                    }
+                },
+
+                // ---- 工具 ----
+                tagClass(type) {
+                    const m = {
+                        '技术能力': 'tag-tech',
+                        '项目经验': 'tag-exp',
+                        '问题解决': 'tag-solve',
+                        '团队协作': 'tag-team'
+                    };
+                    return m[type] || 'tag-tech';
+                },
+
+                copyAll() {
+                    let t = `面试题目（${this.questions.length}题）\n\n`;
+                    this.questions.forEach((q,i) => {
+                        t += `【Q${i+1}】${q.type}\n`;
+                        t += `问题：${q.question}\n`;
+                        if (q.tips) t += `思路提示：${q.tips}\n`;
+                        if (q.sample) t += `回答示例：${q.sample}\n`;
+                        if (q.keywords) t += `关键词：${q.keywords}\n`;
+                        if (!q.sample && !q.tips) t += `答案：${q.answer}\n`;
+                        t += `\n`;
+                    });
+                    navigator.clipboard.writeText(t).then(() => this.flash('已复制到剪贴板 ✓'));
+                },
+
+                exportTxt() {
+                    let t = `面试题目 · ${new Date().toLocaleString()}\n`;
+                    t += '─'.repeat(40) + '\n\n';
+                    this.questions.forEach((q,i) => {
+                        t += `Q${i+1} [${q.type}]\n${q.question}\n\n`;
+                        if (q.tips) t += `【思路提示】\n${q.tips}\n\n`;
+                        if (q.sample) t += `【回答示例】\n${q.sample}\n\n`;
+                        if (q.keywords) t += `【关键词】${q.keywords}\n\n`;
+                        if (!q.sample && !q.tips) t += `答案：${q.answer}\n`;
+                        t += '─'.repeat(40) + '\n';
+                    });
+                    const blob = new Blob([t], { type: 'text/plain;charset=utf-8' });
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = `面试题_${Date.now()}.txt`;
+                    a.click();
+                    URL.revokeObjectURL(a.href);
+                    this.flash('导出成功 ✓');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
