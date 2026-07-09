@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>天天基金APP选基实操手册 | 稳健型投资者专属</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #f5f6fa;
+    color: #2c2c2c;
+    line-height: 1.8;
+    font-size: 15px;
+  }
+  .container { max-width: 860px; margin: 0 auto; padding: 0 20px 60px; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #3949ab 100%);
+    color: #fff;
+    padding: 48px 40px;
+    border-radius: 0 0 24px 24px;
+    margin-bottom: 40px;
+  }
+  .hero h1 { font-size: 28px; font-weight: 700; margin-bottom: 12px; letter-spacing: 1px; }
+  .hero .subtitle { font-size: 16px; opacity: 0.85; margin-bottom: 20px; }
+  .hero .meta { display: flex; gap: 24px; font-size: 13px; opacity: 0.7; }
+  .hero .badge {
+    display: inline-block; background: rgba(255,255,255,0.15); padding: 4px 14px;
+    border-radius: 20px; font-size: 13px; margin-right: 8px; margin-top: 8px;
+  }
+
+  /* Section */
+  .section { margin-bottom: 36px; }
+  .section-title {
+    font-size: 22px; font-weight: 700; color: #1a237e;
+    padding-left: 16px; border-left: 5px solid #3949ab;
+    margin-bottom: 20px; line-height: 1.4;
+  }
+  .section-sub {
+    font-size: 17px; font-weight: 600; color: #283593;
+    margin: 24px 0 12px; padding: 8px 0 8px 14px;
+    background: #e8eaf6; border-radius: 6px;
+  }
+
+  /* Card */
+  .card {
+    background: #fff; border-radius: 12px; padding: 24px;
+    margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .card-highlight {
+    border: 2px solid #3949ab; background: #fff;
+  }
+
+  /* Step */
+  .step-list { counter-reset: step; }
+  .step-item {
+    position: relative; padding-left: 52px; margin-bottom: 20px;
+    min-height: 40px;
+  }
+  .step-item::before {
+    counter-increment: step; content: counter(step);
+    position: absolute; left: 0; top: 0;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #3949ab; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700;
+  }
+  .step-item h4 { font-size: 16px; font-weight: 600; color: #1a237e; margin-bottom: 6px; }
+  .step-item p { font-size: 14px; color: #555; }
+  .step-item .detail {
+    background: #f5f6fa; border-radius: 8px; padding: 12px 16px;
+    margin-top: 8px; font-size: 13px; color: #666;
+    border-left: 3px solid #c5cae9;
+  }
+
+  /* Table */
+  table {
+    width: 100%; border-collapse: collapse; margin: 12px 0;
+    font-size: 13px; background: #fff;
+  }
+  th {
+    background: #3949ab; color: #fff; padding: 10px 12px;
+    text-align: left; font-weight: 600; font-size: 13px;
+  }
+  th:first-child { border-radius: 6px 0 0 0; }
+  th:last-child { border-radius: 0 6px 0 0; }
+  td { padding: 10px 12px; border-bottom: 1px solid #e8e8e8; }
+  tr:hover td { background: #f5f6fa; }
+  .td-center { text-align: center; }
+  .td-bold { font-weight: 600; }
+  .td-code { font-family: "SF Mono", Consolas, monospace; font-weight: 600; color: #3949ab; }
+
+  /* Tags */
+  .tag {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 12px; font-weight: 500;
+  }
+  .tag-r2 { background: #e8f5e9; color: #2e7d32; }
+  .tag-r3 { background: #fff3e0; color: #e65100; }
+  .tag-blue { background: #e3f2fd; color: #1565c0; }
+  .tag-green { background: #e8f5e9; color: #2e7d32; }
+  .tag-red { background: #fce4ec; color: #c62828; }
+  .tag-purple { background: #ede7f6; color: #5e35b1; }
+
+  /* Alert */
+  .alert {
+    border-radius: 8px; padding: 14px 18px; margin: 12px 0;
+    font-size: 14px; display: flex; align-items: flex-start; gap: 10px;
+  }
+  .alert-icon { font-size: 18px; flex-shrink: 0; line-height: 1.6; }
+  .alert-warn { background: #fff8e1; border-left: 4px solid #ffb300; }
+  .alert-danger { background: #ffebee; border-left: 4px solid #e53935; }
+  .alert-info { background: #e3f2fd; border-left: 4px solid #2196f3; }
+  .alert-success { background: #e8f5e9; border-left: 4px solid #43a047; }
+
+  /* Funnel */
+  .funnel { display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 20px 0; }
+  .funnel-step {
+    padding: 12px 24px; border-radius: 6px; text-align: center;
+    font-size: 14px; font-weight: 500; color: #fff;
+    transition: transform 0.2s;
+  }
+  .funnel-step:hover { transform: scale(1.02); }
+  .funnel-1 { background: #1a237e; width: 90%; }
+  .funnel-2 { background: #283593; width: 75%; }
+  .funnel-3 { background: #3949ab; width: 60%; }
+  .funnel-4 { background: #5c6bc0; width: 45%; }
+  .funnel-arrow { color: #999; font-size: 14px; }
+  .funnel-desc { font-size: 12px; color: #888; margin-top: 2px; }
+
+  /* Fund card */
+  .fund-card {
+    background: #fff; border-radius: 10px; padding: 0;
+    margin-bottom: 16px; overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border: 1px solid #e8e8e8;
+  }
+  .fund-header {
+    padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .fund-header-1 { background: #e8eaf6; border-left: 4px solid #1a237e; }
+  .fund-header-2 { background: #e0f2f1; border-left: 4px solid #00695c; }
+  .fund-header-3 { background: #e3f2fd; border-left: 4px solid #1565c0; }
+  .fund-header-4 { background: #fff3e0; border-left: 4px solid #e65100; }
+  .fund-header-5 { background: #fce4ec; border-left: 4px solid #c62828; }
+  .fund-body { padding: 16px 20px; }
+  .fund-name { font-size: 16px; font-weight: 700; color: #1a237e; }
+  .fund-code { font-family: "SF Mono", Consolas, monospace; font-size: 14px; color: #666; margin-left: 8px; }
+  .fund-alloc { font-size: 24px; font-weight: 700; }
+
+  /* Nav path */
+  .nav-path {
+    background: #1a237e; color: #fff; padding: 12px 16px;
+    border-radius: 8px; font-size: 13px; margin: 10px 0;
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  }
+  .nav-path .sep { opacity: 0.5; }
+  .nav-path .current { background: rgba(255,255,255,0.2); padding: 2px 10px; border-radius: 10px; }
+
+  /* Parameter box */
+  .param-box {
+    background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;
+    padding: 16px 20px; margin: 10px 0;
+  }
+  .param-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0; border-bottom: 1px dashed #e8e8e8; font-size: 14px;
+  }
+  .param-row:last-child { border-bottom: none; }
+  .param-label { color: #666; }
+  .param-value { font-weight: 600; color: #1a237e; }
+  .param-input {
+    display: inline-block; background: #e3f2fd; color: #1565c0;
+    padding: 2px 10px; border-radius: 4px; font-family: monospace; font-size: 13px;
+  }
+
+  /* Progress */
+  .progress-bar {
+    height: 8px; background: #e8e8e8; border-radius: 4px; overflow: hidden;
+    margin: 6px 0;
+  }
+  .progress-fill { height: 100%; border-radius: 4px; }
+  .progress-1 { background: #1a237e; }
+  .progress-2 { background: #00695c; }
+  .progress-3 { background: #1565c0; }
+  .progress-4 { background: #e65100; }
+  .progress-5 { background: #c62828; }
+
+  /* Checklist */
+  .checklist { list-style: none; }
+  .checklist li {
+    padding: 8px 0 8px 28px; position: relative; font-size: 14px;
+  }
+  .checklist li::before {
+    content: ""; position: absolute; left: 0; top: 10px;
+    width: 18px; height: 18px; border: 2px solid #3949ab; border-radius: 4px;
+  }
+  .checklist li.done::before {
+    content: "✓"; background: #3949ab; color: #fff; font-size: 12px;
+    display: flex; align-items: center; justify-content: center; line-height: 1;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center; padding: 40px 20px; color: #999; font-size: 13px;
+    border-top: 1px solid #e0e0e0; margin-top: 40px;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .hero { padding: 32px 20px; }
+    .hero h1 { font-size: 22px; }
+    table { font-size: 12px; }
+    th, td { padding: 8px 6px; }
+  }
+
+  .divider { height: 1px; background: #e0e0e0; margin: 24px 0; }
+  .text-sm { font-size: 13px; color: #666; }
+  .text-bold { font-weight: 700; }
+  .text-red { color: #c62828; }
+  .text-green { color: #2e7d32; }
+  .text-blue { color: #1565c0; }
+  .mt-8 { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-16 { margin-bottom: 16px; }
+</style>
+</head>
+<body>
+
+<!-- ========== HERO ========== -->
+<div class="hero">
+  <h1>天天基金APP 选基实操手册</h1>
+  <div class="subtitle">稳健型投资者专属 | 从条件筛选到定投建立的完整操作指南</div>
+  <div>
+    <span class="badge">70% 纯债 R2</span>
+    <span class="badge">30% 偏债 R3</span>
+    <span class="badge">月定投 1,000 元</span>
+    <span class="badge">目标年化 3-5%</span>
+  </div>
+  <div class="meta" style="margin-top: 16px;">
+    <span>数据截至：2026-07-08</span>
+    <span>适用APP：天天基金 v9.x</span>
+    <span>生成日期：2026-07-09</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ========== 第一章：选基方法论 ========== -->
+<div class="section">
+  <div class="section-title">第一章 选基方法论：四步漏斗法</div>
+
+  <p>选基金不是看排行榜抄作业，而是通过四层筛选逐步缩小范围，最终留下经得起考验的优质基金。以下是完整流程：</p>
+
+  <div class="funnel">
+    <div class="funnel-step funnel-1">第一步：定底线 — 筛掉风险不匹配的（淘汰约60%）</div>
+    <div class="funnel-desc">只保留 R2纯债 + R3偏债混合/二级债基，排除所有 R4及以上</div>
+    <div class="funnel-arrow">▼</div>
+    <div class="funnel-step funnel-2">第二步：看长期 — 筛掉短跑冠军（再淘汰约50%）</div>
+    <div class="funnel-desc">只看近3年收益，纯债<8%、偏债混合<20% 的直接淘汰</div>
+    <div class="funnel-arrow">▼</div>
+    <div class="funnel-step funnel-3">第三步：查背景 — 筛掉小作坊（再淘汰约30%）</div>
+    <div class="funnel-desc">规模<10亿、经理任职<2年、机构占比>80% 的不要</div>
+    <div class="funnel-arrow">▼</div>
+    <div class="funnel-step funnel-4">第四步：分散配 — 筛掉同质化的（最终留5只）</div>
+    <div class="funnel-desc">利率债、信用债、二级债基各选代表，同经理只选1只</div>
+  </div>
+</div>
+
+<!-- ========== 第二章：APP条件选基实操 ========== -->
+<div class="section">
+  <div class="section-title">第二章 APP条件选基实操（含具体参数）</div>
+
+  <p>天天基金APP内置了强大的<i>条件选基</i>功能，可以按你设定的参数自动筛选全市场基金。以下是每一步的具体操作路径和参数设置。</p>
+
+  <!-- 第一步 -->
+  <div class="section-sub">第一步：进入条件选基</div>
+  <div class="card">
+    <div class="nav-path">
+      <span>打开APP</span><span class="sep">→</span>
+      <span>底部「基金」Tab</span><span class="sep">→</span>
+      <span>顶部「基金排行」</span><span class="sep">→</span>
+      <span>右上角「筛选」图标</span><span class="sep">→</span>
+      <span class="current">条件选基</span>
+    </div>
+    <p class="text-sm mt-8">也可以直接在APP首页搜索框输入"条件选基"快速进入。</p>
+  </div>
+
+  <!-- 第二步 -->
+  <div class="section-sub">第二步：设置筛选参数（纯债基金 R2）</div>
+  <div class="card">
+    <p>这是最关键的一步。按照下方参数逐一设置，筛选出符合条件的纯债基金：</p>
+    <div class="param-box">
+      <div class="param-row">
+        <span class="param-label">基金类型</span>
+        <span class="param-value">债券型 → 长期纯债 + 短期纯债</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">风险等级</span>
+        <span class="param-value">中低风险（R2）</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">成立年限</span>
+        <span class="param-value">≥ 3年</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">基金规模</span>
+        <span class="param-value">≥ 10亿元</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">近3年收益率</span>
+        <span class="param-value">≥ 8%</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">最大回撤（近1年）</span>
+        <span class="param-value">≤ 2%</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">基金经理任职时间</span>
+        <span class="param-value">≥ 2年</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">排序方式</span>
+        <span class="param-value">近3年收益率 降序</span>
+      </div>
+    </div>
+    <div class="alert alert-info">
+      <span class="alert-icon">💡</span>
+      <div>
+        <b>操作提示：</b>在条件选基页面，每个参数都有滑块或下拉选项。设置完成后点击底部「查看结果」，系统会自动列出所有符合条件的基金，按近3年收益从高到低排列。
+      </div>
+    </div>
+  </div>
+
+  <!-- 第三步 -->
+  <div class="section-sub">第三步：设置筛选参数（偏债混合/二级债基 R3）</div>
+  <div class="card">
+    <p>再用另一组参数筛选进攻性稍强的品种：</p>
+    <div class="param-box">
+      <div class="param-row">
+        <span class="param-label">基金类型</span>
+        <span class="param-value">混合型 → 偏债混合 + 债券型 → 二级债基</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">风险等级</span>
+        <span class="param-value">中风险 / 中低风险（R3）</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">成立年限</span>
+        <span class="param-value">≥ 3年</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">基金规模</span>
+        <span class="param-value">≥ 5亿元</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">近3年收益率</span>
+        <span class="param-value">≥ 20%</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">最大回撤（近1年）</span>
+        <span class="param-value">≤ 5%</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">基金经理任职时间</span>
+        <span class="param-value">≥ 2年</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">排序方式</span>
+        <span class="param-value">近3年收益率 降序</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第四步 -->
+  <div class="section-sub">第四步：从筛选结果中精选</div>
+  <div class="card">
+    <p>筛选结果可能仍有十几只基金，需要进一步人工甄别。打开每只基金的详情页，检查以下清单：</p>
+    <ul class="checklist">
+      <li><b>基金经理稳定性</b>：详情页 → 基金经理 → 任职日期是否 ≥ 2年。频繁换人的不要</li>
+      <li><b>持仓集中度</b>：详情页 → 基金持仓 → 前五大重仓债券占比是否 < 30%。过于集中的不要</li>
+      <li><b>机构持有比例</b>：详情页 → 规模份额 → 机构持有比是否 < 80%。过高的流动性差</li>
+      <li><b>分红记录</b>：详情页 → 分红送配 → 是否有持续分红。定期分红说明运作成熟</li>
+      <li><b>费率水平</b>：详情页 → 费率 → 申购费是否 ≤ 0.15%（打折后）。管理费纯债 ≤ 0.6%/年</li>
+      <li><b>回撤对比</b>：详情页 → 业绩走势 → 最大回撤是否优于同类平均</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========== 第三章：5支推荐基金 ========== -->
+<div class="section">
+  <div class="section-title">第三章 5支推荐基金详情与购买操作</div>
+
+  <p>基于上述四步漏斗法筛选，结合你的稳健投资风格，推荐以下5支基金。按建议比例配置，形成"70%纯债底仓 + 30%偏债进攻"的组合结构。</p>
+
+  <!-- 基金1 -->
+  <div class="fund-card">
+    <div class="fund-header fund-header-1">
+      <div>
+        <span class="fund-name">广发中债7-10年国开债指数A</span>
+        <span class="fund-code">003376</span>
+      </div>
+      <div style="text-align: right;">
+        <div class="fund-alloc">30%</div>
+        <div class="text-sm">建议占比</div>
+      </div>
+    </div>
+    <div class="fund-body">
+      <table>
+        <tr><th style="width:30%">指标</th><th>数据</th></tr>
+        <tr><td>基金类型</td><td><span class="tag tag-r2">R2 中低风险</span> 纯债-利率债指数</td></tr>
+        <tr><td>最新净值（07-08）</td><td class="td-bold">1.3764</td></tr>
+        <tr><td>近1年收益</td><td class="text-red td-bold">+2.24%</td></tr>
+        <tr><td>近3年收益</td><td class="text-red td-bold">+16.59%</td></tr>
+        <tr><td>基金规模</td><td>53.75亿元</td></tr>
+        <tr><td>基金经理</td><td>古渥</td></tr>
+        <tr><td>管理费/年</td><td>0.30%</td></tr>
+      </table>
+      <div class="alert alert-success">
+        <span class="alert-icon">✅</span>
+        <div>
+          <b>推荐理由：</b>跟踪7-10年国开债指数，持仓全是国家政策性银行债，信用风险几乎为零。近3年+16.59%在纯债中排第一梯队。作为组合压舱石，即使市场动荡也不会大亏。
+        </div>
+      </div>
+      <div class="param-box">
+        <div class="param-row">
+          <span class="param-label">APP搜索</span>
+          <span class="param-input">003376</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">操作方式</span>
+          <span class="param-value">定投 → 普通定投</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">每月金额</span>
+          <span class="param-value">300元</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">扣款日</span>
+          <span class="param-value">每月8日</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">建议建仓时间</span>
+          <span class="param-value">第1个月（立即）</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 基金2 -->
+  <div class="fund-card">
+    <div class="fund-header fund-header-2">
+      <div>
+        <span class="fund-name">鹏华丰禄债券</span>
+        <span class="fund-code">003547</span>
+      </div>
+      <div style="text-align: right;">
+        <div class="fund-alloc">25%</div>
+        <div class="text-sm">建议占比</div>
+      </div>
+    </div>
+    <div class="fund-body">
+      <table>
+        <tr><th style="width:30%">指标</th><th>数据</th></tr>
+        <tr><td>基金类型</td><td><span class="tag tag-r2">R2 中低风险</span> 纯债-信用债</td></tr>
+        <tr><td>最新净值（07-07）</td><td class="td-bold">1.0407</td></tr>
+        <tr><td>近1年收益</td><td class="text-red td-bold">+1.51%</td></tr>
+        <tr><td>近3年收益</td><td class="text-red td-bold">+11.32%</td></tr>
+        <tr><td>基金规模</td><td>92.53亿元</td></tr>
+        <tr><td>基金经理</td><td>刘涛（任职7年+）</td></tr>
+        <tr><td>管理费/年</td><td>0.60%</td></tr>
+        <tr><td>历史分红</td><td>14次，累计分红率超49%</td></tr>
+      </table>
+      <div class="alert alert-success">
+        <span class="alert-icon">✅</span>
+        <div>
+          <b>推荐理由：</b>全市场最大的信用债基金之一（92亿），流动性好。基金经理刘涛管理超7年，穿越多轮牛熊。历史分红14次，运作成熟。信用债收益略高于利率债，用主动管理赚利差。
+        </div>
+      </div>
+      <div class="param-box">
+        <div class="param-row">
+          <span class="param-label">APP搜索</span>
+          <span class="param-input">003547</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">操作方式</span>
+          <span class="param-value">定投 → 普通定投</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">每月金额</span>
+          <span class="param-value">250元</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">扣款日</span>
+          <span class="param-value">每月10日</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">建议建仓时间</span>
+          <span class="param-value">第2个月</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 基金3 -->
+  <div class="fund-card">
+    <div class="fund-header fund-header-3">
+      <div>
+        <span class="fund-name">中加纯债债券</span>
+        <span class="fund-code">000914</span>
+      </div>
+      <div style="text-align: right;">
+        <div class="fund-alloc">15%</div>
+        <div class="text-sm">建议占比</div>
+      </div>
+    </div>
+    <div class="fund-body">
+      <table>
+        <tr><th style="width:30%">指标</th><th>数据</th></tr>
+        <tr><td>基金类型</td><td><span class="tag tag-r2">R2 中低风险</span> 纯债-长债</td></tr>
+        <tr><td>最新净值（07-08）</td><td class="td-bold">1.0513</td></tr>
+        <tr><td>近1年收益</td><td class="text-red td-bold">+1.63%</td></tr>
+        <tr><td>近3年收益</td><td class="text-red td-bold">+9.66%</td></tr>
+        <tr><td>基金规模</td><td>82.08亿元</td></tr>
+        <tr><td>基金经理</td><td>于跃</td></tr>
+        <tr><td>管理费/年</td><td>0.60%</td></tr>
+        <tr><td>历史分红</td><td>10次</td></tr>
+      </table>
+      <div class="alert alert-success">
+        <span class="alert-icon">✅</span>
+        <div>
+          <b>推荐理由：</b>纯长债策略，久期较长，对利率下行更敏感。规模82亿，成立以来累计收益+67.46%。与003376形成互补——一个跟踪指数被动管理，一个主动选券，分散单一策略风险。
+        </div>
+      </div>
+      <div class="param-box">
+        <div class="param-row">
+          <span class="param-label">APP搜索</span>
+          <span class="param-input">000914</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">操作方式</span>
+          <span class="param-value">定投 → 普通定投</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">每月金额</span>
+          <span class="param-value">150元</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">扣款日</span>
+          <span class="param-value">每月12日</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">建议建仓时间</span>
+          <span class="param-value">第3个月</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 基金4 -->
+  <div class="fund-card">
+    <div class="fund-header fund-header-4">
+      <div>
+        <span class="fund-name">易方达安心回报债券A</span>
+        <span class="fund-code">110027</span>
+      </div>
+      <div style="text-align: right;">
+        <div class="fund-alloc">15%</div>
+        <div class="text-sm">建议占比</div>
+      </div>
+    </div>
+    <div class="fund-body">
+      <table>
+        <tr><th style="width:30%">指标</th><th>数据</th></tr>
+        <tr><td>基金类型</td><td><span class="tag tag-r3">R3 中低风险</span> 二级债基</td></tr>
+        <tr><td>最新净值（07-07）</td><td class="td-bold">2.3731</td></tr>
+        <tr><td>近1年收益</td><td class="text-red td-bold">+14.76%</td></tr>
+        <tr><td>近3年收益</td><td class="text-red td-bold">+27.11%</td></tr>
+        <tr><td>近3月收益</td><td class="text-red td-bold">+8.60%</td></tr>
+        <tr><td>基金规模</td><td>116.01亿元</td></tr>
+        <tr><td>基金经理</td><td>张清华（明星经理）</td></tr>
+        <tr><td>成立时间</td><td>2011-06-21（14年老基金）</td></tr>
+        <tr><td>管理费/年</td><td>0.70%</td></tr>
+      </table>
+      <div class="alert alert-success">
+        <span class="alert-icon">✅</span>
+        <div>
+          <b>推荐理由：</b>张清华管理的标杆产品，规模116亿，2011年成立，经历多轮牛熊。可投不超过20%权益资产，近1年+14.76%远超纯债。债市回暖+股市反弹时弹性很大，是组合中进攻性第一梯队。
+        </div>
+      </div>
+      <div class="alert alert-warn">
+        <span class="alert-icon">⚠️</span>
+        <div>
+          <b>注意：</b>该基金限制大额购买（单日上限1000万），对定投无影响。但若你想一次性大额申购，需分多日操作。
+        </div>
+      </div>
+      <div class="param-box">
+        <div class="param-row">
+          <span class="param-label">APP搜索</span>
+          <span class="param-input">110027</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">操作方式</span>
+          <span class="param-value">定投 → 普通定投</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">每月金额</span>
+          <span class="param-value">150元</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">扣款日</span>
+          <span class="param-value">每月15日</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">建议建仓时间</span>
+          <span class="param-value">第4个月</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 基金5 -->
+  <div class="fund-card">
+    <div class="fund-header fund-header-5">
+      <div>
+        <span class="fund-name">富国久利稳健配置混合A</span>
+        <span class="fund-code">003877</span>
+      </div>
+      <div style="text-align: right;">
+        <div class="fund-alloc">15%</div>
+        <div class="text-sm">建议占比</div>
+      </div>
+    </div>
+    <div class="fund-body">
+      <table>
+        <tr><th style="width:30%">指标</th><th>数据</th></tr>
+        <tr><td>基金类型</td><td><span class="tag tag-r3">R3 中风险</span> 偏债混合</td></tr>
+        <tr><td>最新净值（07-08）</td><td class="td-bold">1.3263</td></tr>
+        <tr><td>近1年收益</td><td class="text-red td-bold">+13.41%</td></tr>
+        <tr><td>近3年收益</td><td class="text-red td-bold">+59.15%</td></tr>
+        <tr><td>基金规模</td><td>5.79亿元</td></tr>
+        <tr><td>基金经理</td><td>蔡耀华 / 俞晓斌</td></tr>
+        <tr><td>成立时间</td><td>2016-12-27</td></tr>
+        <tr><td>管理费/年</td><td>0.80%</td></tr>
+        <tr><td>评级</td><td>三星</td></tr>
+      </table>
+      <div class="alert alert-success">
+        <span class="alert-icon">✅</span>
+        <div>
+          <b>推荐理由：</b>已在你自选中，也是自选4只中近3年表现最好的（+59.15%）。偏债混合型，可在债券底仓基础上适度参与股票打新和权益投资，是组合中进攻性最强的一环。保留你熟悉的好基金。
+        </div>
+      </div>
+      <div class="alert alert-warn">
+        <span class="alert-icon">⚠️</span>
+        <div>
+          <b>注意：</b>该基金规模5.79亿偏小，需关注后续是否有清盘风险（一般低于2亿才触发预警，目前安全）。近1年收益从5月的+24.73%回调至+13.41%，波动相对较大，仓位控制在15%以内。
+        </div>
+      </div>
+      <div class="param-box">
+        <div class="param-row">
+          <span class="param-label">APP搜索</span>
+          <span class="param-input">003877</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">操作方式</span>
+          <span class="param-value">定投 → 普通定投</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">每月金额</span>
+          <span class="param-value">150元</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">扣款日</span>
+          <span class="param-value">每月18日</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">建议建仓时间</span>
+          <span class="param-value">第5个月</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 第四章：组合配置总览 ========== -->
+<div class="section">
+  <div class="section-title">第四章 组合配置总览</div>
+
+  <div class="card card-highlight">
+    <table>
+      <tr>
+        <th>序号</th>
+        <th>基金代码</th>
+        <th>基金名称</th>
+        <th>类型</th>
+        <th>风险</th>
+        <th>占比</th>
+        <th>月定投</th>
+        <th>扣款日</th>
+        <th>建仓月</th>
+      </tr>
+      <tr>
+        <td class="td-center">1</td>
+        <td class="td-code">003376</td>
+        <td>广发国开债</td>
+        <td>纯债-利率债</td>
+        <td><span class="tag tag-r2">R2</span></td>
+        <td class="td-center td-bold">30%</td>
+        <td class="td-center">300元</td>
+        <td class="td-center">8日</td>
+        <td class="td-center">第1月</td>
+      </tr>
+      <tr>
+        <td class="td-center">2</td>
+        <td class="td-code">003547</td>
+        <td>鹏华丰禄</td>
+        <td>纯债-信用债</td>
+        <td><span class="tag tag-r2">R2</span></td>
+        <td class="td-center td-bold">25%</td>
+        <td class="td-center">250元</td>
+        <td class="td-center">10日</td>
+        <td class="td-center">第2月</td>
+      </tr>
+      <tr>
+        <td class="td-center">3</td>
+        <td class="td-code">000914</td>
+        <td>中加纯债</td>
+        <td>纯债-长债</td>
+        <td><span class="tag tag-r2">R2</span></td>
+        <td class="td-center td-bold">15%</td>
+        <td class="td-center">150元</td>
+        <td class="td-center">12日</td>
+        <td class="td-center">第3月</td>
+      </tr>
+      <tr>
+        <td class="td-center">4</td>
+        <td class="td-code">110027</td>
+        <td>易方达安心</td>
+        <td>二级债基</td>
+        <td><span class="tag tag-r3">R3</span></td>
+        <td class="td-center td-bold">15%</td>
+        <td class="td-center">150元</td>
+        <td class="td-center">15日</td>
+        <td class="td-center">第4月</td>
+      </tr>
+      <tr>
+        <td class="td-center">5</td>
+        <td class="td-code">003877</td>
+        <td>富国久利</td>
+        <td>偏债混合</td>
+        <td><span class="tag tag-r3">R3</span></td>
+        <td class="td-center td-bold">15%</td>
+        <td class="td-center">150元</td>
+        <td class="td-center">18日</td>
+        <td class="td-center">第5月</td>
+      </tr>
+      <tr style="background: #e8eaf6;">
+        <td colspan="5" class="td-bold td-center">合计</td>
+        <td class="td-center td-bold">100%</td>
+        <td class="td-center td-bold">1,000元</td>
+        <td colspan="2" class="td-center text-sm">5个月建仓完成</td>
+      </tr>
+    </table>
+
+    <div style="margin-top: 16px;">
+      <div style="display: flex; gap: 12px; margin-bottom: 8px;">
+        <div style="flex: 7; background: #1a237e; color: #fff; padding: 10px 16px; border-radius: 8px; text-align: center; font-size: 14px;">
+          <b>70%</b> 纯债 R2（底仓防守）
+        </div>
+        <div style="flex: 3; background: #e65100; color: #fff; padding: 10px 16px; border-radius: 8px; text-align: center; font-size: 14px;">
+          <b>30%</b> 偏债 R3（适度进攻）
+        </div>
+      </div>
+      <p class="text-sm" style="text-align: center;">扣款日错开（8/10/12/15/18日），避免同一天集中扣款，平滑资金流出节奏</p>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 第五章：完整操作流程 ========== -->
+<div class="section">
+  <div class="section-title">第五章 完整操作流程（逐步对照执行）</div>
+
+  <div class="section-sub">阶段一：清理旧定投（第1天）</div>
+  <div class="card">
+    <div class="step-list">
+      <div class="step-item">
+        <h4>打开天天基金APP → 我的</h4>
+        <p>进入个人中心页面</p>
+      </div>
+      <div class="step-item">
+        <h4>点击「定投管理」</h4>
+        <p>在资产区域找到"定投管理"入口，点击进入</p>
+      </div>
+      <div class="step-item">
+        <h4>找到3只慧定投计划</h4>
+        <p>分别是：005984兴业聚华、501073华安智联、160323华夏磐泰</p>
+        <div class="detail">
+          状态应显示"已暂停"或"停扣中"，因为沪深300高估触发慧定投停扣机制
+        </div>
+      </div>
+      <div class="step-item">
+        <h4>逐个点击进入 → 终止定投</h4>
+        <p>每只基金详情页底部有"终止定投"按钮，点击确认即可</p>
+        <div class="alert alert-danger" style="margin-top: 8px;">
+          <span class="alert-icon">❗</span>
+          <div>
+            <b>重要：</b>终止定投不会自动赎回已持有的份额。如果你之前有持仓，需在"我的持仓"中单独操作赎回。但根据查询，你的账户当前无持仓，所以直接终止即可。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-sub">阶段二：建立第1只定投（第1天）</div>
+  <div class="card">
+    <div class="step-list">
+      <div class="step-item">
+        <h4>搜索基金代码 003376</h4>
+        <p>APP首页搜索框输入"003376" → 点击搜索结果进入基金详情页</p>
+      </div>
+      <div class="step-item">
+        <h4>点击底部「定投」按钮</h4>
+        <p>在基金详情页底部，找到"定投"按钮（通常在"买入"旁边）</p>
+      </div>
+      <div class="step-item">
+        <h4>选择「普通定投」</h4>
+        <p>系统会弹出定投方式选择，务必选择<b style="color:#c62828;">普通定投</b>，不要选"慧定投"</p>
+        <div class="alert alert-warn" style="margin-top: 8px;">
+          <span class="alert-icon">⚠️</span>
+          <div>
+            <b>为什么不用慧定投？</b><br>
+            慧定投会参考沪深300估值决定是否扣款。你买的是债基，跟沪深300毫无关系，之前3只慧定投全部停扣就是这个原因。普通定投按时扣款，简单有效。
+          </div>
+        </div>
+      </div>
+      <div class="step-item">
+        <h4>设置定投参数</h4>
+        <div class="param-box">
+          <div class="param-row">
+            <span class="param-label">定投金额</span>
+            <span class="param-input">300</span>
+          </div>
+          <div class="param-row">
+            <span class="param-label">扣款频率</span>
+            <span class="param-value">每月</span>
+          </div>
+          <div class="param-row">
+            <span class="param-label">扣款日</span>
+            <span class="param-value">每月8日</span>
+          </div>
+          <div class="param-row">
+            <span class="param-label">扣款渠道</span>
+            <span class="param-value">选择已绑定的银行卡</span>
+          </div>
+        </div>
+      </div>
+      <div class="step-item">
+        <h4>确认并签署协议</h4>
+        <p>核对信息无误后，点击"确认定投"，输入交易密码完成签约</p>
+      </div>
+      <div class="step-item">
+        <h4>验证定投计划</h4>
+        <p>返回"我的 → 定投管理"，确认新增了一条003376的普通定投计划，状态为"正常"</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-sub">阶段三：逐月扩展（第2-5个月）</div>
+  <div class="card">
+    <table>
+      <tr>
+        <th>月份</th>
+        <th>操作内容</th>
+        <th>基金代码</th>
+        <th>金额</th>
+        <th>扣款日</th>
+        <th>月定投累计</th>
+      </tr>
+      <tr>
+        <td class="td-center td-bold">第1月</td>
+        <td>终止旧定投 + 建立003376</td>
+        <td class="td-code">003376</td>
+        <td class="td-center">300元</td>
+        <td class="td-center">8日</td>
+        <td class="td-center td-bold">300元</td>
+      </tr>
+      <tr>
+        <td class="td-center td-bold">第2月</td>
+        <td>新增003547鹏华丰禄</td>
+        <td class="td-code">003547</td>
+        <td class="td-center">250元</td>
+        <td class="td-center">10日</td>
+        <td class="td-center td-bold">550元</td>
+      </tr>
+      <tr>
+        <td class="td-center td-bold">第3月</td>
+        <td>新增000914中加纯债</td>
+        <td class="td-code">000914</td>
+        <td class="td-center">150元</td>
+        <td class="td-center">12日</td>
+        <td class="td-center td-bold">700元</td>
+      </tr>
+      <tr>
+        <td class="td-center td-bold">第4月</td>
+        <td>新增110027易方达安心</td>
+        <td class="td-code">110027</td>
+        <td class="td-center">150元</td>
+        <td class="td-center">15日</td>
+        <td class="td-center td-bold">850元</td>
+      </tr>
+      <tr>
+        <td class="td-center td-bold">第5月</td>
+        <td>新增003877富国久利</td>
+        <td class="td-code">003877</td>
+        <td class="td-center">150元</td>
+        <td class="td-center">18日</td>
+        <td class="td-center td-bold">1,000元</td>
+      </tr>
+    </table>
+    <div class="alert alert-info mt-16">
+      <span class="alert-icon">💡</span>
+      <div>
+        <b>为什么分5个月建仓？</b><br>
+        ① 避免一次性投入过多，给自己适应和观察的时间<br>
+        ② 每月加1只，可以观察新基金的实际表现再决定是否继续<br>
+        ③ 如果某月市场出现极端行情，可以灵活调整建仓节奏
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 第六章：定投参数详解 ========== -->
+<div class="section">
+  <div class="section-title">第六章 定投参数详解与优化</div>
+
+  <div class="section-sub">普通定投 vs 慧定投</div>
+  <div class="card">
+    <table>
+      <tr>
+        <th style="width:20%">对比项</th>
+        <th>普通定投</th>
+        <th>慧定投</th>
+      </tr>
+      <tr>
+        <td class="td-bold">扣款逻辑</td>
+        <td>每月固定日期固定金额扣款</td>
+        <td>参考沪深300估值，高估时停扣、低估时加码</td>
+      </tr>
+      <tr>
+        <td class="td-bold">适合基金</td>
+        <td class="text-green">债券基金、偏债混合（你的情况）</td>
+        <td class="text-red">指数基金、偏股基金（与沪深300相关）</td>
+      </tr>
+      <tr>
+        <td class="td-bold">你的适用性</td>
+        <td><span class="tag tag-green">✓ 推荐</span></td>
+        <td><span class="tag tag-red">✗ 不适用</span></td>
+      </tr>
+      <tr>
+        <td class="td-bold">停扣风险</td>
+        <td class="text-green">不会停扣</td>
+        <td class="text-red">会因股市高估停扣（你已遇到）</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section-sub">扣款日选择技巧</div>
+  <div class="card">
+    <ul class="checklist">
+      <li><b>避开月初1-5日</b>：很多工资发放日在5-10日，银行卡余额可能不足</li>
+      <li><b>避开月末25-31日</b>：信用卡还款日集中，资金紧张</li>
+      <li><b>推荐选择发薪日后2-3天</b>：确保卡里有足够余额</li>
+      <li><b>多只定投错开日期</b>：如本方案8/10/12/15/18日，避免同一天扣款压力</li>
+      <li><b>注意节假日顺延</b>：如果扣款日是周末或节假日，银行会顺延到下一个工作日扣款</li>
+    </ul>
+  </div>
+
+  <div class="section-sub">定投金额调整规则</div>
+  <div class="card">
+    <table>
+      <tr>
+        <th style="width:25%">场景</th>
+        <th style="width:25%">操作</th>
+        <th>说明</th>
+      </tr>
+      <tr>
+        <td>市场大涨（债市涨幅>1%）</td>
+        <td class="text-blue">维持不变</td>
+        <td>不要因为涨了就加码，定投的核心是纪律性</td>
+      </tr>
+      <tr>
+        <td>市场大跌（债市跌幅>1%）</td>
+        <td class="text-green">可手动加投1次</td>
+        <td>大跌时加投是"捡便宜"，但不要把定投金额改高</td>
+      </tr>
+      <tr>
+        <td>连续3个月亏损</td>
+        <td class="text-blue">维持定投</td>
+        <td>债基短期亏损很正常，坚持定投摊低成本是正确做法</td>
+      </tr>
+      <tr>
+        <td>收入增加</td>
+        <td class="text-green">按比例提高</td>
+        <td>如工资涨10%，定投金额也可涨10%</td>
+      </tr>
+      <tr>
+        <td>急需用钱</td>
+        <td class="text-red">暂停而非赎回</td>
+        <td>先暂停定投扣款，已投入的份额不要急着赎回</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- ========== 第七章：后续管理 ========== -->
+<div class="section">
+  <div class="section-title">第七章 后续管理与调整规则</div>
+
+  <div class="section-sub">定期检视（每季度1次）</div>
+  <div class="card">
+    <p>每3个月打开APP检查一次，重点看以下指标：</p>
+    <table>
+      <tr>
+        <th style="width:25%">检查项</th>
+        <th style="width:25%">正常标准</th>
+        <th>异常处理</th>
+      </tr>
+      <tr>
+        <td>基金规模变化</td>
+        <td>> 2亿元</td>
+        <td>低于2亿触发清盘预警，考虑换基金</td>
+      </tr>
+      <tr>
+        <td>基金经理是否变更</td>
+        <td>未变更</td>
+        <td>换人后观察1-2个月，业绩明显下滑则换基金</td>
+      </tr>
+      <tr>
+        <td>近3个月收益</td>
+        <td>纯债>0，偏债>同期同类平均</td>
+        <td>连续2个季度低于同类平均后30%，考虑替换</td>
+      </tr>
+      <tr>
+        <td>最大回撤</td>
+        <td>纯债<2%，偏债<5%</td>
+        <td>超出阈值说明风控失效，需重新评估</td>
+      </tr>
+      <tr>
+        <td>组合整体收益</td>
+        <td>年化>3%</td>
+        <td>低于银行定存1.55%需认真检讨策略</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section-sub">何时止盈</div>
+  <div class="card">
+    <div class="alert alert-info">
+      <span class="alert-icon">📊</span>
+      <div>
+        <b>稳健型定投止盈策略：</b>不设固定止盈点，而是用"目标年化法"
+      </div>
+    </div>
+    <table>
+      <tr>
+        <th style="width:20%">持有时间</th>
+        <th style="width:20%">目标累计收益</th>
+        <th>达到目标后操作</th>
+      </tr>
+      <tr>
+        <td class="td-center">1年</td>
+        <td class="td-center td-bold">+4%</td>
+        <td>不止盈，继续定投</td>
+      </tr>
+      <tr>
+        <td class="td-center">2年</td>
+        <td class="td-center td-bold">+8%</td>
+        <td>不止盈，继续定投</td>
+      </tr>
+      <tr>
+        <td class="td-center">3年</td>
+        <td class="td-center td-bold">+12%</td>
+        <td>赎回收益部分的30%，剩余继续持有</td>
+      </tr>
+      <tr>
+        <td class="td-center">5年+</td>
+        <td class="td-center td-bold">+20%</td>
+        <td>赎回收益部分的50%，调整组合再平衡</td>
+      </tr>
+    </table>
+    <p class="text-sm mt-8">注意：以上是累计收益（非年化）。稳健型投资者不建议频繁止盈，债基的票息收益会持续累积，持有越久收益越稳。</p>
+  </div>
+
+  <div class="section-sub">组合再平衡（每年1次）</div>
+  <div class="card">
+    <p>定投1年后，各基金的实际占比会因涨跌不同而偏离目标比例。每年年底做一次再平衡：</p>
+    <div class="step-list">
+      <div class="step-item">
+        <h4>查看各基金实际占比</h4>
+        <p>APP → 我的 → 持仓 → 查看每只基金占总资产的比例</p>
+      </div>
+      <div class="step-item">
+        <h4>对比目标比例</h4>
+        <p>目标：003376占30%、003547占25%、000914占15%、110027占15%、003877占15%</p>
+      </div>
+      <div class="step-item">
+        <h4>调整定投金额</h4>
+        <p>对占比偏低的基金适当增加定投金额，偏高的适当减少。不需要赎回操作，只调定投参数即可</p>
+      </div>
+      <div class="step-item">
+        <h4>记录调整日志</h4>
+        <p>在手机备忘录中记录调整日期和原因，方便日后复盘</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 第八章：常见问题 ========== -->
+<div class="section">
+  <div class="section-title">第八章 常见问题</div>
+
+  <div class="card">
+    <p><b>Q1：定投扣款日当天余额不足怎么办？</b></p>
+    <p class="text-sm">银行会在扣款日当天尝试扣款1次。如果失败，当月不会补扣。建议在扣款日前1天确保卡内余额充足。如果当月漏扣，可以手动买入等额份额补上。</p>
+  </div>
+
+  <div class="card">
+    <p><b>Q2：纯债基金也会亏钱吗？</b></p>
+    <p class="text-sm">会，但概率低、幅度小。纯债基金短期亏损通常因市场利率上行导致债券价格下跌，但持有6个月以上基本都能回正。因为债券有票息收益（持有到期还本付息），时间越长正收益概率越高。</p>
+  </div>
+
+  <div class="card">
+    <p><b>Q3：003877富国久利近1年收益从24%降到13%，是不是不行了？</b></p>
+    <p class="text-sm">这是正常回调。偏债混合基金有少量权益仓位，会随股市波动。近3年+59.15%说明长期赚钱能力没问题，短期回调反而是定投的好时机——同样的钱能买到更多份额。</p>
+  </div>
+
+  <div class="card">
+    <p><b>Q4：能不能用余额宝/货币基金替代纯债定投？</b></p>
+    <p class="text-sm">不建议。货币基金当前年化约1.2-1.5%，接近银行定存。纯债基金虽然短期有波动，但近3年收益9-16%，长期跑赢货币基金3-5个百分点。定投正好熨平短期波动。</p>
+  </div>
+
+  <div class="card">
+    <p><b>Q5：如果急需用钱怎么赎回？</b></p>
+    <p class="text-sm">APP → 我的 → 持仓 → 选择基金 → 赎回。债券基金赎回T+1到账（T日15:00前提交）。建议优先赎回盈利最多的那只，保留亏损的继续定投摊低成本。持有不满7天有1.5%惩罚性赎回费，注意避开。</p>
+  </div>
+
+  <div class="card">
+    <p><b>Q6：5只基金会不会太多了管不过来？</b></p>
+    <p class="text-sm">不会。定投设置好之后是自动扣款的，日常不需要操作。每季度花10分钟检查一次即可。5只基金的分散度恰好——少了不够分散，多了收益被稀释。如果实在觉得多，可以先从003376+003547两只纯债开始。</p>
+  </div>
+</div>
+
+<!-- ========== 附录 ========== -->
+<div class="section">
+  <div class="section-title">附录：操作清单 Checklist</div>
+  <div class="card card-highlight">
+    <p class="mb-16">打印或截图保存，完成一项勾选一项：</p>
+    <ul class="checklist">
+      <li><b>终止005984兴业聚华慧定投</b> — 我的 → 定投管理 → 终止</li>
+      <li><b>终止501073华安智联慧定投</b> — 我的 → 定投管理 → 终止</li>
+      <li><b>终止160323华夏磐泰慧定投</b> — 我的 → 定投管理 → 终止</li>
+      <li><b>建立003376普通定投</b> — 300元/月，每月8日</li>
+      <li><b>第2月：建立003547普通定投</b> — 250元/月，每月10日</li>
+      <li><b>第3月：建立000914普通定投</b> — 150元/月，每月12日</li>
+      <li><b>第4月：建立110027普通定投</b> — 150元/月，每月15日</li>
+      <li><b>第5月：建立003877普通定投</b> — 150元/月，每月18日</li>
+      <li><b>第3个月：首次季度检视</b> — 检查规模、经理、收益、回撤</li>
+      <li><b>坚持2年以上</b> — 不因短期波动中断定投</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========== Footer ========== -->
+<div class="footer">
+  <p>天天基金APP选基实操手册 | 稳健型投资者专属</p>
+  <p style="margin-top: 8px;">数据来源：天天基金网、新浪财经、百度股市通（截至2026-07-08）</p>
+  <p style="margin-top: 8px;">本手册仅供参考，不构成投资建议。基金有风险，投资需谨慎。</p>
+</div>
+
+</div>
+</body>
+</html>
