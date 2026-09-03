@@ -14,7 +14,7 @@ a{text-decoration:none;color:inherit}
 @keyframes twinkle{0%,100%{opacity:.1}50%{opacity:.7}}
 .page{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 20px 80px}
 header{display:flex;align-items:center;justify-content:space-between;padding:24px 0 0;flex-wrap:wrap;gap:10px}
-.logo{font-size:20px;font-weight:900;color:var(--gold);letter-spacing:2px}
+.logo{font-size:20px;font-weight:900;color:var(--gold);letter-spacing:2px;cursor:pointer}
 .nav-links{display:flex;gap:6px}
 .nav-btn{padding:7px 14px;border-radius:30px;font-size:13px;border:1px solid rgba(255,215,0,0.25);color:#b0a880;cursor:pointer;background:transparent;transition:.25s;font-family:inherit}
 .nav-btn:hover,.nav-btn.active{background:rgba(255,215,0,0.1);border-color:var(--gold);color:var(--gold)}
@@ -80,7 +80,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:24p
 <div class="stars" id="stars"></div>
 <div class="page">
   <header>
-    <div class="logo">🃏 FORTUNE TAROT</div>
+    <div class="logo" onclick="location.href='index.html'">🃏 FORTUNE TAROT</div>
     <div class="nav-links">
       <button class="nav-btn" onclick="location.href='index.html'">首页</button>
       <button class="nav-btn" onclick="location.href='single.html'">单牌</button>

@@ -24,10 +24,10 @@ a{text-decoration:none;color:inherit}
 .page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 20px 60px}
 
 /* Header */
-header{width:100%;max-width:960px;display:flex;align-items:center;justify-content:space-between;padding:24px 0 0}
-.logo{font-size:22px;font-weight:900;color:var(--gold);letter-spacing:3px;text-shadow:0 0 20px rgba(255,215,0,0.4)}
+header{width:100%;max-width:780px;display:flex;align-items:center;justify-content:space-between;padding:24px 0 0;flex-wrap:wrap;gap:10px}
+.logo{font-size:20px;font-weight:900;color:var(--gold);letter-spacing:2px;cursor:pointer}
 .nav-links{display:flex;gap:6px}
-.nav-btn{padding:8px 16px;border-radius:30px;font-size:13px;border:1px solid rgba(255,215,0,0.25);color:#b0a880;cursor:pointer;background:transparent;transition:all .25s;font-family:inherit}
+.nav-btn{padding:7px 14px;border-radius:30px;font-size:13px;border:1px solid rgba(255,215,0,0.25);color:#b0a880;cursor:pointer;background:transparent;transition:.25s;font-family:inherit}
 .nav-btn:hover,.nav-btn.active{background:rgba(255,215,0,0.1);border-color:var(--gold);color:var(--gold)}
 
 
@@ -89,7 +89,7 @@ header{width:100%;max-width:960px;display:flex;align-items:center;justify-conten
 
 <div class="page">
   <header>
-    <div class="logo">🃏 FORTUNE TAROT</div>
+    <div class="logo" onclick="location.href='index.html'">🃏 FORTUNE TAROT</div>
     <div class="nav-links">
       <button class="nav-btn active" onclick="location.href='index.html'">首页</button>
       <button class="nav-btn" onclick="location.href='single.html'">单牌</button>
