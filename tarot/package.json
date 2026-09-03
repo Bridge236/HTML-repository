@@ -1,0 +1,8 @@
+{
+  "name": "fortune-tarot",
+  "version": "1.0.0",
+  "description": "塔罗牌占卜网站（独立项目）",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

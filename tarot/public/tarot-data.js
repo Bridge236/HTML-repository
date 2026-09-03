@@ -319,101 +319,104 @@ function drawCards(n, pool = ALL_CARDS) {
   }));
 }
 
-// ── AI reading helper ─────────────────────────────────────────
-async function callAI(prompt, apiKey, baseUrl) {
-  if (!Settings.aiEnabled) throw new Error("AI 功能已关闭");
-  const model = Settings.model;
-  const url = baseUrl;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
-    body: JSON.stringify({
-      model: model,
-      messages: [
-        { role: "system", content: `你是一位资深塔罗解读师，擅长用温柔而深刻的语言解读牌意。
+// ── 访客自配 Key（仅存本地浏览器 localStorage） ──────────────
+const KEY_STORAGE = 'qianwen_api_key';
+function getUserKey() {
+  try { return (localStorage.getItem(KEY_STORAGE) || '').trim(); } catch (e) { return ''; }
+}
+function setUserKey(v) {
+  try { v ? localStorage.setItem(KEY_STORAGE, v) : localStorage.removeItem(KEY_STORAGE); } catch (e) {}
+}
 
-要求：
-1. 紧密结合用户的具体问题和牌面信息，避免泛泛而谈
-2. 从象征性映射的角度出发，不做绝对预言
-3. 语言自然温暖，像一位真诚的朋友在交谈
-4. 以启发和反思收尾，不给出绝对化指令
-5. 请按照以下 Markdown 格式输出，段落之间用空行分隔：
-
-### 🔮 牌面启示
-（1-2句话点出牌面最核心的启示）
-### 📖 深度解读
-（主体内容，分段展开）
-### 💫 轻声提醒
-（以温暖鼓励收尾，1-2句话）
----
-⚠️ 塔罗牌是一种自我探索与心理映射的工具，以上解读仅为象征性启发，不构成对命运或具体事件的确定性判断。` },
-        { role: "user", content: prompt }
-      ],
-      max_tokens: 1200,
-      thinking: { type: "enabled" },
-      reasoning_effort: "high"
-    })
+// ── AI reading helper（后端代理，前端不持有/不暴露 Key） ─────
+async function callAI(prompt) {
+  const res = await fetch('/api/tarot/ai', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt, apiKey: getUserKey() })
   });
-  if (!res.ok) throw new Error(`API Error ${res.status}（${url}）`);
-  const data = await res.json();
-  const content = data.choices?.[0]?.message?.content || "";
-  // fallback: some APIs may return reasoning_content instead when thinking mode is on
-  if (!content) {
-    const reasoning = data.choices?.[0]?.message?.reasoning_content || "";
-    if (reasoning) return reasoning;
+  let data = null;
+  try { data = await res.json(); } catch (e) {}
+  if (!res.ok || !data || data.success === false) {
+    throw new Error((data && data.error) || `AI 服务错误（${res.status}）`);
   }
-  if (!content) throw new Error("API 返回了空内容，请检查模型配置或尝试关闭深度思考模式");
-  return content;
+  if (!data.content) throw new Error('AI 返回了空内容');
+  return data.content;
 }
 
 // ── Markdown renderer ─────────────────────────────────────────
-function renderMarkdown(md) {
-  let html = md;
-  // escape
-  html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  // bold
-  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  // ### headings
-  html = html.replace(/^### (.+)$/gm, '<h3 class="ai-h3">$1</h3>');
-  // --- horizontal rule
-  html = html.replace(/^---$/gm, '<hr class="ai-hr">');
-  // paragraphs (split by double newline, wrap each)
-  const blocks = html.split(/\n\n+/);
-  html = blocks.map(b => {
-    const trimmed = b.trim();
-    if (!trimmed) return '';
-    // skip if already wrapped in h3 or hr
-    if (/^<h3|<hr/.test(trimmed)) return trimmed;
-    // handle single newlines within paragraph → <br>
-    const withBreaks = trimmed.replace(/\n/g, '<br>');
-    return '<p>' + withBreaks + '</p>';
-  }).join('\n');
-  return html;
+function inlineMarkdown(s) {
+  return s
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`(.+?)`/g, '<code>$1</code>');
 }
 
-// ── Settings helpers ──────────────────────────────────────────
-const Settings = {
-  get apiKey()   { return localStorage.getItem("tarot_api_key")   || ""; },
-  get baseUrl()  {
-    const v = localStorage.getItem("tarot_base_url") || "https://api.deepseek.com/v1/chat/completions";
-    // backward compat for non-DeepSeek URLs (e.g. OpenAI base → append path)
-    if (!v.includes("/chat/completions")) return v.replace(/\/$/, "") + "/v1/chat/completions";
-    // DeepSeek: force standard URL — strip any stray segments like /anthropic/ etc.
-    if (v.includes("api.deepseek.com") && v !== "https://api.deepseek.com/v1/chat/completions") {
-      const fixed = "https://api.deepseek.com/v1/chat/completions";
-      localStorage.setItem("tarot_base_url", fixed);
-      return fixed;
+function renderMarkdown(md) {
+  let html = String(md == null ? '' : md);
+  // escape
+  html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  // normalize line endings
+  html = html.replace(/\r\n?/g, '\n');
+
+  const lines = html.split('\n');
+  const out = [];
+  let listType = null; // 'ul' | 'ol'
+
+  const closeList = () => {
+    if (listType) { out.push('</' + listType + '>'); listType = null; }
+  };
+
+  const isHeading = /^(#{1,3})\s+(.+)$/;
+  const isHr = /^\s*[-*_]{3,}\s*$/;
+  const isUl = /^\s*[-*+]\s+(.+)$/;
+  const isOl = /^\s*\d+[.)]\s+(.+)$/;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    if (isHr.test(line)) { closeList(); out.push('<hr class="ai-hr">'); continue; }
+
+    const h = line.match(isHeading);
+    if (h) {
+      closeList();
+      const level = h[1].length;
+      out.push(`<h${level} class="ai-h${level}">${inlineMarkdown(h[2])}</h${level}>`);
+      continue;
     }
-    return v;
-  },
-  get model()    { return localStorage.getItem("tarot_model")     || "deepseek-v4-pro"; },
-  set apiKey(v)  { localStorage.setItem("tarot_api_key", v); },
-  set baseUrl(v) { localStorage.setItem("tarot_base_url", v); },
-  set model(v)   { localStorage.setItem("tarot_model", v); },
-  hasKey()       { return !!this.apiKey; },
-  get aiEnabled() { return localStorage.getItem("tarot_ai_enabled") !== "0"; },
-  set aiEnabled(v){ localStorage.setItem("tarot_ai_enabled", v ? "1" : "0"); }
-};
+
+    const ul = line.match(isUl);
+    if (ul) {
+      if (listType !== 'ul') { closeList(); out.push('<ul class="ai-ul">'); listType = 'ul'; }
+      out.push('<li>' + inlineMarkdown(ul[1]) + '</li>');
+      continue;
+    }
+
+    const ol = line.match(isOl);
+    if (ol) {
+      if (listType !== 'ol') { closeList(); out.push('<ol class="ai-ol">'); listType = 'ol'; }
+      out.push('<li>' + inlineMarkdown(ol[1]) + '</li>');
+      continue;
+    }
+
+    if (!line.trim()) { closeList(); continue; }
+
+    // 普通段落：连续的非空行合并为一个段落，中间用 <br> 分隔
+    closeList();
+    const para = [line.trim()];
+    while (i + 1 < lines.length && lines[i + 1].trim()
+      && !isHr.test(lines[i + 1])
+      && !isHeading.test(lines[i + 1])
+      && !isUl.test(lines[i + 1])
+      && !isOl.test(lines[i + 1])) {
+      i++;
+      para.push(lines[i].trim());
+    }
+    out.push('<p>' + inlineMarkdown(para.join('<br>')) + '</p>');
+  }
+  closeList();
+
+  return out.join('\n');
+}
 
 // ── History helpers ───────────────────────────────────────────
 const History = {
@@ -441,217 +444,134 @@ const QUOTES = [
 function randomQuote() { return QUOTES[Math.floor(Math.random() * QUOTES.length)]; }
 
 // ============================================================
-//  SHARED ADMIN UI — injected into all pages
+//  AI reading styles — injected into all pages
 // ============================================================
-const _ADMIN_PWD = '123456';
-
-(function initAdminUI() {
-  if (document.getElementById('adminModal')) return;
-
-  // ── CSS ──
+(function initAIReadingStyles() {
+  if (document.getElementById('aiReadingStyles')) return;
   const style = document.createElement('style');
+  style.id = 'aiReadingStyles';
   style.textContent = `
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-.modal-overlay.open{display:flex}
-.modal{background:linear-gradient(145deg,#12183a,#1a2744);border:1px solid rgba(255,215,0,0.3);border-radius:24px;padding:36px;width:100%;max-width:460px;position:relative}
-.modal h2{color:var(--gold);font-size:22px;margin-bottom:24px;font-weight:700}
-.modal label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;margin-top:16px;letter-spacing:1px}
-.modal input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,215,0,0.25);border-radius:10px;padding:12px 14px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:.25s}
-.modal input:focus{border-color:var(--gold)}
-.modal .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.7}
-.modal .hint b{color:var(--gold)}
-.modal .btn-row{display:flex;gap:10px;margin-top:24px}
-.btn{padding:12px 28px;border-radius:30px;font-size:14px;font-family:inherit;cursor:pointer;border:none;transition:.25s;font-weight:600}
-.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1a2e}
-.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
-.btn-ghost{background:transparent;border:1px solid rgba(255,215,0,0.3);color:var(--gold)}
-.btn-ghost:hover{background:rgba(255,215,0,0.08)}
-.modal .close-btn{position:absolute;top:18px;right:18px;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
-.modal .close-btn:hover{color:var(--text)}
-.key-input-wrap{position:relative}
-.key-input-wrap input{padding-right:48px}
-.key-toggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px 8px;line-height:1;transition:.2s}
-.key-toggle:hover{color:var(--gold)}
-.key-toggle.showing{color:var(--gold)}
-.toggle-wrap{display:flex;align-items:center;gap:12px;margin:8px 0 20px}
-.toggle-track{width:50px;height:28px;border-radius:14px;background:rgba(255,255,255,.08);border:2px solid rgba(255,215,0,.2);cursor:pointer;position:relative;transition:.3s}
-.toggle-track.on{background:rgba(74,222,128,.2);border-color:rgba(74,222,128,.5)}
-.toggle-thumb{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--muted);transition:.3s;box-shadow:0 2px 6px rgba(0,0,0,.3)}
-.toggle-track.on .toggle-thumb{left:24px;background:var(--green)}
-#aiStatusLabel{font-size:14px;font-weight:600;transition:.3s}
-.admin-lock-icon{font-size:48px;margin-bottom:12px}
-.admin-lock-title{color:var(--gold);font-size:22px;font-weight:700}
-.admin-lock-sub{font-size:13px;color:var(--muted);margin-top:8px}
-.admin-pwd-err{color:#ef4444;font-size:13px;margin-top:8px;display:none}
-/* AI reading styles */
 .ai-reading{font-size:15px;color:#c0c8b8;line-height:2.1}
-.ai-reading .ai-h3{color:var(--gold);font-size:17px;font-weight:700;margin:24px 0 12px;letter-spacing:0.5px}
-.ai-reading .ai-h3:first-child{margin-top:0}
+.ai-reading h1,.ai-reading h2,.ai-reading h3{color:var(--gold);font-weight:700;margin:24px 0 12px;letter-spacing:0.5px;line-height:1.5}
+.ai-reading h1{font-size:20px}.ai-reading h2{font-size:18px}.ai-reading h3{font-size:17px}
+.ai-reading h1:first-child,.ai-reading h2:first-child,.ai-reading h3:first-child{margin-top:0}
 .ai-reading p{margin:0 0 14px;text-indent:0}
 .ai-reading strong{color:#e8d5a3;font-weight:600}
+.ai-reading code{background:rgba(255,215,0,0.08);color:#e8d5a3;padding:2px 6px;border-radius:6px;font-size:0.9em}
+.ai-reading ul.ai-ul,.ai-reading ol.ai-ol{margin:0 0 14px;padding-left:22px}
+.ai-reading li{margin:0 0 8px;line-height:1.9}
+.ai-reading li::marker{color:var(--gold)}
 .ai-reading hr.ai-hr{border:none;border-top:1px dashed rgba(255,215,0,0.2);margin:20px 0 14px}
 .ai-reading em,.ai-reading .disclaimer{color:#8a8f7a;font-size:13px;line-height:1.8;display:block;margin-top:4px}`;
   document.head.appendChild(style);
-
-  // ── HTML ──
-  const html = `
-<div class="modal-overlay" id="adminModal">
-  <div class="modal">
-    <button class="close-btn" onclick="closeAdmin()">✕</button>
-    <div id="adminLock" style="text-align:center;padding:20px 0">
-      <div class="admin-lock-icon">🔐</div>
-      <div class="admin-lock-title">管理员验证</div>
-      <div class="admin-lock-sub">请输入管理员密码以访问设置</div>
-      <input type="password" id="adminPwdInput" placeholder="输入密码…" autocomplete="off" onkeydown="if(event.key==='Enter')verifyAdmin()" style="margin-top:20px;text-align:center;font-size:16px;letter-spacing:4px">
-      <div class="admin-pwd-err" id="pwdErr">❌ 密码错误，请重试</div>
-      <button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="verifyAdmin()">进入管理</button>
-    </div>
-    <div id="adminSettings" style="display:none">
-      <h2>⚙️ 管理员设置</h2>
-      <label>AI 功能</label>
-      <div class="toggle-wrap">
-        <div class="toggle-track" id="aiToggle" onclick="toggleAI()"><div class="toggle-thumb"></div></div>
-        <span id="aiStatusLabel" style="color:var(--green)">已开启</span>
-      </div>
-      <label>API Key</label>
-      <div class="key-input-wrap">
-        <input type="password" id="apiKeyInput" placeholder="sk-…" autocomplete="off">
-        <button class="key-toggle" id="keyToggle" onclick="toggleKeyVisibility()" title="点击查看明文">👁️</button>
-      </div>
-      <p class="hint">Key 仅存储在本地浏览器，不会上传至任何服务器。支持 <b>DeepSeek</b>、OpenAI、智谱等兼容接口。</p>
-      <label>模型名称</label>
-      <input type="text" id="modelInput" placeholder="deepseek-v4-pro">
-      <p class="hint">DeepSeek：<b>deepseek-v4-pro</b>｜智谱：<b>glm-4.7-flash</b>｜OpenAI：<b>gpt-4o-mini</b></p>
-      <label>API 地址</label>
-      <input type="text" id="baseUrlInput" placeholder="https://api.deepseek.com/v1/chat/completions">
-      <p class="hint">DeepSeek：https://api.deepseek.com/v1/chat/completions<br>智谱：https://open.bigmodel.cn/api/paas/v4/chat/completions<br>OpenAI：https://api.openai.com/v1/chat/completions</p>
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="saveAdminSettings()">💾 保存</button>
-        <button class="btn btn-ghost" onclick="clearAdminSettings()">🗑 清除</button>
-      </div>
-    </div>
-  </div>
-</div>`;
-  document.body.insertAdjacentHTML('beforeend', html);
-
-  // Click overlay to close
-  document.getElementById('adminModal').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeAdmin();
-  });
 })();
 
-// ── Global admin functions (called from any page) ──
-function openAdmin() {
-  const unlocked = sessionStorage.getItem('tarot_admin_ok') === '1';
-  if (unlocked) { _showAdminSettings(); } else { _showAdminLock(); }
-  document.getElementById('adminModal').classList.add('open');
-  if (!unlocked) setTimeout(() => document.getElementById('adminPwdInput')?.focus(), 100);
-}
+// ============================================================
+//  API Key 配置入口 — 所有页面右上角注入按钮 + 弹窗
+// ============================================================
+(function initKeySettings() {
+  const style = document.createElement('style');
+  style.textContent = `
+.nav-btn.key-btn.has-key{border-color:var(--green);color:var(--green)}
+.key-mask{position:fixed;inset:0;background:rgba(5,8,20,.72);backdrop-filter:blur(2px);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
+.key-mask.hidden{display:none}
+.key-modal{background:linear-gradient(160deg,#16213e,#0d1a30);border:1px solid rgba(255,215,0,.3);border-radius:18px;padding:26px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.55)}
+.key-modal h3{color:var(--gold);font-size:17px;letter-spacing:1px;margin-bottom:8px}
+.key-modal .km-desc{font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:14px}
+.key-modal .km-desc strong{color:#e8d5a3}
+.key-modal input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,215,0,.25);border-radius:10px;padding:11px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;transition:.2s}
+.key-modal input:focus{border-color:var(--gold)}
+.key-status{font-size:12px;margin-top:10px;color:var(--muted)}
+.key-status.on{color:var(--green)}
+.key-status.err{color:#ef4444}
+.km-save:disabled{opacity:.5;cursor:not-allowed}
+.km-btns{display:flex;gap:10px;margin-top:16px;justify-content:flex-end;flex-wrap:wrap}
+.km-btns button{padding:8px 18px;border-radius:20px;font-size:13px;cursor:pointer;font-family:inherit;transition:.2s}
+.km-save{border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1a2e;font-weight:700}
+.km-clear{border:1px solid rgba(239,68,68,.4);background:transparent;color:#ef4444}
+.km-cancel{border:1px solid rgba(255,215,0,.3);background:transparent;color:var(--gold)}`;
+  document.head.appendChild(style);
 
-function _showAdminLock() {
-  document.getElementById('adminLock').style.display = '';
-  document.getElementById('adminSettings').style.display = 'none';
-  document.getElementById('adminPwdInput').value = '';
-  document.getElementById('pwdErr').style.display = 'none';
-}
+  function mount() {
+    const nav = document.querySelector('.nav-links');
+    if (!nav || document.getElementById('keySettingsBtn')) return;
 
-function _showAdminSettings() {
-  document.getElementById('adminLock').style.display = 'none';
-  document.getElementById('adminSettings').style.display = '';
-  document.getElementById('apiKeyInput').value = Settings.apiKey;
-  document.getElementById('baseUrlInput').value = Settings.baseUrl;
-  document.getElementById('modelInput').value = Settings.model;
-  const toggle = document.getElementById('aiToggle');
-  const label = document.getElementById('aiStatusLabel');
-  if (Settings.aiEnabled) {
-    toggle.classList.add('on');
-    label.textContent = '已开启';
-    label.style.color = 'var(--green)';
-  } else {
-    toggle.classList.remove('on');
-    label.textContent = '已关闭';
-    label.style.color = 'var(--muted)';
+    const btn = document.createElement('button');
+    btn.className = 'nav-btn key-btn';
+    btn.id = 'keySettingsBtn';
+    nav.appendChild(btn);
+
+    const mask = document.createElement('div');
+    mask.className = 'key-mask hidden';
+    mask.innerHTML = `
+      <div class="key-modal">
+        <h3>🔑 配置千问 API Key</h3>
+        <p class="km-desc">配置后，AI 解读将使用<strong>你自己的</strong> Key 与额度。Key 仅保存在本浏览器本地，不会被存入网站数据库；未配置时使用站长提供的共享 Key（如有）。</p>
+        <input id="keyInput" type="password" placeholder="粘贴你的千问 API Key（sk-…）" autocomplete="off">
+        <div class="key-status" id="keyStatus"></div>
+        <div class="km-btns">
+          <button class="km-clear" id="keyClear">清除</button>
+          <button class="km-cancel" id="keyCancel">取消</button>
+          <button class="km-save" id="keySave">保存</button>
+        </div>
+      </div>`;
+    document.body.appendChild(mask);
+
+    const input = mask.querySelector('#keyInput');
+    const status = mask.querySelector('#keyStatus');
+
+    function refreshBtn() {
+      const on = !!getUserKey();
+      btn.textContent = on ? '🔑 已配置 Key' : '🔑 AI 配置';
+      btn.classList.toggle('has-key', on);
+      btn.title = on ? '当前使用你自己配置的千问 API Key（仅存本浏览器）' : '配置你自己的千问 API Key，启用 AI 解读';
+    }
+    function setStatus(text, mode) {
+      status.textContent = text;
+      status.classList.toggle('on', mode === 'on');
+      status.classList.toggle('err', mode === 'err');
+    }
+    function show() {
+      input.value = getUserKey();
+      const on = !!getUserKey();
+      setStatus(on ? '✓ 当前使用你配置的 Key（仅存本浏览器）' : '· 未配置；若站长配置了共享 Key 则默认使用它', on ? 'on' : '');
+      mask.classList.remove('hidden');
+      input.focus();
+    }
+
+    btn.onclick = show;
+    mask.addEventListener('click', (e) => { if (e.target === mask) mask.classList.add('hidden'); });
+    mask.querySelector('#keyCancel').onclick = () => mask.classList.add('hidden');
+    mask.querySelector('#keySave').onclick = async () => {
+      const v = input.value.trim();
+      if (!v) { setStatus('✘ 请先填写 API Key', 'err'); return; }
+      const saveBtn = mask.querySelector('#keySave');
+      saveBtn.disabled = true; saveBtn.textContent = '校验中…';
+      setStatus('· 正在校验 Key 是否有效…', '');
+      try {
+        const res = await fetch('/api/tarot/validate-key', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ apiKey: v })
+        });
+        const data = await res.json().catch(() => null);
+        if (data && data.success) {
+          setUserKey(v);
+          mask.classList.add('hidden');
+          refreshBtn();
+        } else {
+          setStatus(`✘ 校验失败：${(data && data.error) || '未知错误'}。Key 未保存`, 'err');
+        }
+      } catch (e) {
+        setStatus(`✘ 校验请求失败：${e.message}`, 'err');
+      } finally {
+        saveBtn.disabled = false; saveBtn.textContent = '保存';
+      }
+    };
+    mask.querySelector('#keyClear').onclick = () => { setUserKey(''); show(); refreshBtn(); };
+    refreshBtn();
   }
-  document.getElementById('apiKeyInput').type = 'password';
-  document.getElementById('keyToggle').textContent = '👁️';
-  document.getElementById('keyToggle').classList.remove('showing');
-}
 
-function verifyAdmin() {
-  const pwd = document.getElementById('adminPwdInput').value;
-  if (pwd === _ADMIN_PWD) {
-    sessionStorage.setItem('tarot_admin_ok', '1');
-    _showAdminSettings();
-  } else {
-    document.getElementById('pwdErr').style.display = 'block';
-    document.getElementById('adminPwdInput').style.borderColor = '#ef4444';
-    setTimeout(() => {
-      const inp = document.getElementById('adminPwdInput');
-      if (inp) { inp.style.borderColor = ''; inp.value = ''; }
-    }, 1500);
-  }
-}
-
-function closeAdmin() {
-  document.getElementById('adminModal').classList.remove('open');
-}
-
-function toggleAI() {
-  const toggle = document.getElementById('aiToggle');
-  const label = document.getElementById('aiStatusLabel');
-  const newState = !Settings.aiEnabled;
-  Settings.aiEnabled = newState;
-  if (newState) {
-    toggle.classList.add('on');
-    label.textContent = '已开启';
-    label.style.color = 'var(--green)';
-  } else {
-    toggle.classList.remove('on');
-    label.textContent = '已关闭';
-    label.style.color = 'var(--muted)';
-  }
-}
-
-function saveAdminSettings() {
-  Settings.apiKey = document.getElementById('apiKeyInput').value.trim();
-  Settings.baseUrl = document.getElementById('baseUrlInput').value.trim() || 'https://api.deepseek.com/v1/chat/completions';
-  Settings.model = document.getElementById('modelInput').value.trim() || 'deepseek-v4-pro';
-  closeAdmin();
-  showToast('✅ 设置已保存');
-}
-
-function clearAdminSettings() {
-  Settings.apiKey = '';
-  Settings.aiEnabled = false;
-  Settings.model = 'deepseek-v4-pro';
-  Settings.baseUrl = 'https://api.deepseek.com/v1/chat/completions';
-  _showAdminSettings();
-  showToast('🗑 已清除全部设置');
-}
-
-function toggleKeyVisibility() {
-  const input = document.getElementById('apiKeyInput');
-  const btn = document.getElementById('keyToggle');
-  if (input.type === 'password') {
-    input.type = 'text';
-    btn.textContent = '🙈';
-    btn.classList.add('showing');
-    btn.title = '隐藏明文';
-  } else {
-    input.type = 'password';
-    btn.textContent = '👁️';
-    btn.classList.remove('showing');
-    btn.title = '点击查看明文';
-  }
-}
-
-function showToast(msg) {
-  const existing = document.querySelector('.global-toast');
-  if (existing) existing.remove();
-  const t = document.createElement('div');
-  t.className = 'global-toast';
-  t.textContent = msg;
-  t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(255,215,0,0.92);color:#1a1a2e;padding:10px 28px;border-radius:30px;font-size:14px;font-weight:600;z-index:9999;transition:opacity .5s;box-shadow:0 4px 24px rgba(0,0,0,0.3)';
-  document.body.appendChild(t);
-  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 500); }, 2000);
-}
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
+  else mount();
+})();

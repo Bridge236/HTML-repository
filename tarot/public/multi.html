@@ -64,8 +64,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:24p
 .spread-board{margin:20px 0 36px}
 .spread-label{text-align:center;font-size:14px;color:var(--muted);margin-bottom:20px}
 .cards-row{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
-.card-slot{display:flex;flex-direction:column;align-items:center;gap:10px}
-.pos-label{font-size:12px;color:var(--muted);letter-spacing:1px;text-align:center;max-width:90px}
+.card-slot{display:flex;flex-direction:column;align-items:center}
+.pos-label{font-size:12px;color:var(--muted);letter-spacing:1px;text-align:center;max-width:90px;margin-bottom:16px}
 .tarot-card{width:100px;height:140px;border-radius:10px;cursor:pointer;transition:.35s;position:relative;overflow:hidden}
 .tarot-card .card-inner{width:100%;height:100%;border-radius:10px;background:linear-gradient(135deg,#1a2a5a,#0d1a40);border:2px solid rgba(255,215,0,0.25);display:flex;align-items:center;justify-content:center;font-size:32px;position:relative;transition:.4s}
 .tarot-card .card-inner::after{content:'';position:absolute;inset:6px;border:1px solid rgba(255,215,0,.15);border-radius:6px}
@@ -78,7 +78,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:24p
 
 /* Celtic layout */
 .celtic-layout{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:500px;margin:0 auto;position:relative}
-.celtic-slot{display:flex;flex-direction:column;align-items:center;gap:8px}
+.celtic-slot{display:flex;flex-direction:column;align-items:center}
 .celtic-slot .pos-label{font-size:11px}
 
 /* Result section */
@@ -142,7 +142,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:24p
 <div class="stars" id="stars"></div>
 <div class="page">
   <header>
-    <div class="logo" onclick="openAdmin()" style="cursor:pointer">🃏 FORTUNE TAROT</div>
+    <div class="logo">🃏 FORTUNE TAROT</div>
     <div class="nav-links">
       <button class="nav-btn" onclick="location.href='index.html'">首页</button>
       <button class="nav-btn" onclick="location.href='single.html'">单牌</button>
@@ -450,15 +450,6 @@ async function requestAI(){
     `[${spread.positions[i]}] ${c.name}（${c.reversed?'逆位':'正位'}）— ${c.reversed?c.reversed:c.upright}`
   ).join('\n');
 
-  if(!Settings.aiEnabled){
-    aiDiv.innerHTML=`<div class="ai-hint">🔮 AI 解读功能暂未开启，当前仅展示预设牌义。</div>`;
-    return;
-  }
-  if(!Settings.hasKey()){
-    aiDiv.innerHTML=`<div class="ai-hint">💡 AI 解读功能尚未完成配置，暂时无法使用。</div>`;
-    return;
-  }
-
   const prompt=`本次塔罗占卜（${spread.name}）信息如下：
 
 用户问题：${q||'（未填写，做一般性解读）'}
@@ -466,10 +457,19 @@ async function requestAI(){
 各位置牌面：
 ${cardsDesc}
 
-请结合用户的问题和牌阵各位置的关系，给出一段连贯而有深度的塔罗解读。语言温柔自然，面向启发与反思，控制在400字以内。`;
+请结合用户的问题和牌阵各位置的关系，给出一段连贯而克制的塔罗解读，全文控制在 250 字左右，紧扣牌面核心关系，不要逐张罗列、不要长篇铺陈。
+
+### 整体能量感知
+用一两句话概括整组牌的核心主题与情绪基调。
+
+### 关键提示
+用两三句话串联牌阵与你的处境，给出最重要的启发或方向。
+
+### 温馨提示
+一句话提醒：解读仅供参考，最终选择在你自己手中。`;
 
   try{
-    const text=await callAI(prompt,Settings.apiKey,Settings.baseUrl);
+    const text=await callAI(prompt);
     aiDiv.innerHTML=`<div class="ai-reading">${renderMarkdown(text)}</div>`;
     History.push({cards:drawnCards.map(c=>c.name).join('·'),question:q});
   }catch(e){

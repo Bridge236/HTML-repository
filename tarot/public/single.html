@@ -128,7 +128,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:24p
 
 <div class="page">
   <header>
-    <div class="logo" onclick="openAdmin()" style="cursor:pointer">🃏 FORTUNE TAROT</div>
+    <div class="logo">🃏 FORTUNE TAROT</div>
     <div class="nav-links">
       <button class="nav-btn" onclick="location.href='index.html'">首页</button>
       <button class="nav-btn active">单牌</button>
@@ -334,15 +334,6 @@ async function requestAI(card){
   const q=document.getElementById('questionInput').value.trim();
   const aiDiv=document.getElementById('aiContent');
 
-  if(!Settings.aiEnabled){
-    aiDiv.innerHTML=`<div class="ai-hint">🔮 AI 解读功能暂未开启，当前仅展示预设牌义。<br><br><em style="color:#c0c8b0;line-height:2">${card.reversed?card.reversed:card.upright}</em></div>`;
-    return;
-  }
-  if(!Settings.hasKey()){
-    aiDiv.innerHTML=`<div class="ai-hint">💡 AI 解读功能尚未完成配置，暂时无法使用。<br><br>当前展示预设解读：<br><br><em style="color:#c0c8b0;line-height:2">${card.reversed?card.reversed:card.upright}</em></div>`;
-    return;
-  }
-
   const prompt=`本次塔罗占卜信息如下：
 - 用户问题：${q||'（未填写，做一般性解读）'}
 - 抽到的牌：${card.name}（${card.en}）
@@ -350,14 +341,23 @@ async function requestAI(card){
 - 牌的核心关键词：${card.keywords.join('、')}
 - 牌的基本含义：${card.reversed?card.reversed:card.upright}
 
-请结合用户的具体问题，给出一段温柔而有深度的塔罗解读。`;
+请结合用户的具体问题，给出一段温柔而克制的塔罗解读，全文控制在 200 字左右，紧扣牌面核心信息，直接给出最有启发的要点，不要长篇铺陈。
+
+### 核心启示
+用一两句话点明这张牌对你问题的核心回应。
+
+### 行动建议
+用一两句话给出一个可思考或行动的方向。
+
+### 温馨提示
+一句话提醒：解读仅供参考，最终选择在你自己手中。`;
 
   try{
-    const text=await callAI(prompt,Settings.apiKey,Settings.baseUrl);
+    const text=await callAI(prompt);
     aiDiv.innerHTML=`<div class="ai-reading">${renderMarkdown(text)}</div>`;
     History.push({cards:card.name,question:q,ts:Date.now()});
   }catch(e){
-    aiDiv.innerHTML=`<div class="ai-hint" style="color:#ef9999">AI 解读失败：${e.message}<br>请检查 API Key 和网络连接。<br><br>预设解读：<em style="color:#c0c8b0">${card.reversed?card.reversed:card.upright}</em></div>`;
+    aiDiv.innerHTML=`<div class="ai-hint" style="color:#ef9999">AI 解读失败：${e.message}<br><br>预设解读：<em style="color:#c0c8b0">${card.reversed?card.reversed:card.upright}</em></div>`;
   }
 }
 

@@ -63,8 +63,6 @@ header{width:100%;max-width:960px;display:flex;align-items:center;justify-conten
 .quote-wrap{max-width:600px;width:100%;margin:40px 0 0;text-align:center}
 .quote-text{font-size:17px;font-style:italic;color:rgba(255,215,0,0.7);letter-spacing:1px}
 
-/* Settings — injected by tarot-data.js */
-
 /* History section */
 .history-section{max-width:760px;width:100%;margin-top:48px}
 .section-label{font-size:13px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px}
@@ -91,7 +89,7 @@ header{width:100%;max-width:960px;display:flex;align-items:center;justify-conten
 
 <div class="page">
   <header>
-    <div class="logo" onclick="openAdmin()" style="cursor:pointer">🃏 FORTUNE TAROT</div>
+    <div class="logo">🃏 FORTUNE TAROT</div>
     <div class="nav-links">
       <button class="nav-btn active" onclick="location.href='index.html'">首页</button>
       <button class="nav-btn" onclick="location.href='single.html'">单牌</button>
@@ -160,8 +158,6 @@ header{width:100%;max-width:960px;display:flex;align-items:center;justify-conten
     <p>⚠️ 塔罗牌是一种自我探索与心理映射的工具，牌面解读仅为象征性启发，不构成对命运、未来或具体事件的确定性判断。请以开放心态参考，理性看待，最终决定权始终在你手中。</p>
   </footer>
 </div>
-
-<!-- Settings Modal — auto-injected by tarot-data.js -->
 
 <script src="tarot-data.js"></script>
 <script>
